@@ -72,8 +72,7 @@ ABOUT_CARD = {
     "school_logo_alt": "University of South Alabama",
     # Keep these methodological, not results — no coefficients before the defense.
     "stats": [
-        {"value": "1,054", "label": "Breach Events"},
-        {"value": "3", "label": "Dissertation Essays"},
+        {"value": "2", "label": "Publications"},
         {"value": "6", "label": "Research Areas"},
     ],
 }
