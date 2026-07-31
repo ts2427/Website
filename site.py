@@ -51,7 +51,7 @@ SITE = {
     # Where the contact form posts. Formspree is the easiest option for a static
     # deploy: sign up, create a form, paste the endpoint here. Leave blank to use
     # the local Flask /contact route instead.
-    "contact_endpoint": "",
+    "contact_endpoint": "https://formsubmit.co/tspivey@pensacolastate.edu",
 }
 
 NAV = [
@@ -67,6 +67,7 @@ NAV = [
 ABOUT_CARD = {
     "role": "Doctoral Candidate (ABD) — Business Analytics",
     "school": "University of South Alabama",
+    "secondary_role": "Adjunct Instructor · Pensacola State College",
     "school_logo": "https://commons.wikimedia.org/wiki/Special:FilePath/University%20of%20South%20Alabama%20logo.png?width=400",
     "school_logo_alt": "University of South Alabama",
     # Keep these methodological, not results — no coefficients before the defense.
@@ -558,7 +559,8 @@ TEMPLATE = r"""<!DOCTYPE html>
     }
     .about-name { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: var(--navy); margin-bottom: .25rem; }
     .about-role { font-size: .85rem; color: var(--accent); font-weight: 600; margin-bottom: .2rem; }
-    .about-school { font-size: .82rem; color: var(--muted); margin-bottom: .75rem; }
+    .about-school { font-size: .82rem; color: var(--muted); }
+    .about-second-role { font-size: .78rem; color: var(--muted); font-style: italic; margin: .3rem 0 .75rem; padding-top: .3rem; border-top: 1px solid var(--border); }
     .school-logo { height: 90px; width: auto; max-width: 100%; object-fit: contain; opacity: 1; margin-bottom: 1.25rem; display: block; }
     .about-stat-row { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; }
     .about-stat { text-align: center; }
@@ -826,6 +828,7 @@ TEMPLATE = r"""<!DOCTYPE html>
           <div class="about-name">{{ site.name }}</div>
           <div class="about-role">{{ about_card.role }}</div>
           <div class="about-school">{{ about_card.school }}</div>
+          <div class="about-second-role">{{ about_card.secondary_role }}</div>
           <img src="{{ about_card.school_logo }}" alt="{{ about_card.school_logo_alt }}" class="school-logo" />
           <div class="about-stat-row">
             {% for s in about_card.stats %}
@@ -1043,6 +1046,12 @@ TEMPLATE = r"""<!DOCTYPE html>
           {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
         {% endwith %}
         <form method="post" action="{{ form_action }}">
+          {% if site.contact_endpoint %}
+          <input type="hidden" name="_subject" value="Message from timothydspivey.com" />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" name="_next" value="https://timothydspivey.com/thanks.html" />
+          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+          {% endif %}
           <div class="form-row">
             <div class="form-group">
               <label>First Name</label>
