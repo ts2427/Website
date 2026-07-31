@@ -32,15 +32,15 @@ SITE = {
     # after the middle initial, mirroring the reference design.
     "hero_name_before_dot": "Timothy D",
     "hero_name_after_dot": " Spivey",
-    "title": "Empirical Researcher & Data Analyst",
+    "title": "Empirical Researcher & Data Scientist",
     "affiliation": "Doctoral Candidate (ABD), Business Administration — Business Analytics",
     "institution": "University of South Alabama · Mitchell College of Business",
     "meta_description": (
-        "Timothy D. Spivey — empirical researcher and data analyst studying mandatory "
+        "Timothy D. Spivey — empirical researcher and data scientist studying mandatory "
         "breach disclosure timing, cybersecurity governance, and the ethical use of data."
     ),
     "email": "tspivey@pensacolastate.edu",
-    "location_lines": ["University of South Alabama", "Pensacola, Florida"],
+    "location_lines": ["Pensacola State College", "Pensacola, Florida"],
     "cv_url": "timothy-spivey-cv.pdf",
     "links": {
         "linkedin": "https://www.linkedin.com/in/tispivey/",
@@ -266,24 +266,28 @@ TEACHING = {
 CONSULTING = {
     "firm": "Threshold Data Sciences",
     "tagline": "Empirical insight. Practical guidance.",
-    "heading": "Where Governance Meets Data",
+    "heading": "Where Research Meets Practice",
     "pitch": (
-        "If you are navigating breach disclosure obligations, building governance "
-        "frameworks, or deciding where compliance dollars go, research-backed counsel "
-        "matters. I don't only advise on this — I study it."
+        "Whether you need analytics infrastructure built, a research question answered "
+        "with defensible methods, or counsel on governance and disclosure, Threshold "
+        "Data Sciences brings the same rigor to consulting that peer review demands of "
+        "research. I don't only advise on this — I study it."
     ),
     "focus": [
         {
-            "title": "Breach Disclosure Strategy",
-            "detail": "Timing, stakeholder communication, regulatory navigation.",
+            "title": "Data Science & Analytics",
+            "detail": ("Forecasting, data pipelines, executive dashboards, and "
+                       "reporting infrastructure that stakeholders actually use."),
         },
         {
-            "title": "Governance Frameworks",
-            "detail": "Board oversight, policy architecture, compliance measurement.",
+            "title": "Research & Measurement",
+            "detail": ("Study design, causal inference, and statistical analysis — "
+                       "answers you can defend, not just charts."),
         },
         {
-            "title": "Compliance Investment",
-            "detail": "Security spend prioritization, cost-benefit analysis, risk quantification.",
+            "title": "Governance, Risk & Compliance",
+            "detail": ("Breach disclosure strategy, board oversight, and security "
+                       "spend prioritization, grounded in the empirical evidence."),
         },
     ],
     "cta_label": "Send an Inquiry",
