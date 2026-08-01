@@ -258,7 +258,7 @@ TEACHING = {
             "building_alt": "John C. Pace Library, University of West Florida",
             "logo": "https://commons.wikimedia.org/wiki/Special:FilePath/Univers%20of%20west%20florida%20logo.png?width=400",
             "logo_alt": "University of West Florida logo",
-            "courses": ["Business Writing", "Professional Writing"],
+            "courses": ["Writing for Business: Theory and Practice"],
         },
     ],
 }
