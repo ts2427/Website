@@ -243,7 +243,7 @@ TEACHING = {
         {
             "name": "Pensacola State College",
             "role": "Adjunct Instructor",
-            "years": "Present",
+            "years": "2025 – Present",
             "building": "clocktower.jpg",
             "building_alt": "M. J. Menge clock tower, Pensacola State College",
             "logo": "https://en.wikipedia.org/wiki/Special:FilePath/Logo-of-Pensacola-State-College.svg",
