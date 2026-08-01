@@ -108,7 +108,8 @@ ABOUT = {
         "the ones practitioners recognize.",
 
         "He holds an MBA in Business Analytics from the University of West Florida "
-        "and a BAS from Pensacola State College.",
+        "and a BAS in Organizational Administration from Pensacola State College — "
+        "where he now teaches.",
     ],
     # TODO: add headshot.jpg to the same directory as this file
     "portrait": ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
