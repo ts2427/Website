@@ -44,7 +44,7 @@ SITE = {
     "cv_url": "timothy-spivey-cv.pdf",
     "links": {
         "linkedin": "https://www.linkedin.com/in/tispivey/",
-        "linkedin_label": "Timothy Spivey on LinkedIn",
+        "linkedin_label": "Timothy D. Spivey on LinkedIn",
         "scholar": "https://scholar.google.com/citations?user=S9sSV1EAAAAJ&hl=en",
         "firm": "https://thresholddatasciences.com",
     },
