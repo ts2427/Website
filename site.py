@@ -111,7 +111,7 @@ ABOUT = {
         "and a BAS in Organizational Administration from Pensacola State College — "
         "where he now teaches.",
     ],
-    # TODO: add headshot.jpg to the same directory as this file
+    # Fallback if headshot.jpg is ever removed — the local file wins when present.
     "portrait": ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
                  "width='220' height='220'%3E%3Crect width='220' height='220' "
                  "fill='%230d1b2a'/%3E%3Ctext x='110' y='132' font-family='Georgia' "
