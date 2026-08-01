@@ -237,14 +237,15 @@ TEACHING = {
         "Business and professional writing courses taught across Northwest Florida "
         "institutions, alongside doctoral study."
     ),
-    "photo": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20C.%20Pace%20Library%2C%20University%20of%20West%20Florida.jpg?width=1000",
-    "photo_alt": "John C. Pace Library, University of West Florida",
+    "photo": "clocktower.jpg",
+    "photo_alt": "M. J. Menge clock tower, Pensacola State College",
     "institutions": [
         {
             "name": "Pensacola State College",
             "role": "Adjunct Instructor",
             "years": "Present",
-            "building": "",  # no good campus photo available — logo tile instead
+            "building": "clocktower.jpg",
+            "building_alt": "M. J. Menge clock tower, Pensacola State College",
             "logo": "https://en.wikipedia.org/wiki/Special:FilePath/Logo-of-Pensacola-State-College.svg",
             "logo_alt": "Pensacola State College logo",
             "courses": ["Introduction to Entrepreneurship", "Small Business Accounting"],
@@ -357,6 +358,11 @@ def index():
 @app.route("/headshot.jpg")
 def portrait():
     return send_from_directory(HERE, "headshot.jpg")
+
+
+@app.route("/clocktower.jpg")
+def clocktower():
+    return send_from_directory(HERE, "clocktower.jpg")
 
 
 @app.route("/timothy-spivey-cv.pdf")

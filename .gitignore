@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 # editable source doc — the published PDF is the public copy
 TSpivey CV.docx
+# original full-res photo — the site serves the optimized clocktower.jpg
+clocktowerbackdrop.jpg
