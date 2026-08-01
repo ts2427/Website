@@ -239,6 +239,36 @@ PUBLICATIONS = {
     ],
 }
 
+SERVICE = {
+    "intro": "Editorial review service and professional memberships.",
+    "review": [
+        {
+            "role": "Peer Reviewer",
+            "venue": "Journal of Risk and Financial Management (MDPI)",
+            "years": "2025 – Present",
+            "note": ("International peer-reviewed journal, Q1 in Business, "
+                     "Management and Accounting; indexed in Scopus, EconBiz, "
+                     "EconLit, and RePEc."),
+        },
+        {
+            "role": "Peer Reviewer",
+            "venue": "Business Strategy & Development (Wiley)",
+            "years": "2025 – Present",
+            "note": ("International peer-reviewed journal covering strategic "
+                     "management, business development, and organizational "
+                     "growth."),
+        },
+    ],
+    "affiliations": [
+        {
+            "name": "ISACA",
+            "detail": ("Information Systems Audit and Control Association — "
+                       "professional association for IT audit, governance, "
+                       "and security."),
+        },
+    ],
+}
+
 TEACHING = {
     "intro": (
         "Business and professional writing courses taught across Northwest Florida "
@@ -348,6 +378,7 @@ def render(building=False):
         gallery=GALLERY,
         research=RESEARCH,
         publications=PUBLICATIONS,
+        service=SERVICE,
         teaching=TEACHING,
         consulting=CONSULTING,
         contact=CONTACT,
@@ -685,6 +716,25 @@ TEMPLATE = r"""<!DOCTYPE html>
     }
     .pub-type + .pub-type { margin-left: .4rem; }
 
+    /* SERVICE & AFFILIATIONS */
+    #service { background: var(--white); }
+    .service-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.5rem; align-items: start; }
+    @media (max-width: 768px) { .service-grid { grid-template-columns: 1fr; } }
+    .service-card {
+      background: var(--sand); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem 1.75rem;
+    }
+    .service-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 1rem; }
+    .service-item { margin-bottom: 1.1rem; }
+    .service-item:last-child { margin-bottom: 0; }
+    .service-role { font-size: .92rem; font-weight: 600; color: var(--navy); }
+    .service-role em { color: var(--accent); }
+    .service-years {
+      font-size: .72rem; font-weight: 700; letter-spacing: .05em;
+      color: var(--accent); text-transform: uppercase; margin: .15rem 0 .3rem;
+    }
+    .service-item p { font-size: .82rem; color: var(--muted); line-height: 1.6; }
+
     /* TEACHING */
     #teaching { background: var(--sand); }
     .teaching-header {
@@ -949,6 +999,36 @@ TEMPLATE = r"""<!DOCTYPE html>
         </div>
       </div>
       {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="service">
+  <div class="container">
+    <div class="section-label">Scholarship</div>
+    <h2 class="section-title">Service &amp; Affiliations</h2>
+    <p class="section-desc">{{ service.intro }}</p>
+    <div class="divider"></div>
+    <div class="service-grid">
+      <div class="service-card">
+        <h3>Editorial &amp; Review Service</h3>
+        {% for r in service.review %}
+        <div class="service-item">
+          <div class="service-role">{{ r.role }} · <em>{{ r.venue }}</em></div>
+          <div class="service-years">{{ r.years }}</div>
+          <p>{{ r.note }}</p>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="service-card">
+        <h3>Professional Affiliations</h3>
+        {% for a in service.affiliations %}
+        <div class="service-item">
+          <div class="service-role">{{ a.name }}</div>
+          <p>{{ a.detail }}</p>
+        </div>
+        {% endfor %}
+      </div>
     </div>
   </div>
 </section>
