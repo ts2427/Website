@@ -71,8 +71,12 @@ ABOUT_CARD = {
     "role": "Doctoral Candidate (ABD) — Business Analytics",
     "school": "University of South Alabama",
     "secondary_role": "Adjunct Instructor · Pensacola State College",
-    "school_logo": "https://commons.wikimedia.org/wiki/Special:FilePath/University%20of%20South%20Alabama%20logo.png?width=400",
-    "school_logo_alt": "University of South Alabama",
+    "school_logos": [
+        {"src": "https://commons.wikimedia.org/wiki/Special:FilePath/University%20of%20South%20Alabama%20logo.png?width=400",
+         "alt": "University of South Alabama"},
+        {"src": "https://en.wikipedia.org/wiki/Special:FilePath/Logo-of-Pensacola-State-College.svg",
+         "alt": "Pensacola State College"},
+    ],
     # Keep these methodological, not results — no coefficients before the defense.
     "stats": [
         {"value": "2", "label": "Publications"},
@@ -583,7 +587,8 @@ TEMPLATE = r"""<!DOCTYPE html>
     .about-role { font-size: .85rem; color: var(--accent); font-weight: 600; margin-bottom: .2rem; }
     .about-school { font-size: .82rem; color: var(--muted); }
     .about-second-role { font-size: .78rem; color: var(--muted); font-style: italic; margin: .3rem 0 .75rem; padding-top: .3rem; border-top: 1px solid var(--border); }
-    .school-logo { height: 90px; width: auto; max-width: 100%; object-fit: contain; opacity: 1; margin-bottom: 1.25rem; display: block; }
+    .school-logos { display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.25rem; }
+    .school-logo { height: 70px; width: auto; max-width: 48%; object-fit: contain; display: block; }
     .about-stat-row { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; }
     .about-stat { text-align: center; }
     .about-stat strong { display: block; font-size: 1.4rem; font-weight: 700; color: var(--navy); }
@@ -851,7 +856,11 @@ TEMPLATE = r"""<!DOCTYPE html>
           <div class="about-role">{{ about_card.role }}</div>
           <div class="about-school">{{ about_card.school }}</div>
           <div class="about-second-role">{{ about_card.secondary_role }}</div>
-          <img src="{{ about_card.school_logo }}" alt="{{ about_card.school_logo_alt }}" class="school-logo" />
+          <div class="school-logos">
+            {% for l in about_card.school_logos %}
+            <img src="{{ l.src }}" alt="{{ l.alt }}" class="school-logo" />
+            {% endfor %}
+          </div>
           <div class="about-stat-row">
             {% for s in about_card.stats %}
             <div class="about-stat"><strong>{{ s.value }}</strong><span>{{ s.label }}</span></div>
