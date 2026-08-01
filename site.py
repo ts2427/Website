@@ -52,6 +52,9 @@ SITE = {
     # deploy: sign up, create a form, paste the endpoint here. Leave blank to use
     # the local Flask /contact route instead.
     "contact_endpoint": "https://formsubmit.co/tspivey@pensacolastate.edu",
+    # Google Analytics 4 Measurement ID (looks like "G-XXXXXXXXXX"). Leave blank
+    # to omit the tracking snippet entirely.
+    "ga_measurement_id": "G-Q1XYCGEW06",
 }
 
 NAV = [
@@ -414,6 +417,16 @@ TEMPLATE = r"""<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+{% if site.ga_measurement_id %}
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.ga_measurement_id }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ site.ga_measurement_id }}');
+  </script>
+{% endif %}
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
