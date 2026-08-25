@@ -4,7 +4,7 @@ Timothy D. Spivey — personal / academic site. Single file, no other assets.
 
     pip install flask
     python site.py            # dev server at http://127.0.0.1:5000
-    python site.py --build    # writes index.html next to this file
+    python site.py --build    # writes index.html + blog/ next to this file
 
 Everything you edit is in the CONTENT section at the top. The HTML, CSS, and JS
 are in TEMPLATE at the bottom; you shouldn't need to touch it.
@@ -14,11 +14,13 @@ automatically. Anything marked TODO needs a real value before you publish.
 """
 
 import os
+import re
 import sys
-from datetime import date
+from datetime import date, datetime
+from xml.sax.saxutils import escape as xml_escape
 
 from flask import (Flask, render_template_string, request, redirect,
-                   url_for, flash, send_from_directory)
+                   url_for, flash, send_from_directory, abort)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -55,6 +57,9 @@ SITE = {
     # Google Analytics 4 Measurement ID (looks like "G-XXXXXXXXXX"). Leave blank
     # to omit the tracking snippet entirely.
     "ga_measurement_id": "G-Q1XYCGEW06",
+    # Canonical origin of the deployed site (no trailing slash). Used for
+    # canonical URLs, Open Graph tags, and the blog's RSS feed.
+    "base_url": "https://timothydspivey.com",
 }
 
 NAV = [
@@ -63,6 +68,7 @@ NAV = [
     {"label": "Publications", "href": "#publications"},
     {"label": "Teaching", "href": "#teaching"},
     {"label": "Consulting", "href": "#consulting"},
+    {"label": "Blog", "href": "blog/"},
     {"label": "Contact", "href": "#contact"},
 ]
 
@@ -344,6 +350,68 @@ CONTACT = {
     ],
 }
 
+BLOG = {
+    "name": "Threshold Effects",
+    "label": "Essays & Research Notes",
+    "tagline": ("Notes on breach disclosure, cybersecurity governance, and the "
+                "practice of data science — written from the points where "
+                "crossing a line changes the outcome."),
+    "meta_description": (
+        "Threshold Effects — essays and research notes by Timothy D. Spivey on "
+        "mandatory breach disclosure, cybersecurity governance, and the practice "
+        "of data science."
+    ),
+}
+
+# Each post is one dict. To publish: add an entry here and rerun
+#     python site.py --build
+# Newest date sorts first. Set "draft": True to keep a post out of the build.
+# The body is plain HTML — <p>, <h2>, <blockquote>, <ul>, <pre><code>, <img>
+# are all styled. Keep slugs stable once published; they become the URL.
+POSTS = [
+    {
+        "slug": "why-threshold-effects",
+        "title": "Why “Threshold Effects”",
+        "date": "2026-08-25",
+        "tags": ["Meta"],
+        "summary": ("The name comes from econometrics — a relationship that "
+                    "changes character once a variable crosses a critical "
+                    "value. It is also a fair description of everything this "
+                    "blog will be about."),
+        "body": """
+<p>In econometrics, a threshold effect is a relationship that changes character
+once a variable crosses a critical value. Below the line, one regime; above it,
+another. The relationship is not linear, and pretending it is will mislead you
+precisely when the stakes are highest.</p>
+
+<p>Most of the questions I study live on lines like these. The moment a breach
+becomes reportable. The day a disclosure deadline arrives. The point at which a
+board stops treating security as an IT expense and starts treating it as a
+governance problem. My dissertation asks what mandatory disclosure timing
+actually does — to markets, to organizations, and to boards — and the honest
+answer so far is that the interesting action is almost never in the average.
+It is at the thresholds.</p>
+
+<p>The name is also, admittedly, an echo of
+<a href="https://thresholddatasciences.com" target="_blank">Threshold Data
+Sciences</a>, the consulting practice where the research meets paying problems.
+The pun was sitting right there.</p>
+
+<h2>What to expect</h2>
+
+<p>Research notes as the dissertation moves toward defense — methods,
+measurement decisions, and the occasional dead end, because dead ends are data
+too. Commentary on disclosure regulation as it keeps evolving. Notes from
+teaching entrepreneurship and small business accounting, and from nearly twenty
+years of telecom operations that keep the empirical questions honest.</p>
+
+<p>The cadence will be honest rather than ambitious: I will write when I have
+something worth saying, and not otherwise. If that suits you, there is an
+<a href="feed.xml">RSS feed</a>.</p>
+""",
+    },
+]
+
 
 # =============================================================================
 # APP — you shouldn't need to edit past this line
@@ -389,9 +457,98 @@ def render(building=False):
     )
 
 
+def _published_posts():
+    posts = [p for p in POSTS if not p.get("draft")]
+    return sorted(posts, key=lambda p: p["date"], reverse=True)
+
+
+def _post_view(post):
+    """Post dict plus the derived fields the templates need."""
+    d = datetime.strptime(post["date"], "%Y-%m-%d")
+    words = len(re.findall(r"\w+", re.sub(r"<[^>]+>", " ", post["body"])))
+    view = dict(post)
+    view["display_date"] = f"{d.strftime('%B')} {d.day}, {d.year}"
+    view["minutes"] = max(1, round(words / 200))
+    view["href"] = post["slug"] + ".html"
+    view["url"] = f"{SITE['base_url']}/blog/{post['slug']}.html"
+    return view
+
+
+def render_blog():
+    return render_template_string(
+        BLOG_TEMPLATE,
+        site=SITE,
+        blog=BLOG,
+        posts=[_post_view(p) for p in _published_posts()],
+        page_title=f"{BLOG['name']} | {SITE['name']}",
+        page_desc=BLOG["meta_description"],
+        page_url=f"{SITE['base_url']}/blog/",
+        year=date.today().year,
+    )
+
+
+def render_post(post):
+    view = _post_view(post)
+    return render_template_string(
+        POST_TEMPLATE,
+        site=SITE,
+        blog=BLOG,
+        post=view,
+        page_title=f"{view['title']} | {BLOG['name']}",
+        page_desc=view["summary"],
+        page_url=view["url"],
+        year=date.today().year,
+    )
+
+
+def blog_feed_xml():
+    items = []
+    for p in _published_posts():
+        link = f"{SITE['base_url']}/blog/{p['slug']}.html"
+        pub = datetime.strptime(p["date"], "%Y-%m-%d").strftime(
+            "%a, %d %b %Y 12:00:00 GMT")
+        items.append(
+            "<item>"
+            f"<title>{xml_escape(p['title'])}</title>"
+            f"<link>{link}</link>"
+            f'<guid isPermaLink="true">{link}</guid>'
+            f"<pubDate>{pub}</pubDate>"
+            f"<description>{xml_escape(p['summary'])}</description>"
+            "</item>"
+        )
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<rss version="2.0"><channel>'
+        f"<title>{xml_escape(BLOG['name'])}</title>"
+        f"<link>{SITE['base_url']}/blog/</link>"
+        f"<description>{xml_escape(BLOG['meta_description'])}</description>"
+        f"<language>en-us</language>"
+        + "".join(items)
+        + "</channel></rss>\n"
+    )
+
+
 @app.route("/")
 def index():
     return render()
+
+
+@app.route("/blog/")
+def blog_index():
+    return render_blog()
+
+
+@app.route("/blog/<slug>.html")
+def blog_post(slug):
+    for p in _published_posts():
+        if p["slug"] == slug:
+            return render_post(p)
+    abort(404)
+
+
+@app.route("/blog/feed.xml")
+def blog_feed():
+    return app.response_class(blog_feed_xml(), mimetype="application/rss+xml")
 
 
 @app.route("/headshot.jpg")
@@ -424,13 +581,27 @@ def contact():
 
 
 def build():
-    """Write a standalone index.html you can upload to any static host."""
+    """Write standalone index.html + blog/ you can upload to any static host."""
     out = os.path.join(HERE, "index.html")
     with app.test_request_context():
         html = render(building=True)
     with open(out, "w", encoding="utf-8") as fh:
         fh.write(html)
     print("Wrote", out)
+
+    blog_dir = os.path.join(HERE, "blog")
+    os.makedirs(blog_dir, exist_ok=True)
+    with app.test_request_context():
+        pages = [("index.html", render_blog())]
+        pages += [(p["slug"] + ".html", render_post(p))
+                  for p in _published_posts()]
+    pages.append(("feed.xml", blog_feed_xml()))
+    for name, content in pages:
+        path = os.path.join(blog_dir, name)
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(content)
+        print("Wrote", path)
+
     if not SITE["contact_endpoint"]:
         print("Note: set SITE['contact_endpoint'] to a Formspree URL - the "
               "contact form has nowhere to post in a static build.")
@@ -1240,6 +1411,321 @@ TEMPLATE = r"""<!DOCTYPE html>
 </body>
 </html>
 """
+
+
+# --- Blog templates -----------------------------------------------------------
+# Blog pages live at /blog/, so links back to the main page are root-absolute
+# ("/#about") and links within the blog are relative — both work on the Flask
+# dev server and on the static deploy.
+
+_BLOG_HEAD = r"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ page_title }}</title>
+  <meta name="description" content="{{ page_desc }}" />
+  <meta property="og:title" content="{{ page_title }}" />
+  <meta property="og:description" content="{{ page_desc }}" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="{{ page_url }}" />
+  <link rel="canonical" href="{{ page_url }}" />
+  <link rel="alternate" type="application/rss+xml" title="{{ blog.name }}" href="/blog/feed.xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+{% if site.ga_measurement_id %}
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.ga_measurement_id }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ site.ga_measurement_id }}');
+  </script>
+{% endif %}
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0d1b2a;
+      --blue:   #223b52;
+      --accent: #b8970a;
+      --accent-lit: #e2c84b;
+      --light:  #f8f2dc;
+      --sand:   #f4f2ed;
+      --text:   #16222d;
+      --muted:  #5a6a78;
+      --border: #ddd9cd;
+      --white:  #ffffff;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(13,27,42,.08);
+      --shadow-lg: 0 12px 48px rgba(13,27,42,.14);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV (same as main page) */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      backdrop-filter: blur(14px) saturate(160%);
+      background: rgba(255,255,255,.88);
+      border-bottom: 1px solid var(--border);
+      height: 64px;
+      display: flex; align-items: center;
+    }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 2rem;
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem; font-weight: 700;
+      color: var(--navy); text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      text-decoration: none; font-size: .875rem; font-weight: 500;
+      color: var(--muted); transition: color .2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+    /* BLOG HEADER BAND */
+    .blog-hero {
+      background: linear-gradient(135deg, var(--navy) 0%, #16293d 60%, var(--blue) 100%);
+      padding: 9.5rem 2rem 4.5rem;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .blog-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1' fill='rgba(255,255,255,.06)'/%3E%3C/svg%3E") repeat;
+      pointer-events: none;
+    }
+    .blog-hero-inner { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+    .blog-kicker {
+      font-size: .72rem; font-weight: 700; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--accent-lit); margin-bottom: .75rem;
+    }
+    .blog-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5.5vw, 3.6rem); font-weight: 700;
+      color: var(--white); line-height: 1.12; margin-bottom: 1rem;
+    }
+    .blog-tagline { font-size: 1.02rem; color: rgba(255,255,255,.72); max-width: 620px; margin: 0 auto; }
+    .blog-hero-meta {
+      display: flex; gap: .9rem; justify-content: center; align-items: center; flex-wrap: wrap;
+      font-size: .82rem; color: rgba(255,255,255,.6); margin-top: 1.25rem;
+    }
+    .blog-hero-meta a { color: var(--accent-lit); text-decoration: none; }
+    .blog-hero-meta a:hover { text-decoration: underline; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-size: .82rem; font-weight: 600; letter-spacing: .04em;
+      color: var(--accent-lit); text-decoration: none; margin-bottom: 1.25rem;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* POST LIST */
+    .wrap { max-width: 780px; margin: 0 auto; padding: 4rem 2rem 5rem; }
+    .post-list { display: flex; flex-direction: column; gap: 1.5rem; }
+    .post-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.9rem 2rem;
+      transition: all .22s; position: relative; overflow: hidden;
+    }
+    .post-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-lit));
+      transform: scaleX(0); transform-origin: left; transition: transform .3s;
+    }
+    .post-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+    .post-card:hover::before { transform: scaleX(1); }
+    .post-card-meta {
+      display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+      font-size: .78rem; color: var(--muted); margin-bottom: .6rem;
+    }
+    .post-date {
+      font-size: .75rem; font-weight: 700; letter-spacing: .05em;
+      color: var(--accent); background: var(--light);
+      padding: .25rem .7rem; border-radius: 6px;
+    }
+    .post-card h2 { font-family: 'Playfair Display', serif; font-size: 1.35rem; line-height: 1.25; margin-bottom: .55rem; }
+    .post-card h2 a { color: var(--navy); text-decoration: none; }
+    .post-card h2 a:hover { color: var(--accent); }
+    .post-card p { font-size: .92rem; color: var(--muted); line-height: 1.7; }
+    .post-card-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 1.1rem; flex-wrap: wrap; gap: .75rem; }
+    .tags { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .tag {
+      background: var(--light); color: var(--blue); font-size: .74rem; font-weight: 600;
+      padding: .25rem .8rem; border-radius: 999px; border: 1px solid rgba(184,151,10,.3);
+    }
+    .read-more {
+      font-size: .84rem; font-weight: 600; color: var(--accent); text-decoration: none;
+    }
+    .read-more:hover { text-decoration: underline; }
+    .empty-note { text-align: center; color: var(--muted); font-size: .95rem; }
+
+    /* ARTICLE */
+    .post-header-meta {
+      display: flex; gap: .9rem; justify-content: center; align-items: center; flex-wrap: wrap;
+      font-size: .84rem; color: rgba(255,255,255,.65); margin-top: 1.1rem;
+    }
+    .post-header-meta .tag { background: rgba(255,255,255,.1); color: rgba(255,255,255,.85); border-color: rgba(255,255,255,.25); }
+    article { max-width: 720px; margin: 0 auto; padding: 3.5rem 2rem 4rem; }
+    .post-body { font-size: 1.03rem; line-height: 1.8; }
+    .post-body p { margin-bottom: 1.3rem; }
+    .post-body h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem; color: var(--navy); line-height: 1.25;
+      margin: 2.4rem 0 .8rem;
+    }
+    .post-body h3 { font-size: 1.12rem; font-weight: 700; color: var(--navy); margin: 1.9rem 0 .6rem; }
+    .post-body a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(184,151,10,.45); }
+    .post-body a:hover { border-bottom-color: var(--accent); }
+    .post-body blockquote {
+      border-left: 3px solid var(--accent);
+      padding: .3rem 0 .3rem 1.3rem; margin: 1.6rem 0;
+      color: var(--muted); font-style: italic;
+    }
+    .post-body ul, .post-body ol { margin: 0 0 1.3rem 1.5rem; }
+    .post-body li { margin-bottom: .45rem; }
+    .post-body code {
+      background: var(--sand); border: 1px solid var(--border); border-radius: 4px;
+      padding: .1rem .4rem; font-size: .87em;
+    }
+    .post-body pre {
+      background: var(--navy); color: #dbe7f3;
+      padding: 1.25rem 1.4rem; border-radius: 8px;
+      overflow-x: auto; margin-bottom: 1.3rem; font-size: .88rem; line-height: 1.6;
+    }
+    .post-body pre code { background: none; border: none; color: inherit; padding: 0; font-size: inherit; }
+    .post-body img { max-width: 100%; border-radius: 8px; display: block; margin: 1.6rem auto; }
+    .post-body figcaption { text-align: center; font-size: .8rem; color: var(--muted); margin-top: -1rem; margin-bottom: 1.6rem; }
+    .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.2rem 0; }
+    .post-end {
+      margin-top: 3rem; padding-top: 1.75rem; border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    .post-end a { font-size: .88rem; font-weight: 600; color: var(--accent); text-decoration: none; }
+    .post-end a:hover { text-decoration: underline; }
+
+    /* FOOTER (same as main page) */
+    footer {
+      background: var(--navy); color: rgba(255,255,255,.5);
+      text-align: center; padding: 2rem; font-size: .82rem;
+    }
+    footer strong { color: rgba(255,255,255,.8); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .blog-hero { padding: 8rem 1.5rem 3.5rem; }
+      .wrap, article { padding-left: 1.5rem; padding-right: 1.5rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">{{ site.name }}</a>
+    <ul class="nav-links">
+      <li><a href="/#about">About</a></li>
+      <li><a href="/#research">Research</a></li>
+      <li><a href="/#publications">Publications</a></li>
+      <li><a href="/#teaching">Teaching</a></li>
+      <li><a href="/#consulting">Consulting</a></li>
+      <li><a href="/blog/" class="active">Blog</a></li>
+      <li><a href="/#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+"""
+
+_BLOG_FOOT = r"""
+<footer>
+  <p><strong>{{ site.name }}</strong> &nbsp;&middot;&nbsp; {{ site.title }} &nbsp;&middot;&nbsp; {{ site.institution }}</p>
+  <p style="margin-top:.4rem">&copy; {{ year }} {{ site.name }}. All rights reserved.</p>
+</footer>
+</body>
+</html>
+"""
+
+BLOG_TEMPLATE = _BLOG_HEAD + r"""
+<header class="blog-hero">
+  <div class="blog-hero-inner">
+    <div class="blog-kicker">{{ blog.label }}</div>
+    <h1>{{ blog.name }}</h1>
+    <p class="blog-tagline">{{ blog.tagline }}</p>
+    <div class="blog-hero-meta">
+      <span>by {{ site.name }}</span>
+      <span>&middot;</span>
+      <a href="feed.xml">RSS feed</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="post-list">
+  {% for post in posts %}
+    <div class="post-card">
+      <div class="post-card-meta">
+        <span class="post-date">{{ post.display_date }}</span>
+        <span>{{ post.minutes }} min read</span>
+      </div>
+      <h2><a href="{{ post.href }}">{{ post.title }}</a></h2>
+      <p>{{ post.summary }}</p>
+      <div class="post-card-foot">
+        <div class="tags">
+          {% for tag in post.tags %}<span class="tag">{{ tag }}</span>{% endfor %}
+        </div>
+        <a class="read-more" href="{{ post.href }}">Read the post &rarr;</a>
+      </div>
+    </div>
+  {% else %}
+    <p class="empty-note">Nothing here yet — the first post is on its way.</p>
+  {% endfor %}
+  </div>
+</main>
+""" + _BLOG_FOOT
+
+POST_TEMPLATE = _BLOG_HEAD + r"""
+<header class="blog-hero">
+  <div class="blog-hero-inner">
+    <a href="./" class="back-link">&larr; {{ blog.name }}</a>
+    <h1>{{ post.title }}</h1>
+    <div class="post-header-meta">
+      <span>{{ post.display_date }}</span>
+      <span>&middot;</span>
+      <span>{{ post.minutes }} min read</span>
+      {% if post.tags %}<span>&middot;</span>{% for tag in post.tags %}<span class="tag">{{ tag }}</span>{% endfor %}{% endif %}
+    </div>
+  </div>
+</header>
+
+<article>
+  <div class="post-body">
+{{ post.body | safe }}
+  </div>
+  <div class="post-end">
+    <a href="./">&larr; All posts</a>
+    <a href="/#contact">Get in touch &rarr;</a>
+  </div>
+</article>
+""" + _BLOG_FOOT
 
 
 if __name__ == "__main__":
