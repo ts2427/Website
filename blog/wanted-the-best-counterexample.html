@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wanted: The Best Counterexample | Threshold Effects</title>
+  <meta name="description" content="The honest version of an argument has to survive its best counterexample. So: what&#39;s the strongest case of a rule that actually changed what organizations are?" />
+  <meta property="og:title" content="Wanted: The Best Counterexample | Threshold Effects" />
+  <meta property="og:description" content="The honest version of an argument has to survive its best counterexample. So: what&#39;s the strongest case of a rule that actually changed what organizations are?" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://timothydspivey.com/blog/wanted-the-best-counterexample.html" />
+  <link rel="canonical" href="https://timothydspivey.com/blog/wanted-the-best-counterexample.html" />
+  <link rel="alternate" type="application/rss+xml" title="Threshold Effects" href="/blog/feed.xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q1XYCGEW06"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-Q1XYCGEW06');
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0d1b2a;
+      --blue:   #223b52;
+      --accent: #b8970a;
+      --accent-lit: #e2c84b;
+      --light:  #f8f2dc;
+      --sand:   #f4f2ed;
+      --text:   #16222d;
+      --muted:  #5a6a78;
+      --border: #ddd9cd;
+      --white:  #ffffff;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(13,27,42,.08);
+      --shadow-lg: 0 12px 48px rgba(13,27,42,.14);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV (same as main page) */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      backdrop-filter: blur(14px) saturate(160%);
+      background: rgba(255,255,255,.88);
+      border-bottom: 1px solid var(--border);
+      height: 64px;
+      display: flex; align-items: center;
+    }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 2rem;
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem; font-weight: 700;
+      color: var(--navy); text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      text-decoration: none; font-size: .875rem; font-weight: 500;
+      color: var(--muted); transition: color .2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+    /* BLOG HEADER BAND */
+    .blog-hero {
+      background: linear-gradient(135deg, var(--navy) 0%, #16293d 60%, var(--blue) 100%);
+      padding: 9.5rem 2rem 4.5rem;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .blog-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1' fill='rgba(255,255,255,.06)'/%3E%3C/svg%3E") repeat;
+      pointer-events: none;
+    }
+    .blog-hero-inner { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+    .blog-kicker {
+      font-size: .72rem; font-weight: 700; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--accent-lit); margin-bottom: .75rem;
+    }
+    .blog-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5.5vw, 3.6rem); font-weight: 700;
+      color: var(--white); line-height: 1.12; margin-bottom: 1rem;
+    }
+    .blog-tagline { font-size: 1.02rem; color: rgba(255,255,255,.72); max-width: 620px; margin: 0 auto; }
+    .blog-hero-meta {
+      display: flex; gap: .9rem; justify-content: center; align-items: center; flex-wrap: wrap;
+      font-size: .82rem; color: rgba(255,255,255,.6); margin-top: 1.25rem;
+    }
+    .blog-hero-meta a { color: var(--accent-lit); text-decoration: none; }
+    .blog-hero-meta a:hover { text-decoration: underline; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-size: .82rem; font-weight: 600; letter-spacing: .04em;
+      color: var(--accent-lit); text-decoration: none; margin-bottom: 1.25rem;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* POST LIST */
+    .wrap { max-width: 780px; margin: 0 auto; padding: 4rem 2rem 5rem; }
+    .post-list { display: flex; flex-direction: column; gap: 1.5rem; }
+    .post-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.9rem 2rem;
+      transition: all .22s; position: relative; overflow: hidden;
+    }
+    .post-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-lit));
+      transform: scaleX(0); transform-origin: left; transition: transform .3s;
+    }
+    .post-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+    .post-card:hover::before { transform: scaleX(1); }
+    .post-card-meta {
+      display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+      font-size: .78rem; color: var(--muted); margin-bottom: .6rem;
+    }
+    .post-date {
+      font-size: .75rem; font-weight: 700; letter-spacing: .05em;
+      color: var(--accent); background: var(--light);
+      padding: .25rem .7rem; border-radius: 6px;
+    }
+    .post-card h2 { font-family: 'Playfair Display', serif; font-size: 1.35rem; line-height: 1.25; margin-bottom: .55rem; }
+    .post-card h2 a { color: var(--navy); text-decoration: none; }
+    .post-card h2 a:hover { color: var(--accent); }
+    .post-card p { font-size: .92rem; color: var(--muted); line-height: 1.7; }
+    .post-card-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 1.1rem; flex-wrap: wrap; gap: .75rem; }
+    .tags { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .tag {
+      background: var(--light); color: var(--blue); font-size: .74rem; font-weight: 600;
+      padding: .25rem .8rem; border-radius: 999px; border: 1px solid rgba(184,151,10,.3);
+    }
+    .read-more {
+      font-size: .84rem; font-weight: 600; color: var(--accent); text-decoration: none;
+    }
+    .read-more:hover { text-decoration: underline; }
+    .empty-note { text-align: center; color: var(--muted); font-size: .95rem; }
+
+    /* ARTICLE */
+    .post-header-meta {
+      display: flex; gap: .9rem; justify-content: center; align-items: center; flex-wrap: wrap;
+      font-size: .84rem; color: rgba(255,255,255,.65); margin-top: 1.1rem;
+    }
+    .post-header-meta .tag { background: rgba(255,255,255,.1); color: rgba(255,255,255,.85); border-color: rgba(255,255,255,.25); }
+    article { max-width: 720px; margin: 0 auto; padding: 3.5rem 2rem 4rem; }
+    .post-body { font-size: 1.03rem; line-height: 1.8; }
+    .post-body p { margin-bottom: 1.3rem; }
+    .post-body h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem; color: var(--navy); line-height: 1.25;
+      margin: 2.4rem 0 .8rem;
+    }
+    .post-body h3 { font-size: 1.12rem; font-weight: 700; color: var(--navy); margin: 1.9rem 0 .6rem; }
+    .post-body a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(184,151,10,.45); }
+    .post-body a:hover { border-bottom-color: var(--accent); }
+    .post-body blockquote {
+      border-left: 3px solid var(--accent);
+      padding: .3rem 0 .3rem 1.3rem; margin: 1.6rem 0;
+      color: var(--muted); font-style: italic;
+    }
+    .post-body ul, .post-body ol { margin: 0 0 1.3rem 1.5rem; }
+    .post-body li { margin-bottom: .45rem; }
+    .post-body code {
+      background: var(--sand); border: 1px solid var(--border); border-radius: 4px;
+      padding: .1rem .4rem; font-size: .87em;
+    }
+    .post-body pre {
+      background: var(--navy); color: #dbe7f3;
+      padding: 1.25rem 1.4rem; border-radius: 8px;
+      overflow-x: auto; margin-bottom: 1.3rem; font-size: .88rem; line-height: 1.6;
+    }
+    .post-body pre code { background: none; border: none; color: inherit; padding: 0; font-size: inherit; }
+    .post-body img { max-width: 100%; border-radius: 8px; display: block; margin: 1.6rem auto; }
+    .post-body figcaption { text-align: center; font-size: .8rem; color: var(--muted); margin-top: -1rem; margin-bottom: 1.6rem; }
+    .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.2rem 0; }
+    .post-end {
+      margin-top: 3rem; padding-top: 1.75rem; border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    .post-end a { font-size: .88rem; font-weight: 600; color: var(--accent); text-decoration: none; }
+    .post-end a:hover { text-decoration: underline; }
+
+    /* FOOTER (same as main page) */
+    footer {
+      background: var(--navy); color: rgba(255,255,255,.5);
+      text-align: center; padding: 2rem; font-size: .82rem;
+    }
+    footer strong { color: rgba(255,255,255,.8); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .blog-hero { padding: 8rem 1.5rem 3.5rem; }
+      .wrap, article { padding-left: 1.5rem; padding-right: 1.5rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">Timothy D. Spivey</a>
+    <ul class="nav-links">
+      <li><a href="/#about">About</a></li>
+      <li><a href="/#research">Research</a></li>
+      <li><a href="/#publications">Publications</a></li>
+      <li><a href="/#teaching">Teaching</a></li>
+      <li><a href="/#consulting">Consulting</a></li>
+      <li><a href="/blog/" class="active">Blog</a></li>
+      <li><a href="/#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="blog-hero">
+  <div class="blog-hero-inner">
+    <a href="./" class="back-link">&larr; Threshold Effects</a>
+    <h1>Wanted: The Best Counterexample</h1>
+    <div class="post-header-meta">
+      <span>August 5, 2026</span>
+      <span>&middot;</span>
+      <span>1 min read</span>
+      <span>&middot;</span><span class="tag">Regulatory Policy</span><span class="tag">Organizational Behavior</span>
+    </div>
+  </div>
+</header>
+
+<article>
+  <div class="post-body">
+
+<p>On Monday I made an argument: rules change what organizations are required
+to do, but rarely change what they are. The research I cited backs it. So does
+most of what I've seen in 20 years of operations.</p>
+
+<p>But the honest version of that argument has to survive its best
+counterexample — and I'd rather go looking for it than wait for it to find
+me.</p>
+
+<p>So here's the question: what's the strongest case you've seen of a rule
+that actually changed what organizations are? Not compliance on paper — real,
+durable change in how firms behave, staff, invest, or think. A regulation that
+built capacity rather than just revealing who already had it.</p>
+
+<p>Seatbelt-style engineering mandates? SOX internal controls, a decade on?
+Something in your industry I've never heard of?</p>
+
+<p>I have a candidate or two of my own, but I'm more interested in yours.</p>
+
+<p>Best counterexample gets a genuine rethink in a future post.</p>
+
+<hr />
+<p><em>No. 006 in the Threshold Effects series. First published on LinkedIn,
+August 5, 2026.</em></p>
+
+  </div>
+  <div class="post-end">
+    <a href="./">&larr; All posts</a>
+    <a href="/#contact">Get in touch &rarr;</a>
+  </div>
+</article>
+
+<footer>
+  <p><strong>Timothy D. Spivey</strong> &nbsp;&middot;&nbsp; Empirical Researcher &amp; Data Scientist &nbsp;&middot;&nbsp; University of South Alabama · Mitchell College of Business</p>
+  <p style="margin-top:.4rem">&copy; 2026 Timothy D. Spivey. All rights reserved.</p>
+</footer>
+</body>
+</html>

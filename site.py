@@ -410,6 +410,607 @@ something worth saying, and not otherwise. If that suits you, there is an
 <a href="feed.xml">RSS feed</a>.</p>
 """,
     },
+    # ------------------------------------------------------------------
+    # The original Threshold Effects series, first published on LinkedIn
+    # (July–August 2026), archived here as posts No. 001–011.
+    # ------------------------------------------------------------------
+    {
+        "slug": "the-faster-is-better-assumption",
+        "title": "The Faster-Is-Better Assumption",
+        "date": "2026-07-20",
+        "tags": ["Mandatory Disclosure", "Cybersecurity", "Research"],
+        "summary": ("The assumption behind mandatory breach disclosure timing "
+                    "is that faster equals better. Across 1,054 breach events "
+                    "and three empirical channels, that assumption doesn't "
+                    "hold up well."),
+        "body": """
+<p>The assumption behind mandatory breach disclosure timing is that faster =
+better. Markets get cleaner signals. Firms recover faster. Uncertainty
+drops.</p>
+
+<p>I've been testing that assumption for a while now. It doesn't hold up
+well.</p>
+
+<p>Using event study methodology across 1,054 breach events, with the FCC's
+2007 disclosure rule as a natural experiment, my research traces what
+regulatory timing actually does to pricing efficiency, post-disclosure
+uncertainty, and governance structures. The consistent finding: real costs,
+across all three channels, without the regulatory payoff. Faster disclosure
+moves the information asymmetry problem — it doesn't solve it.</p>
+
+<p>That thread connects back to earlier work during my MBA on the cable and
+telecom industry, where the same gap kept showing up between policy intent and
+market reality.</p>
+
+<p>Three ISACA Journal publications, a co-authored empirical paper in
+progress, and nearly 20 years in telecom operations underneath all of it.</p>
+
+<p>Still a lot of work left on this. If any of it connects with work you're
+doing, I'd love to hear about it.</p>
+
+<hr />
+<p><em>No. 001 in the Threshold Effects series. First published on LinkedIn,
+July 20, 2026.</em></p>
+""",
+    },
+    {
+        "slug": "cover-yourself-8-ks",
+        "title": "Cover-Yourself 8-Ks",
+        "date": "2026-07-22",
+        "tags": ["Mandatory Disclosure", "Regulatory Policy", "Cybersecurity"],
+        "summary": ("When the SEC required four-business-day incident "
+                    "disclosure, firms responded with “cover yourself "
+                    "8-Ks.” Organizations don't respond to regulatory "
+                    "intent — they respond to regulatory incentives."),
+        "body": """
+<p>Mandatory disclosure rules are built on an assumption that organizations
+will respond to transparency requirements with transparency.</p>
+
+<p>The evidence suggests otherwise.</p>
+
+<p>When the SEC required public companies to disclose material cybersecurity
+incidents within four business days, something unexpected happened. Instead of
+producing cleaner market signals, companies started filing mandatory
+disclosures for incidents that didn't even meet the materiality threshold. SEC
+officials had a name for it: "cover yourself 8-Ks." Firms were disclosing not
+because the incident warranted it — but because they were afraid of being
+second-guessed later.</p>
+
+<p>The SEC had to issue clarifying guidance in May 2024 to correct the
+behavior. The guidance worked. But the episode reveals something worth paying
+attention to.</p>
+
+<p>Organizations don't respond to regulatory intent. They respond to
+regulatory incentives. And those two things are not the same.</p>
+
+<p>A rule designed to reduce information asymmetry between firms and investors
+produced strategic disclosure behavior instead — firms managing perception
+rather than informing markets. That gap between intent and outcome is where
+the real cost lives, and it shows up more often than the policy debate
+acknowledges.</p>
+
+<p>The question regulators should be asking isn't just what information do
+markets need — it's how will organizations behave when required to provide
+it?</p>
+
+<p>We're not great at answering that second question yet.</p>
+
+<hr />
+<p><em>No. 002 in the Threshold Effects series. First published on LinkedIn,
+July 22, 2026.</em></p>
+""",
+    },
+    {
+        "slug": "paper-trails-and-shadow-ai",
+        "title": "Paper Trails and Shadow AI",
+        "date": "2026-07-27",
+        "tags": ["AI Governance", "Shadow AI", "Compliance"],
+        "summary": ("Only 37% of compliance leaders can measure whether their "
+                    "programs work — and half the U.S. workforce is using AI "
+                    "at work without knowing if it's allowed. Why did we "
+                    "think a document was going to govern a behavior?"),
+        "body": """
+<p>Organizations invest significant resources building compliance programs —
+policies, training, audits, documentation.</p>
+
+<p>How much of that investment actually changes behavior versus simply
+documenting that the organization tried?</p>
+
+<p>According to Gartner, only 37% of compliance leaders are confident in their
+ability to measure program effectiveness. That's not a data collection
+problem. That's a design problem.</p>
+
+<p>In my experience, the gap between a compliance program that documents
+effort and one that actually shifts behavior comes down to a single question:
+do the people who wrote the policy understand why the behavior they're trying
+to govern exists in the first place?</p>
+
+<p>Most of the time, they don't. And a rule written without that understanding
+doesn't change behavior — it just creates a paper trail.</p>
+
+<p>Curious what others are seeing on the ground.</p>
+
+<p>ISACA's 2026 AI Pulse Poll surveyed 3,400 digital trust professionals and
+found that 90% believe employees at their organizations are using AI tools.
+Only 38% have a formal comprehensive AI policy. One in four have no policy at
+all.</p>
+
+<p>KPMG's research puts the behavioral picture in even sharper focus. Half of
+the U.S. workforce reports using AI tools at work without knowing whether it's
+allowed. Another 44% admit to knowingly using AI in ways that contravene
+company policies and guidelines. Only 41% of employees report that their
+organization has any policy guiding AI use at all.</p>
+
+<p>Read those numbers together. Then read them again.</p>
+
+<p>This isn't a compliance gap. It's a governance design problem.</p>
+
+<p>AI policy travels top-down as a document — authored by leadership, signed
+once, filed somewhere. AI behavior travels peer-to-peer as a habit — spread
+through shared prompts, chat threads, and a colleague saying "you have to try
+this." Those two channels don't touch each other. A rule that travels one path
+and a behavior that travels the other will diverge no matter how well the rule
+is written.</p>
+
+<p>The productivity calculus makes it worse. When the reward for using an
+unapproved tool is concrete, recurring, and personal — and the risk is
+abstract, deferred, and someone else's problem — the behavior wins. Every
+time.</p>
+
+<p>We've seen this pattern before. Shadow IT didn't disappear because
+organizations wrote better policies. It persisted because the tools people
+weren't supposed to use worked better than the ones they were supposed to use.
+AI is following the same road at a much faster speed.</p>
+
+<p>The question worth asking isn't how do we enforce the policy we already
+have. It's why did we think a document was going to govern a behavior in the
+first place.</p>
+
+<hr />
+<p><em>No. 003 in the Threshold Effects series. First published on LinkedIn,
+July 27, 2026.</em></p>
+""",
+    },
+    {
+        "slug": "shadow-it-was-the-rehearsal",
+        "title": "Shadow IT Was the Rehearsal",
+        "date": "2026-07-29",
+        "tags": ["Shadow IT", "AI Governance", "ISACA"],
+        "summary": ("Shadow IT persisted because unsanctioned tools solved "
+                    "real problems faster than approved ones. AI governance "
+                    "is replaying the same dynamic — in months instead of "
+                    "years."),
+        "body": """
+<p>In 2025 I published a piece in the ISACA Journal on shadow IT governance —
+specifically how and why employees adopt unauthorized technology outside of
+sanctioned IT channels, and what that means for organizational security
+culture.</p>
+
+<p>The core finding wasn't surprising in hindsight: employees don't adopt
+shadow IT because they're trying to create risk. They adopt it because the
+unsanctioned tools solve a real problem faster than the approved ones do. The
+productivity gain is immediate and personal. The governance risk is diffuse
+and deferred. When those two things compete, behavior wins over policy almost
+every time.</p>
+
+<p>What made shadow IT hard to govern wasn't the technology. It was the gap
+between how the policy traveled — top-down, documented, signed — and how the
+behavior traveled — peer-to-peer, through habit, through a colleague saying
+"just use this."</p>
+
+<p>Organizations that never closed that gap didn't close it by writing better
+shadow IT policies. Most just learned to live with it.</p>
+
+<p>Reading the AI governance data coming out in 2026, I keep seeing the same
+dynamic — same incentive structure, same behavioral pattern, same governance
+gap. The difference is speed and scale. Shadow IT crept in over years. AI is
+doing the same thing in months, across every function, at every level of the
+organization.</p>
+
+<p>A policy document didn't solve shadow IT. It's not going to solve this
+either.</p>
+
+<hr />
+<p><em>No. 004 in the Threshold Effects series. First published on LinkedIn,
+July 29, 2026.</em></p>
+""",
+    },
+    {
+        "slug": "three-rules-same-outcome",
+        "title": "Three Rules, Same Outcome",
+        "date": "2026-08-03",
+        "tags": ["Regulatory Policy", "Mandatory Disclosure",
+                 "Organizational Behavior"],
+        "summary": ("AI governance, compliance programs, mandatory "
+                    "disclosure: three domains, three rules, same outcome. "
+                    "The rule changes what organizations are required to do. "
+                    "It rarely changes what they are."),
+        "body": """
+<p>In my series over the past three weeks, the same pattern has shown up in
+three different places.</p>
+
+<p>AI governance: ISACA found that 90% of organizations believe employees are
+using AI tools. Only 38% have a formal policy. KPMG found half the U.S.
+workforce uses AI at work without knowing whether it's allowed.</p>
+
+<p>Compliance programs: Gartner found that only 37% of compliance leaders are
+confident they can measure program effectiveness. The investment is real. The
+evidence that it changes behavior is not.</p>
+
+<p>Mandatory disclosure: When the SEC required companies to report material
+cybersecurity incidents within four business days, firms started filing
+disclosures for incidents that didn't meet the materiality threshold. A rule
+designed to produce cleaner signals produced strategic noise instead.</p>
+
+<p>Three domains. Three rules. Same outcome.</p>
+
+<p>Here's what the research says about why.</p>
+
+<p>Doshi, Dowell, and Toffel (Strategic Management Journal, 2013) studied how
+thousands of establishments responded to a mandatory environmental disclosure
+program. Responses weren't uniform — they were moderated by organizational
+characteristics. The fastest improvement came from establishments near their
+headquarters and those owned by private firms. Same mandate, different
+organizations, different outcomes.</p>
+
+<p>Haapamäki and Sihvonen (International Journal of Accounting Information
+Systems, 2026) analyzed 3,440 cybersecurity disclosures filed under the SEC's
+new 10-K requirement. Disclosure quality varied with firm size, auditor
+quality, and peer practices — and firms' actual cyber histories showed no
+influence at all. Strategic discretion persisted under the mandate. And the
+market's response to these newly required disclosures? Minimal. Investors and
+analysts barely reacted.</p>
+
+<p>The DOJ — in its own Corporate Enforcement Policy — draws the same
+distinction. "Paper programs" versus effective ones. And what separates them
+isn't the document. It's culture, leadership commitment, and reporting trust.
+Characteristics that predate the rule and persist regardless of it.</p>
+
+<p>The pattern across all of it: the rule changes what organizations are
+required to do. It rarely changes what they are.</p>
+
+<p>We keep passing rules that tell companies what to do — and the companies
+that were already going to do it, do it. The ones that weren't, don't. The
+rule itself changes very little.</p>
+
+<hr />
+<p><em>No. 005 in the Threshold Effects series. First published on LinkedIn,
+August 3, 2026.</em></p>
+""",
+    },
+    {
+        "slug": "wanted-the-best-counterexample",
+        "title": "Wanted: The Best Counterexample",
+        "date": "2026-08-05",
+        "tags": ["Regulatory Policy", "Organizational Behavior"],
+        "summary": ("The honest version of an argument has to survive its "
+                    "best counterexample. So: what's the strongest case of a "
+                    "rule that actually changed what organizations are?"),
+        "body": """
+<p>On Monday I made an argument: rules change what organizations are required
+to do, but rarely change what they are. The research I cited backs it. So does
+most of what I've seen in 20 years of operations.</p>
+
+<p>But the honest version of that argument has to survive its best
+counterexample — and I'd rather go looking for it than wait for it to find
+me.</p>
+
+<p>So here's the question: what's the strongest case you've seen of a rule
+that actually changed what organizations are? Not compliance on paper — real,
+durable change in how firms behave, staff, invest, or think. A regulation that
+built capacity rather than just revealing who already had it.</p>
+
+<p>Seatbelt-style engineering mandates? SOX internal controls, a decade on?
+Something in your industry I've never heard of?</p>
+
+<p>I have a candidate or two of my own, but I'm more interested in yours.</p>
+
+<p>Best counterexample gets a genuine rethink in a future post.</p>
+
+<hr />
+<p><em>No. 006 in the Threshold Effects series. First published on LinkedIn,
+August 5, 2026.</em></p>
+""",
+    },
+    {
+        "slug": "what-the-broadband-labels-revealed",
+        "title": "What the Broadband Labels Revealed",
+        "date": "2026-08-10",
+        "tags": ["Telecom", "FCC", "Mandatory Disclosure"],
+        "summary": ("The FCC's broadband nutrition labels were identical for "
+                    "all 35 ISPs a 2025 study scored. What the mandate "
+                    "produced depended entirely on what each organization "
+                    "already was."),
+        "body": """
+<p>In 2021, Congress mandated "broadband nutrition labels" — standardized
+disclosures of pricing, fees, and speeds, modeled on FDA food labels. The FCC
+adopted the rules in November 2022. Unanimously. Full compliance was required
+by October 2024.</p>
+
+<p>I've spent nearly 20 years in this industry. Here's how it played out.</p>
+
+<p>A 2025 study by Obar and Chen (York University, presented at TPRC) assessed
+35 ISPs against ten FCC-mandated criteria — label placement, formatting,
+machine-readability, required policy links. The average score: 5.2 out of 10.
+Only sixteen of 35 properly placed labels at the point of sale. Not a single
+provider received full marks.</p>
+
+<p>On average, compliance tracked size — larger ISPs scored 5.8, medium 5.4,
+smaller 3.75. But the averages hide the more interesting finding. Three small
+ISPs scored zero. No compliant label at all. And one of the highest scores in
+the entire study — 7.5 out of 10 — belonged to Sonic, one of the smallest
+providers in the sample, tied with Google Fiber.</p>
+
+<p>That's not a size effect. That's a capacity effect. And it's consistent
+with what the academic literature has been saying for years. Research on SEC
+disclosure compliance (Ettredge et al., Review of Accounting Studies) found
+noncompliant firms weren't smaller than compliant ones — they had weaker
+governance. Work on regulatory cost (Trebbi et al.) documents economies of
+scale in compliance. A 2026 study of environmental regulation found the same
+thing: regulatory pressure hits firms as a common constraint, and the
+differences in outcomes come from internal capabilities — not from the
+regulation.</p>
+
+<p>The mandate was identical for all 35 providers. What it produced depended
+entirely on what each organization already was. The rule didn't create
+compliance capacity. It revealed who had it.</p>
+
+<p>Meanwhile, enforcement never materialized — and at its July 2026 Open
+Meeting, the FCC scaled the label requirements back, citing compliance
+burdens.</p>
+
+<p>The label was supposed to fix an information asymmetry between providers
+and consumers. The asymmetry that actually determined the outcome was inside
+the firms — between organizations with the capacity to comply and
+organizations without it.</p>
+
+<hr />
+<p><em>No. 007 in the Threshold Effects series. First published on LinkedIn,
+August 10, 2026.</em></p>
+""",
+    },
+    {
+        "slug": "the-dashboard-is-green",
+        "title": "The Dashboard Is Green",
+        "date": "2026-08-12",
+        "tags": ["Metrics", "Goodhart's Law", "Data Governance"],
+        "summary": ("Goodhart's Law and Campbell's Law warned us fifty years "
+                    "ago: the metric changes what the organization reports, "
+                    "not what the organization is. We built the dashboards "
+                    "anyway."),
+        "body": """
+<p>If you build reporting infrastructure for a living, you've watched this
+happen.</p>
+
+<p>Leadership picks a metric. The metric becomes a target. The target gets a
+dashboard. And then the number starts improving — while the thing the number
+was supposed to measure doesn't move at all. Sometimes it gets worse.</p>
+
+<p>Everyone in the room knows. Nobody says it. The dashboard is green.</p>
+
+<p>This pattern has a name — two, actually. Goodhart's Law (1975): when a
+measure becomes a target, it ceases to be a good measure. Campbell's Law
+(1976): the more a quantitative indicator is used for decision-making, the
+more it corrupts the very process it was meant to monitor. Two researchers,
+working independently, warned us fifty years ago. We built the dashboards
+anyway.</p>
+
+<p>The case studies are brutal. Wells Fargo set a cross-selling target — eight
+accounts per customer — and wired incentives to it. Employees opened millions
+of unauthorized accounts. The metric hit its numbers right up until the moment
+it detonated. In the English NHS, an 18-week treatment target produced exactly
+what Bevan and Hood documented in Public Administration: delayed referrals to
+keep the clock from starting, minor procedures scheduled to reset it, easy
+cases prioritized while complex ones waited. Wait-time metrics improved.
+Waiting didn't.</p>
+
+<p>Here's what fifty years of evidence says, and it's the same thing this
+series has been saying about federal rules: the metric changes what the
+organization reports. It doesn't change what the organization is. People don't
+game numbers because they're dishonest — they game them because the metric
+became the job, and the metric was never the job.</p>
+
+<p>Every reporting requirement — a federal disclosure rule, a compliance
+program, a KPI on an executive dashboard — is a bet that measuring a thing
+will improve it. Fifty years of research says: only if the capacity and the
+culture underneath already point that way. Otherwise you get a green dashboard
+and a red reality.</p>
+
+<p>You've seen this one. What was the metric?</p>
+
+<hr />
+<p><em>No. 008 in the Threshold Effects series. First published on LinkedIn,
+August 12, 2026.</em></p>
+""",
+    },
+    {
+        "slug": "say-something-vs-build-something",
+        "title": "Say Something vs. Build Something",
+        "date": "2026-08-17",
+        "tags": ["Regulatory Policy", "SOX", "Telecom"],
+        "summary": ("There are rules that require organizations to say "
+                    "something and rules that require them to build "
+                    "something. Only the second kind has a track record of "
+                    "changing what organizations are."),
+        "body": """
+<p>For five weeks I've made the same argument from different angles: rules
+change what organizations are required to do, but rarely change what they are.
+Disclosure mandates get absorbed by whatever the organization already is — its
+capacity, its culture, its governance.</p>
+
+<p>A fair question follows: can regulation change what organizations are at
+all?</p>
+
+<p>Yes. But not the kind we keep writing.</p>
+
+<p>There are two kinds of mandates. Rules that require organizations to SAY
+something — disclose the breach, post the label, file the 8-K. And rules that
+require organizations to BUILD something. The evidence from five weeks of
+posts is about the first kind. The second kind behaves differently, and my own
+industry produced the best example I know.</p>
+
+<p>In 1996 and 1999, the FCC ordered wireless carriers to be able to locate
+911 callers — Phase II required latitude and longitude within 50 to 300
+meters. There was no document a carrier could file to satisfy that. The FCC's
+own implementation record describes what compliance required: developing new
+location technologies, upgrading networks, and coordinating across carriers,
+vendors, and public safety agencies. Carriers fought it. They requested
+waivers. Deployment ran slow. But you cannot paper-comply with an accuracy
+standard — and the capability got built. The location infrastructure that
+mandate forced into existence now underpins far more than emergency
+calling.</p>
+
+<p>SOX Section 404 tells a similar story with an honest asterisk. It didn't
+just require companies to report on internal controls — it required the
+controls to exist and to survive an audit. John Coates and Suraj Srinivasan's
+review of more than 120 studies (Accounting Horizons, 2014) found the
+institutions SOX created survived intact and financial reporting quality
+appears to have improved — though causal attribution is weak, and the costs
+fell disproportionately on smaller firms. Even a capacity mandate routes
+through capacity distribution. There's no escaping that. But note what nobody
+claims about Section 404: that firms satisfied it with a filing.</p>
+
+<p>So here's the pattern, stated plainly.</p>
+
+<p>Disclosure mandates are cheap to write, cheap to comply with, and cheap to
+verify — which is exactly why we keep writing them. A timing window costs the
+regulator a paragraph and costs the firm a template. Capacity mandates are
+expensive, slow, contested, and hard to specify. They're also the only kind
+with a track record of changing what organizations are.</p>
+
+<p>We regulate the announcement because the announcement is what we can afford
+to regulate. Then we're surprised the announcement is all we get.</p>
+
+<p>If the outcome is what we want, the capacity is what we have to require.
+Everything else is asking organizations to describe themselves — and they
+will, in exactly the way five weeks of evidence predicts.</p>
+
+<hr />
+<p><em>No. 009 in the Threshold Effects series. First published on LinkedIn,
+August 17, 2026.</em></p>
+""",
+    },
+    {
+        "slug": "a-fair-fight-with-sox-404",
+        "title": "A Fair Fight with SOX 404",
+        "date": "2026-08-19",
+        "tags": ["SOX", "Regulatory Policy", "Compliance"],
+        "summary": ("Arguing against myself: SOX Section 404 is the strongest "
+                    "counterexample to this series' thesis. The argument "
+                    "survives — but comes out more precise than it went in."),
+        "body": """
+<p>I've spent six weeks arguing that rules change what organizations are
+required to do — but rarely change what they are. Today I'm arguing against
+myself, because every argument deserves a fair fight against its best
+counterexample.</p>
+
+<p>The strongest one I know is Sarbanes-Oxley (SOX) Section 404. And the case
+is real. It didn't ask firms to describe their internal controls — it required
+the controls to exist and survive an independent audit. Two decades later, the
+infrastructure it forced into existence — control documentation, testing
+regimes, audit committee muscle — is simply how public-company financial
+reporting works now. Coates and Srinivasan's review of more than 120 studies
+(Accounting Horizons, 2014) found the institutions SOX built survived intact
+and reporting quality appears to have improved. If my thesis were "regulation
+never changes organizations," SOX would break it.</p>
+
+<p>But the same review cuts back the other way on three fronts.</p>
+
+<p>Causal attribution is weak. Reporting quality rose after SOX, but the
+research can't cleanly separate the rule's effect from everything else that
+changed after Enron and WorldCom — including the scared-straight effect of
+watching two giants implode.</p>
+
+<p>The costs fell disproportionately on smaller firms — so heavily that
+Congress permanently exempted thousands of smaller companies from the audit
+requirement. The mandate that worked was also the mandate a large share of
+firms were eventually excused from. Capacity determined who could even afford
+to be changed by it.</p>
+
+<p>And the part of SOX that worked was precisely the part that couldn't be
+satisfied with paperwork. The certification and disclosure provisions — the
+say-something parts — produced exactly the boilerplate this series has been
+documenting for six weeks.</p>
+
+<p>So the honest scorecard: regulation can change what organizations are —
+when it mandates capability, verifies it independently, and the regulated
+firms can bear the cost. That's a narrow gate, and most rules never attempt
+it, because that kind of rule is expensive, slow, and fought at every
+step.</p>
+
+<p>My argument survives — but it comes out more precise than it went in.
+That's what counterexamples are for.</p>
+
+<hr />
+<p><em>No. 010 in the Threshold Effects series. First published on LinkedIn,
+August 19, 2026.</em></p>
+""",
+    },
+    {
+        "slug": "gulf-coast-who-the-money-moves-through",
+        "title": "Gulf Coast: Who the Money Moves Through",
+        "date": "2026-08-24",
+        "tags": ["BEAD", "Broadband", "Gulf Coast", "Telecom"],
+        "summary": ("BEAD is finally putting fiber in the ground around "
+                    "northwest Florida and south Alabama. Five years of "
+                    "process decided who gets to build — and it wasn't "
+                    "construction capability that decided."),
+        "body": """
+<p>The largest broadband investment in American history is about to start
+putting fiber in the ground in the counties around us. Florida was allocated
+$1.16 billion. Alabama, $1.4 billion. The unserved locations this money
+targets are disproportionately rural — the Panhandle, the Black Belt, the
+counties between Pensacola and Montgomery. I've spent nearly 20 years in this
+industry, in this region. So I've been watching this one closely.</p>
+
+<p>Here's the timeline that should get more attention than it does.</p>
+
+<p>The law passed in November 2021. Florida filed its letter of intent in July
+2022. The challenge process — determining which locations actually qualify —
+wasn't approved until April 2025. Then in June 2025, the federal government
+rewrote the program rules mid-stream, rescinding prior guidance and giving
+every state 90 days to redo its work. Florida's final proposal went in that
+October. NTIA approved it in January 2026. Construction: spring 2026.</p>
+
+<p>Five years from law to shovels. The first half-decade of the largest
+infrastructure investment in broadband history produced, almost exclusively,
+compliance documents.</p>
+
+<p>Now look at who came through the process. Alabama's provisional award list
+is instructive. The largest single award went to Comcast — $157 million.
+AT&amp;T took $93 million. That part surprises no one. But keep reading the
+list: Millry Telephone, $9.4 million. Farmers Telecommunications, $8.3
+million. Ardmore Telephone, $3.2 million. Small rural Alabama telcos,
+competing and winning.</p>
+
+<p>What separated the small providers who won from the ones who never made
+the list wasn't size — it was the capacity to survive the process. Federal
+grant applications, letters of credit, environmental reviews, labor
+certifications, challenge filings. The providers with grant-writing and
+compliance muscle got through a five-year gauntlet. The ones without it aren't
+on the list — and their absence doesn't show up in any official record. The
+communities they might have served just wait for someone bigger.</p>
+
+<p>Here's the honest tension. BEAD is the kind of program I've argued FOR in
+this series — it mandates building something real, not describing something.
+You can't paper-comply with fiber in the ground. Some of that process is the
+legitimate price of spending $42 billion carefully. But a build-something
+program wrapped in five years of say-something process inherits the flaw it
+was designed to avoid: the compliance stack, not the construction capability,
+decides who gets to build.</p>
+
+<p>For northwest Florida and south Alabama, that's not an abstraction. It
+determines which counties get fiber from a national carrier on a national
+timeline — and which ones get it from a local provider who answers the
+phone.</p>
+
+<p>The money is finally moving. Worth watching who it moves through.</p>
+
+<hr />
+<p><em>No. 011 in the Threshold Effects series. First published on LinkedIn,
+August 24, 2026.</em></p>
+""",
+    },
 ]
 
 
