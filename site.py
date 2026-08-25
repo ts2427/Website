@@ -353,9 +353,10 @@ CONTACT = {
 BLOG = {
     "name": "Threshold Effects",
     "label": "Essays & Research Notes",
-    "tagline": ("Notes on breach disclosure, cybersecurity governance, and the "
-                "practice of data science — written from the points where "
-                "crossing a line changes the outcome."),
+    "tagline": ("Rules change what organizations are required to do. They "
+                "rarely change what they are. A weekly research series on the "
+                "gap between the two — regulation, disclosure, governance, and "
+                "the organizational capacity that actually decides outcomes."),
     "meta_description": (
         "Threshold Effects — essays and research notes by Timothy D. Spivey on "
         "mandatory breach disclosure, cybersecurity governance, and the practice "
