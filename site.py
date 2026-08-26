@@ -48,10 +48,9 @@ SITE = {
         "linkedin": "https://www.linkedin.com/in/tispivey/",
         "linkedin_label": "Timothy D. Spivey on LinkedIn",
         "scholar": "https://scholar.google.com/citations?user=S9sSV1EAAAAJ&hl=en",
-        # The Threshold Data Sciences page lives in this repo at /threshold/.
-        # (thresholddatasciences.com currently 301s to the homepage; point its
-        # forward at this URL to put the firm site on its own domain.)
-        "firm": "threshold/",
+        # The firm's standalone site (launched 2026-08-25). The old
+        # /threshold/ page here is now a redirect stub to it.
+        "firm": "https://thresholddatasciences.com",
     },
     # Where the contact form posts. Formspree is the easiest option for a static
     # deploy: sign up, create a form, paste the endpoint here. Leave blank to use
@@ -70,7 +69,7 @@ NAV = [
     {"label": "Research", "href": "#research"},
     {"label": "Publications", "href": "#publications"},
     {"label": "Teaching", "href": "#teaching"},
-    {"label": "Consulting", "href": "#consulting"},
+    {"label": "Consulting", "href": "https://thresholddatasciences.com"},
     {"label": "Blog", "href": "blog/"},
     {"label": "Contact", "href": "#contact"},
 ]
@@ -349,122 +348,6 @@ CONTACT = {
         "Teaching Inquiry",
         "Consulting Engagement",
         "Request CV",
-        "Other",
-    ],
-}
-
-THRESHOLD = {
-    "name": "Threshold Data Sciences",
-    "tagline": "Empirical insight. Practical guidance.",
-    "hero_sub": ("Data science, empirical research, and governance consulting "
-                 "from a practitioner who studies what he advises on."),
-    "meta_description": (
-        "Threshold Data Sciences — the consulting practice of Timothy D. "
-        "Spivey. Data science and analytics, research and measurement, and "
-        "governance, risk, and compliance counsel grounded in empirical "
-        "evidence."
-    ),
-    "pitch": (
-        "Whether you need analytics infrastructure built, a research question "
-        "answered with defensible methods, or counsel on governance and "
-        "disclosure, Threshold Data Sciences brings the same rigor to "
-        "consulting that peer review demands of research. I don't only advise "
-        "on this — I study it."
-    ),
-    "services": [
-        {
-            "title": "Data Science & Analytics",
-            "detail": ("Forecasting, data pipelines, executive dashboards, and "
-                       "reporting infrastructure that stakeholders actually "
-                       "use — from normalizing messy source data to production "
-                       "Python-and-Snowflake pipelines matched to the "
-                       "decisions they serve."),
-        },
-        {
-            "title": "Research & Measurement",
-            "detail": ("Study design, causal inference, and statistical "
-                       "analysis — answers you can defend, not just charts. "
-                       "Event studies, program evaluation, and measurement "
-                       "built to survive peer-review-grade scrutiny."),
-        },
-        {
-            "title": "Governance, Risk & Compliance",
-            "detail": ("Breach disclosure strategy, board oversight, and "
-                       "security spend prioritization, grounded in the "
-                       "empirical evidence on what regulation actually does "
-                       "inside organizations."),
-        },
-    ],
-    "why": [
-        {
-            "title": "Researcher First",
-            "detail": ("Active empirical research on mandatory disclosure and "
-                       "cybersecurity governance, publications in the ISACA "
-                       "Journal, and peer-review service for international "
-                       "journals. The advice is built on evidence, not "
-                       "anecdote."),
-        },
-        {
-            "title": "Twenty Years an Operator",
-            "detail": ("Nearly two decades in telecom operations: building "
-                       "the reporting pipelines, sitting in the escalation "
-                       "calls, and watching compliance decisions get made "
-                       "under real pressure. The methods are academic; the "
-                       "questions are not."),
-        },
-        {
-            "title": "Plain-Language Educator",
-            "detail": ("A college instructor by trade. Findings arrive in "
-                       "language your board, your team, and your auditors can "
-                       "act on — the analysis is only as useful as the "
-                       "decision it enables."),
-        },
-    ],
-    "process": [
-        {
-            "step": "Scope the decision",
-            "detail": ("An engagement starts with the decision you need to "
-                       "make, not a deliverable list. We define the question, "
-                       "the evidence that would answer it, and what done "
-                       "looks like."),
-        },
-        {
-            "step": "Build with rigor",
-            "detail": ("Defensible methods, documented assumptions, and "
-                       "reproducible pipelines — so the answer holds up when "
-                       "someone pushes back on it."),
-        },
-        {
-            "step": "Deliver what gets used",
-            "detail": ("Dashboards, briefs, and recommendations sized for the "
-                       "people who have to act on them, with the technical "
-                       "detail available underneath."),
-        },
-    ],
-    "principal": {
-        "heading": "About the Principal",
-        "paragraphs": [
-            "Threshold Data Sciences is the consulting practice of Timothy D. "
-            "Spivey — doctoral candidate (ABD) in Business Administration "
-            "with a Business Analytics emphasis at the University of South "
-            "Alabama, MBA in Business Analytics from the University of West "
-            "Florida, and a management information systems supervisor with "
-            "nearly twenty years in telecom operations.",
-
-            "His research examines what mandatory breach disclosure timing "
-            "actually does — to markets, to organizations, and to boards. He "
-            "has published in the ISACA Journal, serves as a peer reviewer "
-            "for the Journal of Risk and Financial Management (MDPI) and "
-            "Business Strategy & Development (Wiley), and teaches "
-            "entrepreneurship and small business accounting at Pensacola "
-            "State College.",
-        ],
-    },
-    "topics": [
-        "Data Science & Analytics",
-        "Research & Measurement",
-        "Governance, Risk & Compliance",
-        "Speaking / Training",
         "Other",
     ],
 }
@@ -1179,17 +1062,39 @@ def render(building=False):
 
 
 def render_threshold():
-    return render_template_string(
-        THRESHOLD_TEMPLATE,
-        site=SITE,
-        th=THRESHOLD,
-        page_title=(f"{THRESHOLD['name']} | Data Science, Research & "
-                    "Governance Consulting"),
-        page_desc=THRESHOLD["meta_description"],
-        page_url=f"{SITE['base_url']}/threshold/",
-        form_action=SITE["contact_endpoint"] or "#contact",
-        year=date.today().year,
+    """/threshold/ is a redirect stub: the firm site lives at its own
+    domain now. GitHub Pages cannot 301, so meta-refresh + canonical."""
+    return (
+        '<!DOCTYPE html>\n<html lang="en">\n<head>\n'
+        '<meta charset="UTF-8" />\n'
+        '<meta http-equiv="refresh" content="0; '
+        'url=https://thresholddatasciences.com/" />\n'
+        '<link rel="canonical" href="https://thresholddatasciences.com/" />\n'
+        '<meta name="robots" content="noindex" />\n'
+        "<title>Threshold Data Sciences</title>\n</head>\n<body>\n"
+        "<p>Threshold Data Sciences has moved to\n"
+        '<a href="https://thresholddatasciences.com/">'
+        "thresholddatasciences.com</a>.</p>\n</body>\n</html>\n"
     )
+
+
+# The Threshold Effects series now has its canonical home on the firm site.
+# These posts stay readable here, but each carries a rel=canonical link to
+# its numbered counterpart so search engines treat the new site as the
+# record. Numbers match the "No. 0XX" footers in the posts themselves.
+SERIES_CANONICAL = {
+    "the-faster-is-better-assumption": 1,
+    "cover-yourself-8-ks": 2,
+    "paper-trails-and-shadow-ai": 3,
+    "shadow-it-was-the-rehearsal": 4,
+    "three-rules-same-outcome": 5,
+    "wanted-the-best-counterexample": 6,
+    "what-the-broadband-labels-revealed": 7,
+    "the-dashboard-is-green": 8,
+    "say-something-vs-build-something": 9,
+    "a-fair-fight-with-sox-404": 10,
+    "gulf-coast-who-the-money-moves-through": 11,
+}
 
 
 def _published_posts():
@@ -1206,6 +1111,10 @@ def _post_view(post):
     view["minutes"] = max(1, round(words / 200))
     view["href"] = post["slug"] + ".html"
     view["url"] = f"{SITE['base_url']}/blog/{post['slug']}.html"
+    n = SERIES_CANONICAL.get(post["slug"])
+    view["canonical"] = (
+        f"https://thresholddatasciences.com/threshold-effects/no-{n:03d}/"
+        if n else view["url"])
     return view
 
 
@@ -1232,6 +1141,7 @@ def render_post(post):
         page_title=f"{view['title']} | {BLOG['name']}",
         page_desc=view["summary"],
         page_url=view["url"],
+        canonical=view["canonical"],
         year=date.today().year,
     )
 
@@ -1996,26 +1906,6 @@ TEMPLATE = r"""<!DOCTYPE html>
   </div>
 </section>
 
-<section id="consulting">
-  <div class="container">
-    <div class="section-label">{{ consulting.firm }}</div>
-    <h2 class="section-title">{{ consulting.heading }}</h2>
-    <div class="consult-tagline">{{ consulting.tagline }}</div>
-    <p class="section-desc">{{ consulting.pitch }}</p>
-    <div class="divider"></div>
-    <div class="consult-grid">
-      {% for f in consulting.focus %}
-      <div class="consult-card">
-        <h3>{{ f.title }}</h3>
-        <p>{{ f.detail }}</p>
-      </div>
-      {% endfor %}
-    </div>
-    <a href="{{ consulting.cta_href }}" class="btn btn-accent">{{ consulting.cta_label }}</a>
-    <a href="{{ site.links.firm }}" class="btn btn-outline-navy">Visit {{ consulting.firm }} &rarr;</a>
-  </div>
-</section>
-
 <section id="cv">
   <h2>Download Full Curriculum Vitae</h2>
   <p>Academic history, complete publication list, applied work, and service record.</p>
@@ -2181,7 +2071,7 @@ _BLOG_HEAD = r"""<!DOCTYPE html>
   <meta property="og:description" content="{{ page_desc }}" />
   <meta property="og:type" content="article" />
   <meta property="og:url" content="{{ page_url }}" />
-  <link rel="canonical" href="{{ page_url }}" />
+  <link rel="canonical" href="{{ canonical or page_url }}" />
   <link rel="alternate" type="application/rss+xml" title="{{ blog.name }}" href="/blog/feed.xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -2478,445 +2368,6 @@ POST_TEMPLATE = _BLOG_HEAD + r"""
   </div>
 </article>
 """ + _BLOG_FOOT
-
-
-# --- Threshold Data Sciences page ---------------------------------------------
-# Lives at /threshold/. Same design system as the main site, business-facing.
-
-THRESHOLD_TEMPLATE = r"""<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{{ page_title }}</title>
-  <meta name="description" content="{{ page_desc }}" />
-  <meta property="og:title" content="{{ page_title }}" />
-  <meta property="og:description" content="{{ page_desc }}" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="{{ page_url }}" />
-  <link rel="canonical" href="{{ page_url }}" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
-{% if site.ga_measurement_id %}
-  <!-- Google Analytics 4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.ga_measurement_id }}"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', '{{ site.ga_measurement_id }}');
-  </script>
-{% endif %}
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --navy:   #0d1b2a;
-      --blue:   #223b52;
-      --accent: #b8970a;
-      --accent-lit: #e2c84b;
-      --light:  #f8f2dc;
-      --sand:   #f4f2ed;
-      --text:   #16222d;
-      --muted:  #5a6a78;
-      --border: #ddd9cd;
-      --white:  #ffffff;
-      --radius: 12px;
-      --shadow: 0 4px 24px rgba(13,27,42,.08);
-      --shadow-lg: 0 12px 48px rgba(13,27,42,.14);
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      color: var(--text);
-      background: var(--white);
-      line-height: 1.65;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* NAV */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      backdrop-filter: blur(14px) saturate(160%);
-      background: rgba(255,255,255,.88);
-      border-bottom: 1px solid var(--border);
-      height: 64px;
-      display: flex; align-items: center;
-    }
-    .nav-inner {
-      max-width: 1100px; margin: 0 auto; padding: 0 2rem;
-      width: 100%;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .nav-logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1rem; font-weight: 700;
-      color: var(--navy); text-decoration: none;
-    }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a {
-      text-decoration: none; font-size: .875rem; font-weight: 500;
-      color: var(--muted); transition: color .2s;
-    }
-    .nav-links a:hover { color: var(--accent); }
-
-    /* HERO */
-    #hero {
-      min-height: 88vh;
-      background: linear-gradient(135deg, var(--navy) 0%, #16293d 60%, var(--blue) 100%);
-      display: flex; align-items: center; justify-content: center;
-      text-align: center; padding: 8rem 2rem 5rem;
-      position: relative; overflow: hidden;
-    }
-    #hero::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1' fill='rgba(255,255,255,.06)'/%3E%3C/svg%3E") repeat;
-      pointer-events: none;
-    }
-    .hero-content { position: relative; z-index: 1; max-width: 760px; }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: .5rem;
-      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
-      color: rgba(255,255,255,.9); font-size: .78rem; font-weight: 600;
-      letter-spacing: .08em; text-transform: uppercase;
-      padding: .35rem 1rem; border-radius: 999px; margin-bottom: 1.5rem;
-    }
-    .hero-badge span { width: 6px; height: 6px; background: var(--accent-lit); border-radius: 50%; }
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2.2rem, 5.5vw, 3.8rem); font-weight: 700;
-      color: var(--white); line-height: 1.12; margin-bottom: 1rem;
-    }
-    .hero-tagline {
-      font-size: .85rem; font-weight: 700; letter-spacing: .16em;
-      text-transform: uppercase; color: var(--accent-lit); margin-bottom: 1rem;
-    }
-    .hero-subtitle { font-size: 1.12rem; color: rgba(255,255,255,.75); max-width: 600px; margin: 0 auto 2.5rem; }
-    .hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-    .btn {
-      display: inline-flex; align-items: center; gap: .5rem;
-      padding: .75rem 1.75rem; border-radius: 8px;
-      font-size: .9rem; font-weight: 600;
-      text-decoration: none; transition: all .22s; cursor: pointer; border: none;
-    }
-    .btn-primary { background: var(--accent); color: var(--navy); }
-    .btn-primary:hover { background: var(--accent-lit); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(184,151,10,.35); }
-    .btn-outline { background: transparent; color: var(--white); border: 1.5px solid rgba(255,255,255,.45); }
-    .btn-outline:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.75); transform: translateY(-1px); }
-
-    /* SECTIONS */
-    section { padding: 5rem 2rem; }
-    .container { max-width: 1100px; margin: 0 auto; }
-    .section-label {
-      font-size: .72rem; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; color: var(--accent); margin-bottom: .6rem;
-    }
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 700;
-      color: var(--navy); line-height: 1.2; margin-bottom: 1rem;
-    }
-    .section-desc { font-size: 1rem; color: var(--muted); max-width: 620px; margin-bottom: 3rem; }
-    .divider { width: 48px; height: 3px; background: var(--accent); border-radius: 2px; margin: 1rem 0 3rem; }
-
-    /* SERVICES */
-    #services { background: var(--sand); }
-    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
-    .card {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.9rem;
-      transition: all .22s; position: relative; overflow: hidden;
-    }
-    .card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-lit));
-      transform: scaleX(0); transform-origin: left; transition: transform .3s;
-    }
-    .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
-    .card:hover::before { transform: scaleX(1); }
-    .card h3 { font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: .6rem; }
-    .card p { font-size: .9rem; color: var(--muted); line-height: 1.7; }
-
-    /* WHY */
-    #why { background: var(--white); }
-
-    /* PROCESS */
-    #process { background: var(--sand); }
-    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; counter-reset: step; }
-    .step {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.9rem; position: relative;
-    }
-    .step-num {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 40px; height: 40px; border-radius: 50%;
-      background: var(--light); border: 1px solid rgba(184,151,10,.3);
-      color: var(--accent); font-weight: 700; font-size: 1rem;
-      margin-bottom: 1rem;
-    }
-    .step h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
-    .step p { font-size: .9rem; color: var(--muted); line-height: 1.7; }
-
-    /* PRINCIPAL */
-    #principal { background: var(--white); }
-    .principal-grid { display: grid; grid-template-columns: 300px 1fr; gap: 3.5rem; align-items: start; }
-    .principal-card {
-      background: var(--sand); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 2rem; text-align: center;
-      box-shadow: var(--shadow);
-    }
-    .principal-photo {
-      width: 130px; height: 130px; border-radius: 50%;
-      object-fit: cover; object-position: center top;
-      border: 3px solid var(--light);
-      box-shadow: 0 4px 16px rgba(13,27,42,.14);
-      margin: 0 auto 1.1rem; display: block;
-    }
-    .principal-name { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--navy); }
-    .principal-role { font-size: .82rem; color: var(--accent); font-weight: 600; margin: .25rem 0 1rem; }
-    .principal-links { display: flex; flex-direction: column; gap: .55rem; text-align: left; }
-    .principal-links a {
-      display: flex; align-items: center; gap: .6rem;
-      font-size: .83rem; color: var(--muted); text-decoration: none; transition: color .2s;
-    }
-    .principal-links a:hover { color: var(--accent); }
-    .principal-links svg { width: 14px; flex-shrink: 0; }
-    .principal-bio p { color: var(--muted); font-size: 1rem; line-height: 1.75; margin-bottom: 1rem; }
-
-    /* CONTACT */
-    #contact { background: var(--sand); }
-    .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 3rem; align-items: start; }
-    .contact-info h3 { font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 1rem; }
-    .contact-info p { font-size: .95rem; color: var(--muted); margin-bottom: 1.5rem; }
-    .contact-line { display: flex; align-items: center; gap: .7rem; font-size: .92rem; color: var(--navy); font-weight: 500; margin-bottom: .8rem; }
-    .contact-line svg { width: 16px; color: var(--accent); flex-shrink: 0; }
-    .contact-line a { color: var(--accent); text-decoration: none; }
-    .contact-form {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow);
-    }
-    .contact-form h3 { font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 1.25rem; }
-    .form-group { margin-bottom: 1rem; }
-    .form-group label { display: block; font-size: .82rem; font-weight: 600; color: var(--text); margin-bottom: .4rem; }
-    .form-group input, .form-group textarea, .form-group select {
-      width: 100%; padding: .65rem .9rem;
-      border: 1.5px solid var(--border); border-radius: 8px;
-      font-family: 'Inter', sans-serif; font-size: .9rem; color: var(--text);
-      background: var(--white); transition: border-color .2s; outline: none;
-    }
-    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--accent); }
-    .form-group textarea { resize: vertical; min-height: 110px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .btn-submit {
-      width: 100%; background: var(--navy); color: var(--white);
-      padding: .8rem; border-radius: 8px; font-size: .92rem; font-weight: 600;
-      border: none; cursor: pointer; transition: all .22s; font-family: 'Inter', sans-serif;
-    }
-    .btn-submit:hover { background: var(--blue); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(13,27,42,.35); }
-
-    /* FOOTER */
-    footer {
-      background: var(--navy); color: rgba(255,255,255,.5);
-      text-align: center; padding: 2rem; font-size: .82rem;
-    }
-    footer strong { color: rgba(255,255,255,.8); }
-    footer a { color: rgba(255,255,255,.7); text-decoration: none; }
-    footer a:hover { color: var(--accent-lit); }
-
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .principal-grid { grid-template-columns: 1fr; gap: 2rem; }
-      .contact-grid { grid-template-columns: 1fr; }
-      .form-row { grid-template-columns: 1fr; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-    }
-  </style>
-</head>
-<body>
-
-<nav>
-  <div class="nav-inner">
-    <a href="#hero" class="nav-logo">{{ th.name }}</a>
-    <ul class="nav-links">
-      <li><a href="#services">Services</a></li>
-      <li><a href="#why">Why Threshold</a></li>
-      <li><a href="#process">How We Work</a></li>
-      <li><a href="#principal">Principal</a></li>
-      <li><a href="#contact">Contact</a></li>
-      <li><a href="/">Research Site</a></li>
-    </ul>
-  </div>
-</nav>
-
-<section id="hero">
-  <div class="hero-content">
-    <div class="hero-badge"><span></span>Consulting Practice of {{ site.name }}</div>
-    <h1>{{ th.name }}</h1>
-    <div class="hero-tagline">{{ th.tagline }}</div>
-    <p class="hero-subtitle">{{ th.hero_sub }}</p>
-    <div class="hero-ctas">
-      <a href="#contact" class="btn btn-primary">Start a Conversation</a>
-      <a href="#services" class="btn btn-outline">Explore Services</a>
-    </div>
-  </div>
-</section>
-
-<section id="services">
-  <div class="container">
-    <div class="section-label">Services</div>
-    <h2 class="section-title">Where Research Meets Practice</h2>
-    <p class="section-desc">{{ th.pitch }}</p>
-    <div class="divider"></div>
-    <div class="card-grid">
-      {% for s in th.services %}
-      <div class="card">
-        <h3>{{ s.title }}</h3>
-        <p>{{ s.detail }}</p>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-
-<section id="why">
-  <div class="container">
-    <div class="section-label">Why Threshold</div>
-    <h2 class="section-title">Evidence, Operations, and Plain Language</h2>
-    <div class="divider"></div>
-    <div class="card-grid">
-      {% for w in th.why %}
-      <div class="card">
-        <h3>{{ w.title }}</h3>
-        <p>{{ w.detail }}</p>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-
-<section id="process">
-  <div class="container">
-    <div class="section-label">How We Work</div>
-    <h2 class="section-title">Three Steps, No Mystery</h2>
-    <div class="divider"></div>
-    <div class="steps">
-      {% for p in th.process %}
-      <div class="step">
-        <div class="step-num">{{ loop.index }}</div>
-        <h3>{{ p.step }}</h3>
-        <p>{{ p.detail }}</p>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-
-<section id="principal">
-  <div class="container">
-    <div class="section-label">The Principal</div>
-    <h2 class="section-title">{{ th.principal.heading }}</h2>
-    <div class="divider"></div>
-    <div class="principal-grid">
-      <div class="principal-card">
-        <img src="/headshot.jpg" alt="{{ site.name }}" class="principal-photo" />
-        <div class="principal-name">{{ site.name }}</div>
-        <div class="principal-role">Principal &amp; Founder</div>
-        <div class="principal-links">
-          <a href="{{ site.links.linkedin }}" target="_blank">
-            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 11.001-4.124 2.062 2.062 0 01-.001 4.124zM7.114 20.452H3.558V9h3.556v11.452z"/></svg>
-            {{ site.links.linkedin_label }}
-          </a>
-          <a href="{{ site.links.scholar }}" target="_blank">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
-            Google Scholar Profile
-          </a>
-          <a href="/">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-            Research &amp; Publications
-          </a>
-          <a href="/blog/">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-            Threshold Effects (Blog)
-          </a>
-        </div>
-      </div>
-      <div class="principal-bio">
-        {% for p in th.principal.paragraphs %}<p>{{ p }}</p>{% endfor %}
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="contact">
-  <div class="container">
-    <div class="section-label">Contact</div>
-    <h2 class="section-title">Start a Conversation</h2>
-    <div class="divider"></div>
-    <div class="contact-grid">
-      <div class="contact-info">
-        <h3>Tell me about the decision you're facing.</h3>
-        <p>Most engagements start with a short conversation about the question you need answered — no deliverable list required. If it's a fit, you'll get a scoped proposal; if it isn't, you'll get a straight answer and, when I know one, a referral.</p>
-        <div class="contact-line">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          <span>{{ site.email }}</span>
-        </div>
-        <div class="contact-line">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          <span>Pensacola, Florida — serving clients remotely</span>
-        </div>
-      </div>
-      <div class="contact-form">
-        <h3>Send an Inquiry</h3>
-        <form method="post" action="{{ form_action }}">
-          <input type="hidden" name="_subject" value="Inquiry via Threshold Data Sciences" />
-          <input type="hidden" name="_captcha" value="false" />
-          <input type="hidden" name="_next" value="{{ site.base_url }}/thanks.html" />
-          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
-          <div class="form-row">
-            <div class="form-group">
-              <label>First Name</label>
-              <input type="text" name="first_name" placeholder="Jane" required />
-            </div>
-            <div class="form-group">
-              <label>Last Name</label>
-              <input type="text" name="last_name" placeholder="Smith" required />
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Email</label>
-            <input type="email" name="email" placeholder="jane@example.com" required />
-          </div>
-          <div class="form-group">
-            <label>Area of Interest</label>
-            <select name="topic">
-              <option value="">Select an area&hellip;</option>
-              {% for t in th.topics %}<option>{{ t }}</option>{% endfor %}
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Message</label>
-            <textarea name="message" placeholder="What decision are you trying to make?" required></textarea>
-          </div>
-          <button class="btn-submit" type="submit">Send Inquiry</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <p><strong>{{ th.name }}</strong> &nbsp;&middot;&nbsp; {{ th.tagline }} &nbsp;&middot;&nbsp; <a href="/">timothydspivey.com</a></p>
-  <p style="margin-top:.4rem">&copy; {{ year }} {{ site.name }}. All rights reserved.</p>
-</footer>
-</body>
-</html>
-"""
 
 
 if __name__ == "__main__":
