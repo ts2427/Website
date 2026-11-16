@@ -182,8 +182,8 @@ ABOUT = {
         "operators should decide which customers to retain.",
 
         "Outside the dissertation, he supervises management information systems at "
-        "Mediacom Communications and teaches entrepreneurship and small business "
-        "accounting as an adjunct at Pensacola State College. Nearly twenty years of "
+        "Mediacom Communications and teaches entrepreneurship and entrepreneurship "
+        "marketing and sales as an adjunct at Pensacola State College. Nearly twenty years of "
         "telecom operations sits underneath the research: he has built the reporting "
         "pipelines, sat in the escalation calls, and watched compliance decisions get "
         "made under real pressure. That is why the empirical questions he chases are "
@@ -421,7 +421,7 @@ SERVICE = {
 
 TEACHING = {
     "intro": (
-        "Courses in entrepreneurship, accounting and business writing at Pensacola "
+        "Courses in entrepreneurship, marketing and sales, and business writing at Pensacola "
         "State College and the University of West Florida, alongside doctoral study."
     ),
     "photo": "clocktower.jpg",
