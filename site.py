@@ -34,11 +34,17 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DEGREE_STAGE = "candidate"
 
 # Profile URLs for the JSON-LD sameAs list; skipped while empty.
-ORCID_URL = ""
-SSRN_URL = ""   # SSRN author page
+ORCID_URL = "https://orcid.org/0009-0009-8990-4308"
+ORCID_LABEL = "ORCID 0009-0009-8990-4308"
+# SSRN author page: JSON-LD sameAs only; no visible link until a paper is posted.
+SSRN_URL = "https://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id=13977868"
+
+# Authors line for the Insider Threat working paper; add co-authors here.
+THIRD_PAPER_AUTHORS = "Spivey, T. D."
 
 # Set to an address on my own domain. The Contact section shows a second
-# email line for it only while it is non-empty.
+# email line for it only while it is non-empty, and the contact form posts to
+# it once set (FormSubmit sends a one-time activation email to the new address).
 PROFESSIONAL_EMAIL = ""
 
 # Change only after the Florida LLC is filed.
@@ -120,7 +126,8 @@ SITE = {
     # Where the contact form posts. Formspree is the easiest option for a static
     # deploy: sign up, create a form, paste the endpoint here. Leave blank to use
     # the local Flask /contact route instead.
-    "contact_endpoint": "https://formsubmit.co/tspivey@pensacolastate.edu",
+    "contact_endpoint": "https://formsubmit.co/"
+                        + (PROFESSIONAL_EMAIL or "tspivey@pensacolastate.edu"),
     # Google Analytics 4 Measurement ID (looks like "G-XXXXXXXXXX"). Leave blank
     # to omit the tracking snippet entirely.
     "ga_measurement_id": "G-Q1XYCGEW06",
@@ -155,7 +162,6 @@ ABOUT_CARD = {
     "stats": [
         {"value": "2", "label": "Publications"},
         {"value": "6", "label": "Research Areas"},
-        {"value": "1", "label": "Working Paper"},
     ],
 }
 
@@ -364,8 +370,24 @@ PUBLICATIONS = {
             "kind": "Working Paper",
             "ssrn_url": "",   # set once posted; makes the title a link
         },
+        {
+            "year": "2026",
+            "title": ("The Insider Threat Paradox: How Security Policies "
+                      "Inadvertently Create the Threats They're Designed to Prevent"),
+            "authors": THIRD_PAPER_AUTHORS,
+            "description": (
+                "Third paper in a series on security culture: how device-ownership "
+                "claims and workplace surveillance turn loyal employees into insider "
+                "threats, and a rights-based alternative."),
+            "kind": "Working Paper",
+            "ssrn_url": "",
+        },
     ],
 }
+
+_n_wp = len(PUBLICATIONS["working_papers"])
+ABOUT_CARD["stats"].append(
+    {"value": str(_n_wp), "label": "Working Paper" if _n_wp == 1 else "Working Papers"})
 
 SERVICE = {
     "intro": "Editorial review service and professional memberships.",
@@ -1208,6 +1230,8 @@ def render(building=False):
         publications=PUBLICATIONS,
         professional_email=PROFESSIONAL_EMAIL,
         consulting_name=CONSULTING_NAME,
+        orcid_url=ORCID_URL,
+        orcid_label=ORCID_LABEL,
         headshot_abs=headshot_abs_url(),
         json_ld=person_json_ld(),
         service=SERVICE,
@@ -1928,6 +1952,12 @@ TEMPLATE = r"""<!DOCTYPE html>
               <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
               Google Scholar Profile
             </a>
+            {% if orcid_url %}
+            <a href="{{ orcid_url }}" target="_blank" class="about-link">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 10v7M8 7v.01M12 10v7h2.5a3.5 3.5 0 000-7H12z"/></svg>
+              {{ orcid_label }}
+            </a>
+            {% endif %}
             <a href="{{ site.links.linkedin }}" target="_blank" class="about-link">
               <svg fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 11.001-4.124 2.062 2.062 0 01-.001 4.124zM7.114 20.452H3.558V9h3.556v11.452z"/></svg>
               {{ site.links.linkedin_label }}
@@ -2037,6 +2067,7 @@ TEMPLATE = r"""<!DOCTYPE html>
             {% if p.ssrn_url %}<a href="{{ p.ssrn_url }}" target="_blank">{{ p.title }}</a>{% else %}{{ p.title }}{% endif %}
           </div>
           <div class="pub-authors">{{ p.authors }}</div>
+          {% if p.description %}<div class="pub-authors">{{ p.description }}</div>{% endif %}
           <span class="pub-type">{{ p.kind }}</span>
         </div>
       </div>
@@ -2175,6 +2206,17 @@ TEMPLATE = r"""<!DOCTYPE html>
             <div class="contact-value"><a href="{{ site.links.scholar }}" target="_blank">Google Scholar Profile</a></div>
           </div>
         </div>
+        {% if orcid_url %}
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 10v7M8 7v.01M12 10v7h2.5a3.5 3.5 0 000-7H12z"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">ORCID</div>
+            <div class="contact-value"><a href="{{ orcid_url }}" target="_blank">{{ orcid_label }}</a></div>
+          </div>
+        </div>
+        {% endif %}
         <div class="contact-item">
           <div class="contact-icon">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1m4 0h1M9 13h1m4 0h1M9 17h1m4 0h1"/></svg>
