@@ -172,19 +172,23 @@ ABOUT = {
 
         "The question is not whether disclosure matters. It is whether mandating "
         "when a firm discloses produces the benefit regulators assumed it would. "
-        "Across three empirical channels, his work finds real costs and little of "
-        "the intended benefit. The empirical backbone is a natural experiment built "
-        "on the FCC's 2007 mandatory disclosure rule (47 CFR § 64.2011), applied to "
-        "1,054 breach events from 2006 to 2025.",
+        "Across three empirical channels, his work finds real costs and little "
+        "evidence of the intended benefit. The empirical backbone is a natural "
+        "experiment built on the FCC’s 2007 mandatory disclosure rule "
+        "(47 CFR § 64.2011), applied to 1,054 breach events from 2006 to 2025.",
 
-        "His current work extends into telecom markets: how competition from fiber "
-        "and fixed wireless shapes cable incumbents' service and networks, and how "
-        "operators should decide which customers to retain.",
+        "His broader work follows two lines. One examines security culture: how "
+        "fear-based policies, rigid IT controls and workplace surveillance can create "
+        "the very risks they are meant to prevent. The other extends into telecom "
+        "markets: how competition from fiber and fixed wireless shapes cable "
+        "incumbents’ service and networks, and how operators should decide which "
+        "customers to retain.",
 
         "Outside the dissertation, he supervises management information systems at "
-        "Mediacom Communications and teaches entrepreneurship and entrepreneurship "
-        "marketing and sales as an adjunct at Pensacola State College. Nearly twenty years of "
-        "telecom operations sits underneath the research: he has built the reporting "
+        "Mediacom Communications and teaches Introduction to Entrepreneurship and "
+        "Entrepreneurship Marketing and Sales as an adjunct at Pensacola State "
+        "College. Nearly twenty years of "
+        "telecom operations lies beneath the research: he has built the reporting "
         "pipelines, sat in the escalation calls, and watched compliance decisions get "
         "made under real pressure. That is why the empirical questions he chases are "
         "the ones practitioners recognize.",
