@@ -1216,6 +1216,13 @@ def cv():
     return send_from_directory(HERE, "timothy-spivey-cv.pdf")
 
 
+# Static on GitHub Pages too: Pages serves /retention-playbook from the .html file.
+@app.route("/retention-playbook")
+@app.route("/retention-playbook.html")
+def retention_playbook():
+    return send_from_directory(HERE, "retention-playbook.html")
+
+
 @app.route("/contact", methods=["POST"])
 def contact():
     """Local fallback — prints the submission to your terminal.
