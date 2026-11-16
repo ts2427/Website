@@ -4,10 +4,58 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Timothy D. Spivey | Empirical Researcher &amp; Data Scientist</title>
-  <meta name="description" content="Timothy D. Spivey — empirical researcher and data scientist studying mandatory breach disclosure timing, cybersecurity governance, and the ethical use of data." />
+  <meta name="description" content="Timothy D. Spivey: empirical researcher and data scientist studying mandatory breach disclosure, cybersecurity governance, telecom markets, and the ethical use of data." />
   <meta property="og:title" content="Timothy D. Spivey — Empirical Researcher &amp; Data Scientist" />
-  <meta property="og:description" content="Timothy D. Spivey — empirical researcher and data scientist studying mandatory breach disclosure timing, cybersecurity governance, and the ethical use of data." />
+  <meta property="og:description" content="Timothy D. Spivey: empirical researcher and data scientist studying mandatory breach disclosure, cybersecurity governance, telecom markets, and the ethical use of data." />
   <meta property="og:type" content="profile" />
+  <meta property="og:url" content="https://timothydspivey.com/" />
+  <meta property="og:image" content="https://timothydspivey.com/headshot.jpg" />
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "mainEntity": {
+    "@type": "Person",
+    "name": "Timothy D. Spivey",
+    "alternateName": [
+      "Timothy Spivey",
+      "T. D. Spivey"
+    ],
+    "url": "https://timothydspivey.com",
+    "image": "https://timothydspivey.com/headshot.jpg",
+    "jobTitle": "MIS Supervisor; Adjunct Faculty",
+    "affiliation": {
+      "@type": "CollegeOrUniversity",
+      "name": "University of South Alabama"
+    },
+    "alumniOf": [
+      {
+        "@type": "CollegeOrUniversity",
+        "name": "University of West Florida"
+      },
+      {
+        "@type": "CollegeOrUniversity",
+        "name": "Pensacola State College"
+      }
+    ],
+    "memberOf": {
+      "@type": "Organization",
+      "name": "ISACA"
+    },
+    "knowsAbout": [
+      "Business analytics",
+      "Cybersecurity governance",
+      "Mandatory breach disclosure",
+      "Broadband markets",
+      "Customer retention analytics"
+    ],
+    "sameAs": [
+      "https://scholar.google.com/citations?user=S9sSV1EAAAAJ&hl=en",
+      "https://www.linkedin.com/in/tispivey/"
+    ]
+  }
+}
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
@@ -250,6 +298,9 @@
     .research-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
     .research-card p { font-size: .875rem; color: var(--muted); line-height: 1.65; }
 
+    /* APPLIED WORK */
+    #applied { background: var(--white); }
+
     /* PUBLICATIONS */
     #publications { background: var(--sand); }
     .pub-list { display: flex; flex-direction: column; gap: 1.25rem; }
@@ -432,7 +483,7 @@
   <div class="nav-inner">
     <a href="#hero" class="nav-logo">Timothy D. Spivey</a>
     <ul class="nav-links">
-      <li><a href="#about">About</a></li><li><a href="#research">Research</a></li><li><a href="#publications">Publications</a></li><li><a href="#teaching">Teaching</a></li><li><a href="https://thresholddatasciences.com">Consulting</a></li><li><a href="blog/">Blog</a></li><li><a href="#contact">Contact</a></li>
+      <li><a href="#about">About</a></li><li><a href="#research">Research</a></li><li><a href="#applied">Applied Work</a></li><li><a href="#publications">Publications</a></li><li><a href="#teaching">Teaching</a></li><li><a href="https://thresholddatasciences.com">Consulting</a></li><li><a href="blog/">Blog</a></li><li><a href="#contact">Contact</a></li>
     </ul>
   </div>
 </nav>
@@ -442,7 +493,7 @@
     <div class="hero-badge"><span></span>Academic Portfolio</div>
     <h1>Timothy D<span class="drop-dot">.</span> Spivey</h1>
     <p class="hero-subtitle">Empirical Researcher &amp; Data Scientist</p>
-    <p class="hero-institution">Doctoral Candidate (ABD), Business Administration — Business Analytics<br/>University of South Alabama · Mitchell College of Business</p>
+    <p class="hero-institution">PhD Candidate, Business Administration (Business Analytics) · University of South Alabama · Mitchell College of Business<br/>Dissertation defense: January 2027</p>
     <div class="hero-ctas">
       <a href="#research" class="btn btn-primary">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
@@ -464,7 +515,7 @@
         <div class="about-card">
           <img src="headshot.jpg" alt="Timothy D. Spivey" class="about-photo" />
           <div class="about-name">Timothy D. Spivey</div>
-          <div class="about-role">Doctoral Candidate (ABD) — Business Analytics</div>
+          <div class="about-role">PhD Candidate — Business Analytics</div>
           <div class="about-school">University of South Alabama</div>
           <div class="about-second-role">Adjunct Instructor · Pensacola State College</div>
           <div class="school-logos">
@@ -479,6 +530,8 @@
             <div class="about-stat"><strong>2</strong><span>Publications</span></div>
             
             <div class="about-stat"><strong>6</strong><span>Research Areas</span></div>
+            
+            <div class="about-stat"><strong>1</strong><span>Working Paper</span></div>
             
           </div>
           <div class="about-links">
@@ -496,7 +549,7 @@
             </a>
             <a href="https://thresholddatasciences.com" class="about-link">
               <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1m4 0h1M9 13h1m4 0h1M9 17h1m4 0h1"/></svg>
-              Threshold Data Sciences
+              Threshold Data Sciences (in formation)
             </a>
           </div>
         </div>
@@ -506,9 +559,9 @@
         <div class="section-label">About</div>
         <h2 class="section-title">Researcher, Analyst &amp; Educator</h2>
         <div class="divider"></div>
-        <p>Timothy D. Spivey is a doctoral candidate in Business Administration with a Business Analytics emphasis at the University of South Alabama, where his dissertation examines what mandatory breach disclosure timing actually does — to markets, to organizations, and to boards.</p><p>The question is not whether disclosure matters. It is whether mandating when a firm discloses produces the benefit regulators assumed it would. Across three empirical channels, his work finds real costs and little of the intended benefit. The empirical backbone is a natural experiment built on the FCC&#39;s 2007 mandatory disclosure rule (47 CFR § 64.2011), applied to 1,054 breach events from 2006 to 2025.</p><p>Outside the dissertation, he supervises management information systems at Mediacom Communications and teaches entrepreneurship and small business accounting as an adjunct at Pensacola State College. Nearly twenty years of telecom operations sits underneath the research: he has built the reporting pipelines, sat in the escalation calls, and watched compliance decisions get made under real pressure. That is why the empirical questions he chases are the ones practitioners recognize.</p><p>He holds an MBA in Business Analytics from the University of West Florida and a BAS in Organizational Administration from Pensacola State College — where he now teaches.</p>
+        <p>Timothy D. Spivey is a doctoral candidate in Business Administration, with a concentration in Business Analytics, at the University of South Alabama, where his dissertation examines what mandatory breach disclosure timing actually does — to markets, to organizations, and to boards.</p><p>The question is not whether disclosure matters. It is whether mandating when a firm discloses produces the benefit regulators assumed it would. Across three empirical channels, his work finds real costs and little of the intended benefit. The empirical backbone is a natural experiment built on the FCC&#39;s 2007 mandatory disclosure rule (47 CFR § 64.2011), applied to 1,054 breach events from 2006 to 2025.</p><p>His current work extends into telecom markets: how competition from fiber and fixed wireless shapes cable incumbents&#39; service and networks, and how operators should decide which customers to retain.</p><p>Outside the dissertation, he supervises management information systems at Mediacom Communications and teaches entrepreneurship and small business accounting as an adjunct at Pensacola State College. Nearly twenty years of telecom operations sits underneath the research: he has built the reporting pipelines, sat in the escalation calls, and watched compliance decisions get made under real pressure. That is why the empirical questions he chases are the ones practitioners recognize.</p><p>He holds an MBA in Business Analytics from the University of West Florida and a BAS in Organizational Administration from Pensacola State College — where he now teaches.</p>
         <div class="tags">
-          <span class="tag">Mandatory Disclosure</span><span class="tag">Cybersecurity Governance</span><span class="tag">Event Studies</span><span class="tag">Capital Markets</span><span class="tag">IT Ethics</span><span class="tag">Business Analytics</span>
+          <span class="tag">Mandatory Disclosure</span><span class="tag">Cybersecurity Governance</span><span class="tag">Event Studies</span><span class="tag">Capital Markets</span><span class="tag">IT Ethics</span><span class="tag">Business Analytics</span><span class="tag">Telecom Markets</span><span class="tag">Customer Analytics</span>
         </div>
       </div>
     </div>
@@ -540,7 +593,7 @@
   <div class="container">
     <div class="section-label">Scholarship</div>
     <h2 class="section-title">Research Interests</h2>
-    <p class="section-desc">What happens when regulation meets reality — mandatory disclosure, cybersecurity governance, and the ethical use of data, measured empirically.</p>
+    <p class="section-desc">What happens when regulation and competition meet reality: mandatory disclosure, cybersecurity governance, telecom markets, and the ethical use of data, measured empirically.</p>
     <div class="divider"></div>
     <div class="research-grid">
       
@@ -575,9 +628,42 @@
       </div>
       
       <div class="research-card">
-        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&amp;q=70" alt="Analytics dashboard" class="research-card-img" loading="lazy" />
-        <h3>Applied Data Engineering</h3>
-        <p>Reproducible research infrastructure: 1,054 breach events across nineteen years, normalized from inconsistent public sources into a Python and Snowflake pipeline matched to market data.</p>
+        <img src="static/img/telecom-card.svg" alt="Abstract fiber network lines" class="research-card-img" loading="lazy" />
+        <h3>Telecom Markets &amp; Customer Analytics</h3>
+        <p>How competition from fiber and fixed wireless shapes cable incumbents&#39; service and networks, and how operators decide whom to retain. Pre-registered designs on public FCC data.</p>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<section id="applied">
+  <div class="container">
+    <div class="section-label">Practice</div>
+    <h2 class="section-title">Applied Work</h2>
+    <p class="section-desc">Analytics built to answer operating questions, using public data and reproducible code.</p>
+    <div class="divider"></div>
+    <div class="research-grid">
+      
+      <div class="research-card">
+        <h3>Who Leaves, Who to Save, and What It Costs</h3>
+        <div class="section-label">Interactive analysis · 2026</div>
+        <p>A public-data retention playbook for broadband. It follows churn analysis through to the targeting decision: calibrated models, profit-based contact rules, uplift on a randomized experiment, and a fairness audit, with findings checked against real operator data.</p>
+        <a href="retention-playbook.html" class="btn btn-accent" style="margin-top:1.25rem">Open the playbook</a>
+      </div>
+      
+      <div class="research-card">
+        <h3>Breach Disclosure Research Pipeline</h3>
+        <div class="section-label">Data engineering · 2024–2026</div>
+        <p>1,054 breach events across nineteen years, normalized from inconsistent public sources into a Python and Snowflake pipeline matched to market data. The empirical backbone of my dissertation.</p>
+        
+      </div>
+      
+      <div class="research-card">
+        <h3>Operational Reporting and Forecasting</h3>
+        <div class="section-label">Industry practice</div>
+        <p>Nearly twenty years building reporting pipelines, executive scorecards and workforce forecasts in telecom operations.</p>
+        
       </div>
       
     </div>
@@ -588,7 +674,7 @@
   <div class="container">
     <div class="section-label">Scholarship</div>
     <h2 class="section-title">Selected Publications</h2>
-    <p class="section-desc">Practitioner research on security culture and IT governance.</p>
+    <p class="section-desc">Practitioner research on security culture and IT governance, and current working papers.</p>
     <div class="divider"></div>
     <div class="pub-list">
       
@@ -617,6 +703,23 @@
       </div>
       
     </div>
+    
+    <div class="section-label" style="margin-top:2.5rem">Working Papers</div>
+    <div class="pub-list">
+      
+      <div class="pub-item">
+        <div class="pub-year">2026</div>
+        <div>
+          <div class="pub-title">
+            Competition Without Discipline? Fiber Entry, Complaints, and Cable Incumbents&#39; Network Offers
+          </div>
+          <div class="pub-authors">Spivey, T. D.</div>
+          <span class="pub-type">Working Paper</span>
+        </div>
+      </div>
+      
+    </div>
+    
   </div>
 </section>
 
@@ -662,7 +765,7 @@
       <div>
         <div class="section-label">Classroom</div>
         <h2 class="section-title">Courses Taught</h2>
-        <p class="section-desc" style="margin-bottom:0">Business and professional writing courses taught across Northwest Florida institutions, alongside doctoral study.</p>
+        <p class="section-desc" style="margin-bottom:0">Courses in entrepreneurship, accounting and business writing at Pensacola State College and the University of West Florida, alongside doctoral study.</p>
         <div class="divider" style="margin-bottom:0"></div>
       </div>
       <div>
@@ -680,7 +783,7 @@
         
         <div>
           <div class="institution-name">Pensacola State College</div>
-          <div class="institution-role">Adjunct Instructor</div>
+          <div class="institution-role">Adjunct Instructor · Instructor of record</div>
           <div class="institution-years">2025 – Present</div>
           <div class="institution-courses">
             <span>Introduction to Entrepreneurship</span><span>Small Business Accounting</span>
@@ -735,10 +838,11 @@
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           </div>
           <div>
-            <div class="contact-label">Email</div>
+            <div class="contact-label">Teaching &amp; academic</div>
             <div class="contact-value">tspivey@pensacolastate.edu</div>
           </div>
         </div>
+        
         <div class="contact-item">
           <div class="contact-icon">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -763,7 +867,7 @@
           </div>
           <div>
             <div class="contact-label">Consulting</div>
-            <div class="contact-value"><a href="https://thresholddatasciences.com">Threshold Data Sciences</a></div>
+            <div class="contact-value"><a href="https://thresholddatasciences.com">Threshold Data Sciences (in formation)</a></div>
           </div>
         </div>
       </div>
@@ -772,6 +876,7 @@
         <h3>Send a Message</h3>
         
           
+        
         
         <form method="post" action="https://formsubmit.co/tspivey@pensacolastate.edu">
           
@@ -798,7 +903,7 @@
             <label>Subject</label>
             <select name="topic">
               <option value="">Select a topic&hellip;</option>
-              <option>Research Collaboration</option><option>Speaking / Presentation</option><option>Teaching Inquiry</option><option>Consulting Engagement</option><option>Request CV</option><option>Other</option>
+              <option>Research Collaboration</option><option>Speaking / Presentation</option><option>Teaching Inquiry</option><option>Consulting Engagement</option><option>Industry / Analytics</option><option>Request CV</option><option>Other</option>
             </select>
           </div>
           <div class="form-group">
@@ -813,8 +918,9 @@
 </section>
 
 <footer>
-  <p><strong>Timothy D. Spivey</strong> &nbsp;&middot;&nbsp; Empirical Researcher &amp; Data Scientist &nbsp;&middot;&nbsp; University of South Alabama · Mitchell College of Business</p>
+  <p><strong>Timothy D. Spivey</strong> &nbsp;&middot;&nbsp; Empirical Researcher &amp; Data Scientist &nbsp;&middot;&nbsp; PhD Candidate, University of South Alabama · Mitchell College of Business</p>
   <p style="margin-top:.4rem">&copy; 2026 Timothy D. Spivey. All rights reserved.</p>
+  <p style="margin-top:.6rem; font-size:.72rem">Views expressed on this site are my own and do not represent my employer, Pensacola State College, or the University of South Alabama. Analyses published here use only publicly available data.</p>
 </footer>
 
 <script>

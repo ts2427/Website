@@ -13,6 +13,7 @@ Drop a headshot named headshot.jpg beside this file and it will be picked up
 automatically. Anything marked TODO needs a real value before you publish.
 """
 
+import json
 import os
 import re
 import sys
@@ -28,18 +29,82 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # CONTENT — edit everything below
 # =============================================================================
 
+# Degree stage drives every piece of degree wording on the main page (hero,
+# About card, bio, footer, JSON-LD). One of "candidate", "defended", "conferred".
+DEGREE_STAGE = "candidate"
+
+# Profile URLs for the JSON-LD sameAs list; skipped while empty.
+ORCID_URL = ""
+SSRN_URL = ""   # SSRN author page
+
+# Set to an address on my own domain. The Contact section shows a second
+# email line for it only while it is non-empty.
+PROFESSIONAL_EMAIL = ""
+
+# Change only after the Florida LLC is filed.
+CONSULTING_NAME = "Threshold Data Sciences (in formation)"
+
+DEGREE_WORDING = {
+    "candidate": {
+        "name_suffix": "",
+        "hero_line": ("PhD Candidate, Business Administration (Business Analytics) · "
+                      "University of South Alabama · Mitchell College of Business"),
+        "hero_line_2": "Dissertation defense: January 2027",
+        "about_role": "PhD Candidate — Business Analytics",
+        "footer": "PhD Candidate, University of South Alabama · Mitchell College of Business",
+        "bio_first": (
+            "Timothy D. Spivey is a doctoral candidate in Business Administration, "
+            "with a concentration in Business Analytics, at the University of South "
+            "Alabama, where his dissertation examines what mandatory breach disclosure "
+            "timing actually does — to markets, to organizations, and to boards."),
+    },
+    "defended": {
+        "name_suffix": "",
+        "hero_line": ("PhD, Business Administration (Business Analytics) · Dissertation "
+                      "defended January 2027; conferral expected May 2027"),
+        "hero_line_2": "",
+        "about_role": "PhD (defended January 2027) — Business Analytics",
+        "footer": ("PhD, University of South Alabama · Mitchell College of Business "
+                   "(conferral expected May 2027)"),
+        "bio_first": (
+            "Timothy D. Spivey is a doctoral candidate in Business Administration, "
+            "with a concentration in Business Analytics, at the University of South "
+            "Alabama, where his dissertation examines what mandatory breach disclosure "
+            "timing actually does — to markets, to organizations, and to boards."),
+    },
+    "conferred": {
+        "name_suffix": ", PhD",
+        "hero_line": ("PhD, Business Administration (Business Analytics) · "
+                      "University of South Alabama (2027)"),
+        "hero_line_2": "",
+        "about_role": "PhD — Business Analytics",
+        "footer": "PhD, University of South Alabama · Mitchell College of Business",
+        "bio_first": (
+            "Timothy D. Spivey holds a PhD in Business Administration, with a "
+            "concentration in Business Analytics, from the University of South "
+            "Alabama. His dissertation examines what mandatory breach disclosure "
+            "timing actually does — to markets, to organizations, and to boards."),
+    },
+}
+DEGREE = DEGREE_WORDING[DEGREE_STAGE]
+
 SITE = {
     "name": "Timothy D. Spivey",
     # The hero renders the name with a small "drop" animation on the period
     # after the middle initial, mirroring the reference design.
     "hero_name_before_dot": "Timothy D",
-    "hero_name_after_dot": " Spivey",
+    "hero_name_after_dot": " Spivey" + DEGREE["name_suffix"],
+    # Nav logo; gains ", PhD" once the degree is conferred.
+    "display_name": "Timothy D. Spivey" + DEGREE["name_suffix"],
     "title": "Empirical Researcher & Data Scientist",
-    "affiliation": "Doctoral Candidate (ABD), Business Administration — Business Analytics",
+    "hero_line": DEGREE["hero_line"],
+    "hero_line_2": DEGREE["hero_line_2"],
+    "footer_degree": DEGREE["footer"],
     "institution": "University of South Alabama · Mitchell College of Business",
     "meta_description": (
-        "Timothy D. Spivey — empirical researcher and data scientist studying mandatory "
-        "breach disclosure timing, cybersecurity governance, and the ethical use of data."
+        "Timothy D. Spivey: empirical researcher and data scientist studying mandatory "
+        "breach disclosure, cybersecurity governance, telecom markets, and the ethical "
+        "use of data."
     ),
     "email": "tspivey@pensacolastate.edu",
     "location_lines": ["Pensacola State College", "Pensacola, Florida"],
@@ -67,6 +132,7 @@ SITE = {
 NAV = [
     {"label": "About", "href": "#about"},
     {"label": "Research", "href": "#research"},
+    {"label": "Applied Work", "href": "#applied"},
     {"label": "Publications", "href": "#publications"},
     {"label": "Teaching", "href": "#teaching"},
     {"label": "Consulting", "href": "https://thresholddatasciences.com"},
@@ -76,7 +142,7 @@ NAV = [
 
 # Sidebar profile card in the About section.
 ABOUT_CARD = {
-    "role": "Doctoral Candidate (ABD) — Business Analytics",
+    "role": DEGREE["about_role"],
     "school": "University of South Alabama",
     "secondary_role": "Adjunct Instructor · Pensacola State College",
     "school_logos": [
@@ -89,16 +155,14 @@ ABOUT_CARD = {
     "stats": [
         {"value": "2", "label": "Publications"},
         {"value": "6", "label": "Research Areas"},
+        {"value": "1", "label": "Working Paper"},
     ],
 }
 
 ABOUT = {
     "heading": "Researcher, Analyst & Educator",
     "paragraphs": [
-        "Timothy D. Spivey is a doctoral candidate in Business Administration with a "
-        "Business Analytics emphasis at the University of South Alabama, where his "
-        "dissertation examines what mandatory breach disclosure timing actually does "
-        "— to markets, to organizations, and to boards.",
+        DEGREE["bio_first"],
 
         "The question is not whether disclosure matters. It is whether mandating "
         "when a firm discloses produces the benefit regulators assumed it would. "
@@ -106,6 +170,10 @@ ABOUT = {
         "the intended benefit. The empirical backbone is a natural experiment built "
         "on the FCC's 2007 mandatory disclosure rule (47 CFR § 64.2011), applied to "
         "1,054 breach events from 2006 to 2025.",
+
+        "His current work extends into telecom markets: how competition from fiber "
+        "and fixed wireless shapes cable incumbents' service and networks, and how "
+        "operators should decide which customers to retain.",
 
         "Outside the dissertation, he supervises management information systems at "
         "Mediacom Communications and teaches entrepreneurship and small business "
@@ -133,6 +201,8 @@ ABOUT = {
         "Capital Markets",
         "IT Ethics",
         "Business Analytics",
+        "Telecom Markets",
+        "Customer Analytics",
     ],
 }
 
@@ -156,8 +226,9 @@ GALLERY = [
 
 RESEARCH = {
     "intro": (
-        "What happens when regulation meets reality — mandatory disclosure, "
-        "cybersecurity governance, and the ethical use of data, measured empirically."
+        "What happens when regulation and competition meet reality: mandatory "
+        "disclosure, cybersecurity governance, telecom markets, and the ethical use "
+        "of data, measured empirically."
     ),
     "cards": [
         {
@@ -210,20 +281,57 @@ RESEARCH = {
             ),
         },
         {
-            "title": "Applied Data Engineering",
-            "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=70",
-            "alt": "Analytics dashboard",
+            "title": "Telecom Markets & Customer Analytics",
+            "image": "static/img/telecom-card.svg",
+            "alt": "Abstract fiber network lines",
             "text": (
-                "Reproducible research infrastructure: 1,054 breach events across "
-                "nineteen years, normalized from inconsistent public sources into a "
-                "Python and Snowflake pipeline matched to market data."
+                "How competition from fiber and fixed wireless shapes cable "
+                "incumbents' service and networks, and how operators decide whom to "
+                "retain. Pre-registered designs on public FCC data."
+            ),
+        },
+    ],
+}
+
+APPLIED = {
+    "intro": ("Analytics built to answer operating questions, using public data "
+              "and reproducible code."),
+    "cards": [
+        {
+            "title": "Who Leaves, Who to Save, and What It Costs",
+            "label": "Interactive analysis · 2026",
+            "text": (
+                "A public-data retention playbook for broadband. It follows churn "
+                "analysis through to the targeting decision: calibrated models, "
+                "profit-based contact rules, uplift on a randomized experiment, and a "
+                "fairness audit, with findings checked against real operator data."
+            ),
+            "cta_label": "Open the playbook",
+            "cta_href": "retention-playbook.html",
+        },
+        {
+            "title": "Breach Disclosure Research Pipeline",
+            "label": "Data engineering · 2024–2026",
+            "text": (
+                "1,054 breach events across nineteen years, normalized from "
+                "inconsistent public sources into a Python and Snowflake pipeline "
+                "matched to market data. The empirical backbone of my dissertation."
+            ),
+        },
+        {
+            "title": "Operational Reporting and Forecasting",
+            "label": "Industry practice",
+            "text": (
+                "Nearly twenty years building reporting pipelines, executive "
+                "scorecards and workforce forecasts in telecom operations."
             ),
         },
     ],
 }
 
 PUBLICATIONS = {
-    "intro": "Practitioner research on security culture and IT governance.",
+    "intro": ("Practitioner research on security culture and IT governance, and "
+              "current working papers."),
     "entries": [
         {
             "year": "2024",
@@ -244,6 +352,17 @@ PUBLICATIONS = {
             "kind": "Journal Article",
             "status": "Published",
             "url": "",
+        },
+    ],
+    # Titles only; no results before the defense.
+    "working_papers": [
+        {
+            "year": "2026",
+            "title": ("Competition Without Discipline? Fiber Entry, Complaints, and "
+                      "Cable Incumbents' Network Offers"),
+            "authors": "Spivey, T. D.",
+            "kind": "Working Paper",
+            "ssrn_url": "",   # set once posted; makes the title a link
         },
     ],
 }
@@ -280,15 +399,15 @@ SERVICE = {
 
 TEACHING = {
     "intro": (
-        "Business and professional writing courses taught across Northwest Florida "
-        "institutions, alongside doctoral study."
+        "Courses in entrepreneurship, accounting and business writing at Pensacola "
+        "State College and the University of West Florida, alongside doctoral study."
     ),
     "photo": "clocktower.jpg",
     "photo_alt": "M. J. Menge clock tower, Pensacola State College",
     "institutions": [
         {
             "name": "Pensacola State College",
-            "role": "Adjunct Instructor",
+            "role": "Adjunct Instructor · Instructor of record",
             "years": "2025 – Present",
             "building": "clocktower.jpg",
             "building_alt": "M. J. Menge clock tower, Pensacola State College",
@@ -310,7 +429,7 @@ TEACHING = {
 }
 
 CONSULTING = {
-    "firm": "Threshold Data Sciences",
+    "firm": CONSULTING_NAME,
     "tagline": "Empirical insight. Practical guidance.",
     "heading": "Where Research Meets Practice",
     "pitch": (
@@ -347,6 +466,7 @@ CONTACT = {
         "Speaking / Presentation",
         "Teaching Inquiry",
         "Consulting Engagement",
+        "Industry / Analytics",
         "Request CV",
         "Other",
     ],
@@ -1034,6 +1154,40 @@ def portrait_url(building=False):
     return ABOUT["portrait"]
 
 
+def headshot_abs_url():
+    return f"{SITE['base_url']}/headshot.jpg"
+
+
+def person_json_ld():
+    """schema.org ProfilePage/Person, serialized with json.dumps. '</' is
+    escaped so no string value can close the <script> element early."""
+    org = lambda name, kind="CollegeOrUniversity": {"@type": kind, "name": name}
+    alumni = [org("University of West Florida"), org("Pensacola State College")]
+    if DEGREE_STAGE == "conferred":
+        alumni.append(org("University of South Alabama"))
+    person = {
+        "@type": "Person",
+        "name": "Timothy D. Spivey",
+        "alternateName": ["Timothy Spivey", "T. D. Spivey"],
+        "url": SITE["base_url"],
+        "image": headshot_abs_url(),
+        "jobTitle": "MIS Supervisor; Adjunct Faculty",
+        "affiliation": org("University of South Alabama"),
+        "alumniOf": alumni,
+        "memberOf": org("ISACA", "Organization"),
+        "knowsAbout": ["Business analytics", "Cybersecurity governance",
+                       "Mandatory breach disclosure", "Broadband markets",
+                       "Customer retention analytics"],
+        "sameAs": [u for u in (SITE["links"]["scholar"], SITE["links"]["linkedin"],
+                               ORCID_URL, SSRN_URL) if u],
+    }
+    if DEGREE_STAGE == "conferred":
+        person["honorificSuffix"] = "PhD"
+    data = {"@context": "https://schema.org", "@type": "ProfilePage",
+            "mainEntity": person}
+    return json.dumps(data, ensure_ascii=False, indent=2).replace("</", "<\\/")
+
+
 def render(building=False):
     if SITE["contact_endpoint"]:
         action = SITE["contact_endpoint"]
@@ -1050,7 +1204,12 @@ def render(building=False):
         about=ABOUT,
         gallery=GALLERY,
         research=RESEARCH,
+        applied=APPLIED,
         publications=PUBLICATIONS,
+        professional_email=PROFESSIONAL_EMAIL,
+        consulting_name=CONSULTING_NAME,
+        headshot_abs=headshot_abs_url(),
+        json_ld=person_json_ld(),
         service=SERVICE,
         teaching=TEACHING,
         consulting=CONSULTING,
@@ -1287,6 +1446,11 @@ TEMPLATE = r"""<!DOCTYPE html>
   <meta property="og:title" content="{{ site.name }} — {{ site.title }}" />
   <meta property="og:description" content="{{ site.meta_description }}" />
   <meta property="og:type" content="profile" />
+  <meta property="og:url" content="{{ site.base_url }}/" />
+  <meta property="og:image" content="{{ headshot_abs }}" />
+  <script type="application/ld+json">
+{{ json_ld | safe }}
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
@@ -1529,6 +1693,9 @@ TEMPLATE = r"""<!DOCTYPE html>
     .research-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
     .research-card p { font-size: .875rem; color: var(--muted); line-height: 1.65; }
 
+    /* APPLIED WORK */
+    #applied { background: var(--white); }
+
     /* PUBLICATIONS */
     #publications { background: var(--sand); }
     .pub-list { display: flex; flex-direction: column; gap: 1.25rem; }
@@ -1709,7 +1876,7 @@ TEMPLATE = r"""<!DOCTYPE html>
 
 <nav>
   <div class="nav-inner">
-    <a href="#hero" class="nav-logo">{{ site.name }}</a>
+    <a href="#hero" class="nav-logo">{{ site.display_name }}</a>
     <ul class="nav-links">
       {% for item in nav %}<li><a href="{{ item.href }}">{{ item.label }}</a></li>{% endfor %}
     </ul>
@@ -1721,7 +1888,7 @@ TEMPLATE = r"""<!DOCTYPE html>
     <div class="hero-badge"><span></span>Academic Portfolio</div>
     <h1>{{ site.hero_name_before_dot }}<span class="drop-dot">.</span>{{ site.hero_name_after_dot }}</h1>
     <p class="hero-subtitle">{{ site.title }}</p>
-    <p class="hero-institution">{{ site.affiliation }}<br/>{{ site.institution }}</p>
+    <p class="hero-institution">{{ site.hero_line }}{% if site.hero_line_2 %}<br/>{{ site.hero_line_2 }}{% endif %}</p>
     <div class="hero-ctas">
       <a href="#research" class="btn btn-primary">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
@@ -1771,7 +1938,7 @@ TEMPLATE = r"""<!DOCTYPE html>
             </a>
             <a href="{{ site.links.firm }}" class="about-link">
               <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1m4 0h1M9 13h1m4 0h1M9 17h1m4 0h1"/></svg>
-              Threshold Data Sciences
+              {{ consulting_name }}
             </a>
           </div>
         </div>
@@ -1819,6 +1986,25 @@ TEMPLATE = r"""<!DOCTYPE html>
   </div>
 </section>
 
+<section id="applied">
+  <div class="container">
+    <div class="section-label">Practice</div>
+    <h2 class="section-title">Applied Work</h2>
+    <p class="section-desc">{{ applied.intro }}</p>
+    <div class="divider"></div>
+    <div class="research-grid">
+      {% for c in applied.cards %}
+      <div class="research-card">
+        <h3>{{ c.title }}</h3>
+        <div class="section-label">{{ c.label }}</div>
+        <p>{{ c.text }}</p>
+        {% if c.cta_href %}<a href="{{ c.cta_href }}" class="btn btn-accent" style="margin-top:1.25rem">{{ c.cta_label }}</a>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
 <section id="publications">
   <div class="container">
     <div class="section-label">Scholarship</div>
@@ -1840,6 +2026,23 @@ TEMPLATE = r"""<!DOCTYPE html>
       </div>
       {% endfor %}
     </div>
+    {% if publications.working_papers %}
+    <div class="section-label" style="margin-top:2.5rem">Working Papers</div>
+    <div class="pub-list">
+      {% for p in publications.working_papers %}
+      <div class="pub-item">
+        <div class="pub-year">{{ p.year }}</div>
+        <div>
+          <div class="pub-title">
+            {% if p.ssrn_url %}<a href="{{ p.ssrn_url }}" target="_blank">{{ p.title }}</a>{% else %}{{ p.title }}{% endif %}
+          </div>
+          <div class="pub-authors">{{ p.authors }}</div>
+          <span class="pub-type">{{ p.kind }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
   </div>
 </section>
 
@@ -1939,10 +2142,21 @@ TEMPLATE = r"""<!DOCTYPE html>
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           </div>
           <div>
-            <div class="contact-label">Email</div>
+            <div class="contact-label">Teaching &amp; academic</div>
             <div class="contact-value">{{ site.email }}</div>
           </div>
         </div>
+        {% if professional_email %}
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">Research, consulting &amp; industry</div>
+            <div class="contact-value">{{ professional_email }}</div>
+          </div>
+        </div>
+        {% endif %}
         <div class="contact-item">
           <div class="contact-icon">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -1967,7 +2181,7 @@ TEMPLATE = r"""<!DOCTYPE html>
           </div>
           <div>
             <div class="contact-label">Consulting</div>
-            <div class="contact-value"><a href="{{ site.links.firm }}">{{ consulting.firm }}</a></div>
+            <div class="contact-value"><a href="{{ site.links.firm }}">{{ consulting_name }}</a></div>
           </div>
         </div>
       </div>
@@ -1977,6 +2191,7 @@ TEMPLATE = r"""<!DOCTYPE html>
         {% with messages = get_flashed_messages() %}
           {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
         {% endwith %}
+        {# TODO: move the FormSubmit target to PROFESSIONAL_EMAIL once that address exists. #}
         <form method="post" action="{{ form_action }}">
           {% if site.contact_endpoint %}
           <input type="hidden" name="_subject" value="Message from timothydspivey.com" />
@@ -2017,8 +2232,9 @@ TEMPLATE = r"""<!DOCTYPE html>
 </section>
 
 <footer>
-  <p><strong>{{ site.name }}</strong> &nbsp;&middot;&nbsp; {{ site.title }} &nbsp;&middot;&nbsp; {{ site.institution }}</p>
+  <p><strong>{{ site.name }}</strong> &nbsp;&middot;&nbsp; {{ site.title }} &nbsp;&middot;&nbsp; {{ site.footer_degree }}</p>
   <p style="margin-top:.4rem">&copy; {{ year }} {{ site.name }}. All rights reserved.</p>
+  <p style="margin-top:.6rem; font-size:.72rem">Views expressed on this site are my own and do not represent my employer, Pensacola State College, or the University of South Alabama. Analyses published here use only publicly available data.</p>
 </footer>
 
 <script>
