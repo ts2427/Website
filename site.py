@@ -45,7 +45,7 @@ THIRD_PAPER_AUTHORS = "Spivey, T. D."
 # Set to an address on my own domain. The Contact section shows a second
 # email line for it only while it is non-empty, and the contact form posts to
 # it once set (FormSubmit sends a one-time activation email to the new address).
-PROFESSIONAL_EMAIL = ""
+PROFESSIONAL_EMAIL = "timothy@thresholddatasciences.com"
 
 # Change only after the Florida LLC is filed.
 CONSULTING_NAME = "Threshold Data Sciences (in formation)"
@@ -435,7 +435,7 @@ TEACHING = {
             "building_alt": "M. J. Menge clock tower, Pensacola State College",
             "logo": "https://en.wikipedia.org/wiki/Special:FilePath/Logo-of-Pensacola-State-College.svg",
             "logo_alt": "Pensacola State College logo",
-            "courses": ["Introduction to Entrepreneurship", "Small Business Accounting"],
+            "courses": ["Introduction to Entrepreneurship", "Entrepreneurship Marketing and Sales"],
         },
         {
             "name": "University of West Florida",
