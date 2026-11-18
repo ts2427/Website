@@ -1,13 +1,15 @@
-# "Ready to teach": course + one-line basis.
-- course: Introduction to Information Systems / MIS
-  basis: Nearly 20 years in telecom operations; current MIS supervisor
-- course: Business Analytics / Data Analytics
-  basis: MBA in Business Analytics; dissertation data pipeline; public retention analytics playbook
-- course: Database Management / SQL for Business
-  basis: Daily production SQL and executive reporting
-- course: Python for Business Analytics
-  basis: Python research pipelines for breach and broadband data
-- course: IT Governance, Risk and Cybersecurity Management
-  basis: Dissertation research; ISACA Journal publications
-- course: Business Statistics / Forecasting
-  basis: Six years leading statistical workforce forecasting
+# "Teaching interests": course + one-line basis.
+# intro renders above the list. Update the "(expected 2027)" wording once the
+# degree is conferred.
+intro: "Information systems and analytics courses, with the PhD in Business Analytics (expected 2027):"
+items:
+  - course: Business Analytics / Data Analytics
+    basis: MBA in Business Analytics; dissertation data pipeline
+  - course: Database Management / SQL for Business
+    basis: Research and production data pipelines
+  - course: Python for Business Analytics
+    basis: Python research pipelines for breach and broadband data
+  - course: IT Governance, Risk and Cybersecurity Management
+    basis: Dissertation research; ISACA Journal publications
+  - course: Business Statistics / Forecasting
+    basis: Six years leading statistical workforce forecasting

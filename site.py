@@ -195,7 +195,17 @@ for _inst in COURSES:
         for c in (_inst.get("courses") or []) if shown(c.get("title"))
     ]
 COURSES = [i for i in COURSES if shown(i.get("institution")) and i["courses"]]
-TEACHING_INTERESTS = [t for t in load_yaml("teaching_interests") if shown(t.get("course"))]
+def load_course_list(name):
+    """content/<name>.yaml with an intro line and items (course, optional basis)."""
+    data = load_yaml(name) or {}
+    items = [i for i in (data.get("items") or []) if shown(i.get("course"))]
+    for i in items:
+        i["basis"] = clean(i.get("basis"))
+    return {"intro": clean(data.get("intro")), "entries": items}
+
+
+QUALIFIED_TO_TEACH = load_course_list("qualified_to_teach")
+TEACHING_INTERESTS = load_course_list("teaching_interests")
 APPLIED_CARDS = [c for c in load_yaml("applied") if shown(c.get("title"))]
 _service = load_yaml("service") or {}
 SERVICE = {
@@ -415,13 +425,17 @@ APPLIED = {
 TEACHING = {
     "intro": (
         "Courses taught at Pensacola State College and the University of West "
-        "Florida, and the information systems and analytics courses I am "
-        "prepared to teach."
+        "Florida, the business courses I am credentialed to teach, and the "
+        "information systems and analytics courses my research prepares me for."
     ),
     "photo": "clocktower.jpg",
     "photo_alt": "M. J. Menge clock tower, Pensacola State College",
     "institutions": COURSES,
-    "interests": TEACHING_INTERESTS,
+    # Rendered in this order, each only when it has items.
+    "lists": [
+        {"title": "Qualified to teach", "id": "qualified", **QUALIFIED_TO_TEACH},
+        {"title": "Teaching interests", "id": "interests", **TEACHING_INTERESTS},
+    ],
 }
 
 CONTACT = {
@@ -1845,6 +1859,7 @@ TEMPLATE = r"""<!DOCTYPE html>
     }
     .ready-course { font-weight: 600; color: var(--navy); font-size: .95rem; }
     .ready-basis { font-size: .85rem; color: var(--muted); margin-top: .2rem; }
+    .list-intro { font-size: .95rem; color: var(--muted); margin: -.35rem 0 1rem; }
     .teaching-statement { margin-top: 2rem; }
 
     .btn-accent { background: var(--accent); color: var(--navy); }
@@ -2065,7 +2080,7 @@ TEMPLATE = r"""<!DOCTYPE html>
 </section>
 {% endif %}
 
-{% if teaching.institutions or teaching.interests %}
+{% if teaching.institutions or teaching.lists | selectattr('entries') | list %}
 <section id="teaching">
   <div class="container">
     <div class="teaching-header">
@@ -2096,17 +2111,20 @@ TEMPLATE = r"""<!DOCTYPE html>
       {% endfor %}
     </div>
     {% endif %}
-    {% if teaching.interests %}
-    <h3 class="sub-title">Ready to teach</h3>
-    <ul class="ready-list">
-      {% for t in teaching.interests %}
-      <li>
-        <div class="ready-course">{{ t.course }}</div>
-        {% if t.basis %}<div class="ready-basis">{{ t.basis }}</div>{% endif %}
-      </li>
-      {% endfor %}
-    </ul>
-    {% endif %}
+    {% for lst in teaching.lists if lst.entries %}
+    <div class="course-list" id="teaching-{{ lst.id }}">
+      <h3 class="sub-title">{{ lst.title }}</h3>
+      {% if lst.intro %}<p class="list-intro">{{ lst.intro }}</p>{% endif %}
+      <ul class="ready-list">
+        {% for t in lst.entries %}
+        <li>
+          <div class="ready-course">{{ t.course }}</div>
+          {% if t.basis %}<div class="ready-basis">{{ t.basis }}</div>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
     {% if teaching_statement %}
     <p class="teaching-statement"><a href="{{ teaching_statement }}" class="btn btn-accent">Teaching statement (PDF)</a></p>
     {% endif %}

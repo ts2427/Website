@@ -1,0 +1,8 @@
+# "Qualified to teach": business courses credentialed through the MBA.
+# intro renders above the list; basis per item is optional.
+intro: "Credentialed through the MBA (Business Administration):"
+items:
+  - course: Management, including organizational behavior, human resource management, operations and strategy
+  - course: Entrepreneurship and small business management
+  - course: Marketing principles and professional selling
+  - course: Introduction to business and business communication
