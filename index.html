@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Timothy D. Spivey | Empirical Researcher &amp; Data Scientist</title>
-  <meta name="description" content="Timothy D. Spivey: empirical researcher and data scientist studying mandatory breach disclosure, cybersecurity governance, telecom markets, and the ethical use of data." />
-  <meta property="og:title" content="Timothy D. Spivey — Empirical Researcher &amp; Data Scientist" />
-  <meta property="og:description" content="Timothy D. Spivey: empirical researcher and data scientist studying mandatory breach disclosure, cybersecurity governance, telecom markets, and the ethical use of data." />
+  <title>Timothy D. Spivey | PhD Candidate, Business Analytics</title>
+  <meta name="description" content="Timothy D. Spivey: business analytics researcher studying mandatory breach disclosure, competition in broadband markets, and security culture and IT governance." />
+  <link rel="canonical" href="https://timothydspivey.com/" />
+  <link rel="icon" href="static/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#0d1b2a" />
+  <meta property="og:title" content="Timothy D. Spivey — PhD Candidate, Business Analytics" />
+  <meta property="og:description" content="Timothy D. Spivey: business analytics researcher studying mandatory breach disclosure, competition in broadband markets, and security culture and IT governance." />
   <meta property="og:type" content="profile" />
   <meta property="og:url" content="https://timothydspivey.com/" />
   <meta property="og:image" content="https://timothydspivey.com/headshot.jpg" />
@@ -23,7 +26,7 @@
     ],
     "url": "https://timothydspivey.com",
     "image": "https://timothydspivey.com/headshot.jpg",
-    "jobTitle": "MIS Supervisor; Adjunct Faculty",
+    "jobTitle": "PhD Candidate",
     "affiliation": {
       "@type": "CollegeOrUniversity",
       "name": "University of South Alabama"
@@ -126,12 +129,46 @@
     }
     .nav-links a:hover { color: var(--accent); }
 
+    .skip-link {
+      position: absolute; left: 1rem; top: -3rem; z-index: 200;
+      background: var(--navy); color: var(--white); padding: .6rem 1rem;
+      border-radius: 8px; font-size: .875rem; font-weight: 600; text-decoration: none;
+    }
+    .skip-link:focus { top: .75rem; }
+    .nav-menu { display: none; position: relative; }
+    .nav-menu summary {
+      list-style: none; cursor: pointer; user-select: none;
+      display: inline-flex; align-items: center; gap: .45rem;
+      font-size: .875rem; font-weight: 600; color: var(--navy);
+      padding: .45rem .85rem; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--white);
+    }
+    .nav-menu summary::-webkit-details-marker { display: none; }
+    .nav-menu summary::before { content: "\2630"; font-size: 1rem; line-height: 1; }
+    .nav-menu[open] summary { color: var(--accent); border-color: var(--accent); }
+    .nav-menu[open] summary::before { content: "\2715"; }
+    .nav-menu ul {
+      position: absolute; right: 0; top: calc(100% + .5rem); min-width: 200px;
+      list-style: none; padding: .4rem 0; background: var(--white);
+      border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg);
+    }
+    .nav-menu a {
+      display: block; padding: .7rem 1.2rem; font-size: .95rem; font-weight: 500;
+      color: var(--text); text-decoration: none;
+    }
+    .nav-menu a:hover, .nav-menu a:focus { color: var(--accent); background: var(--sand); }
+    @media (max-width: 767px) {
+      .nav-links { display: none; }
+      .nav-menu { display: block; }
+      .nav-inner { padding: 0 1.25rem; }
+    }
+
     /* HERO */
     #hero {
-      min-height: 100vh;
+      min-height: 60vh;
       background: linear-gradient(135deg, var(--navy) 0%, #16293d 60%, var(--blue) 100%);
       display: flex; align-items: center; justify-content: center;
-      text-align: center; padding: 7rem 2rem 4rem;
+      text-align: center; padding: 6.5rem 2rem 3.5rem;
       position: relative; overflow: hidden;
     }
     #hero::before {
@@ -141,21 +178,17 @@
       pointer-events: none;
     }
     .hero-content { position: relative; z-index: 1; max-width: 720px; }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: .5rem;
-      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
-      color: rgba(255,255,255,.9); font-size: .78rem; font-weight: 600;
-      letter-spacing: .08em; text-transform: uppercase;
-      padding: .35rem 1rem; border-radius: 999px; margin-bottom: 1.5rem;
-    }
-    .hero-badge span { width: 6px; height: 6px; background: var(--accent-lit); border-radius: 50%; }
     h1 {
       font-family: 'Playfair Display', serif;
       font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 700;
       color: var(--white); line-height: 1.15; margin-bottom: 1rem;
     }
     .hero-subtitle { font-size: 1.15rem; color: rgba(255,255,255,.78); margin-bottom: .5rem; }
-    .hero-institution { font-size: .95rem; color: rgba(255,255,255,.55); margin-bottom: 2.5rem; }
+    .hero-institution { font-size: .95rem; color: rgba(255,255,255,.6); margin-bottom: 1.5rem; }
+    .hero-statement {
+      font-size: 1.12rem; line-height: 1.6; color: rgba(255,255,255,.88);
+      max-width: 620px; margin: 0 auto 2.25rem;
+    }
     .hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
     .btn {
       display: inline-flex; align-items: center; gap: .5rem;
@@ -167,14 +200,6 @@
     .btn-primary:hover { background: var(--light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,.18); }
     .btn-outline { background: transparent; color: var(--white); border: 1.5px solid rgba(255,255,255,.45); }
     .btn-outline:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.75); transform: translateY(-1px); }
-    .scroll-hint {
-      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
-      color: rgba(255,255,255,.4); font-size: .78rem; letter-spacing: .06em;
-      text-transform: uppercase; display: flex; flex-direction: column; align-items: center; gap: .5rem;
-      animation: bounce 2.4s infinite;
-    }
-    @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
-
     .drop-dot {
       display: inline-block;
       animation: dropDot .7s cubic-bezier(.34,1.1,.4,1) 1.3s both;
@@ -188,7 +213,6 @@
     }
     @media (prefers-reduced-motion: reduce) {
       .drop-dot { animation: none; }
-      .scroll-hint { animation: none; }
       html { scroll-behavior: auto; }
     }
 
@@ -227,12 +251,13 @@
     .about-role { font-size: .85rem; color: var(--accent); font-weight: 600; margin-bottom: .2rem; }
     .about-school { font-size: .82rem; color: var(--muted); }
     .about-second-role { font-size: .78rem; color: var(--muted); font-style: italic; margin: .3rem 0 .75rem; padding-top: .3rem; border-top: 1px solid var(--border); }
-    .school-logos { display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.25rem; }
-    .school-logo { height: 70px; width: auto; max-width: 48%; object-fit: contain; display: block; }
-    .about-stat-row { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; }
-    .about-stat { text-align: center; }
-    .about-stat strong { display: block; font-size: 1.4rem; font-weight: 700; color: var(--navy); }
-    .about-stat span { font-size: .75rem; color: var(--muted); }
+    .about-stat-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.25rem;
+      margin: 1rem 0 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);
+    }
+    .about-stat:first-child { grid-column: 1 / -1; }
+    .about-stat strong { display: block; font-size: 1.35rem; font-weight: 700; color: var(--navy); line-height: 1.2; }
+    .about-stat span { display: block; font-size: .75rem; color: var(--muted); line-height: 1.4; }
     .about-links { display: flex; flex-direction: column; gap: .6rem; }
     .about-link {
       display: flex; align-items: center; gap: .6rem;
@@ -248,42 +273,45 @@
       padding: .3rem .85rem; border-radius: 999px; border: 1px solid rgba(184,151,10,.3);
     }
 
-    /* GALLERY */
-    #gallery { background: var(--white); padding: 0; }
-    .gallery-strip {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr 1fr;
-      height: 340px;
-      overflow: hidden;
-    }
-    .gallery-item {
-      position: relative; overflow: hidden;
-    }
-    .gallery-item img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      transition: transform .5s ease;
-      display: block;
-    }
-    .gallery-item:hover img { transform: scale(1.04); }
-    .gallery-caption {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      background: linear-gradient(transparent, rgba(13,27,42,.7));
-      color: rgba(255,255,255,.9);
-      font-size: .78rem; font-weight: 600;
-      padding: 1.5rem .75rem .6rem;
-      letter-spacing: .03em;
-    }
-
     /* RESEARCH */
     #research { background: var(--sand); }
-    .research-card-img {
-      width: 100%; height: 160px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      display: block;
+    .streams { display: flex; flex-direction: column; gap: 1.5rem; }
+    .stream {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.75rem 2rem;
     }
+    .stream-title {
+      font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700;
+      color: var(--navy); margin-bottom: 1rem; padding-bottom: .75rem;
+      border-bottom: 2px solid var(--light);
+    }
+    .paper-list { list-style: none; display: flex; flex-direction: column; gap: 1.35rem; }
+    .paper-title { font-size: .98rem; font-weight: 600; color: var(--navy); line-height: 1.45; }
+    .paper-title a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--accent); }
+    .paper-meta { font-size: .82rem; color: var(--muted); margin-top: .2rem; }
+    .paper-abstract { font-size: .88rem; color: var(--muted); line-height: 1.65; margin-top: .4rem; max-width: 760px; }
+    .paper-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
+    .jmp-tag {
+      display: inline-block; font-size: .7rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      background: var(--accent); color: var(--navy);
+      padding: .18rem .55rem; border-radius: 4px;
+    }
+
+    /* DISSERTATION */
+    #dissertation { background: var(--white); }
+    .diss-meta { display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; font-size: .92rem; color: var(--muted); }
+    .essay-list { display: flex; flex-direction: column; gap: 1.25rem; }
+    .essay {
+      background: var(--sand); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.6rem 1.9rem;
+    }
+    .essay-featured { border-left: 4px solid var(--accent); }
+    .essay-head { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-bottom: .5rem; }
+    .essay-num { font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+    .essay-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; line-height: 1.35; color: var(--navy); }
+    .essay-title a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--accent); }
+    .essay-abstract { font-size: .92rem; color: var(--muted); margin-top: .6rem; max-width: 780px; }
     .research-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
     .research-card {
       background: var(--white); border: 1px solid var(--border);
@@ -300,33 +328,20 @@
     .research-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
     .research-card p { font-size: .875rem; color: var(--muted); line-height: 1.65; }
 
-    /* APPLIED WORK */
-    #applied { background: var(--white); }
+    /* APPLIED RESEARCH */
+    #applied { background: var(--sand); }
 
-    /* PUBLICATIONS */
-    #publications { background: var(--sand); }
-    .pub-list { display: flex; flex-direction: column; gap: 1.25rem; }
-    .pub-item {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.5rem 1.75rem;
-      display: flex; gap: 1.25rem; align-items: flex-start; transition: box-shadow .22s;
-    }
-    .pub-item:hover { box-shadow: var(--shadow); }
-    .pub-year {
-      flex-shrink: 0; font-size: .75rem; font-weight: 700; letter-spacing: .05em;
-      color: var(--accent); background: var(--light);
-      padding: .3rem .7rem; border-radius: 6px; margin-top: .15rem;
-    }
-    .pub-title { font-size: .95rem; font-weight: 600; color: var(--navy); margin-bottom: .3rem; }
-    .pub-title a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--accent); }
-    .pub-authors { font-size: .82rem; color: var(--muted); margin-bottom: .25rem; }
-    .pub-journal { font-size: .82rem; color: var(--accent); font-style: italic; }
+    /* PAPER LABELS */
+    .pub-journal { font-size: .82rem; color: var(--accent); font-style: italic; margin-top: .15rem; }
     .pub-type {
       display: inline-block; font-size: .7rem; font-weight: 700;
       letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
-      border: 1px solid var(--border); padding: .15rem .5rem; border-radius: 4px; margin-top: .5rem;
+      border: 1px solid var(--border); padding: .15rem .5rem; border-radius: 4px;
     }
-    .pub-type + .pub-type { margin-left: .4rem; }
+
+    /* TALKS & AWARDS */
+    #talks { background: var(--sand); }
+    #awards { background: var(--white); }
 
     /* SERVICE & AFFILIATIONS */
     #service { background: var(--white); }
@@ -348,65 +363,46 @@
     .service-item p { font-size: .82rem; color: var(--muted); line-height: 1.6; }
 
     /* TEACHING */
-    #teaching { background: var(--sand); }
+    #teaching { background: var(--white); }
     .teaching-header {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; margin-bottom: 3rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; margin-bottom: 1rem;
     }
     .teaching-photo {
       width: 100%; height: 240px; object-fit: cover; border-radius: var(--radius);
       box-shadow: var(--shadow-lg); display: block;
     }
     @media (max-width: 768px) { .teaching-header { grid-template-columns: 1fr; } }
-    .institution-timeline { display: flex; flex-direction: column; gap: 1.75rem; margin-top: 2.5rem; }
+    .sub-title {
+      font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--navy); margin: 2.5rem 0 1rem;
+    }
+    .institution-timeline { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; }
     .institution-block {
-      display: grid; grid-template-columns: 220px 1fr; gap: 2rem; align-items: center;
-      background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 1.5rem; box-shadow: var(--shadow); transition: all .2s;
+      background: var(--sand); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.5rem 1.75rem;
     }
-    .institution-block:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
-    .institution-media { position: relative; }
-    .institution-building { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; display: block; }
-    .institution-logo {
-      width: 52px; height: 52px; object-fit: contain; background: var(--white);
-      border-radius: 8px; padding: 5px; border: 1px solid var(--border);
-      position: absolute; bottom: -12px; left: -12px; box-shadow: var(--shadow);
-    }
-    .institution-logo-only {
-      height: 130px; display: flex; align-items: center; justify-content: center;
-      background: var(--sand); border-radius: 8px;
-    }
-    .institution-logo-only img { width: 120px; height: auto; max-height: 100px; object-fit: contain; }
     .institution-name { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--navy); }
-    .institution-role { font-size: .82rem; color: var(--muted); margin-top: .1rem; }
+    .institution-role { font-size: .85rem; color: var(--muted); margin-top: .1rem; }
     .institution-years { font-size: .78rem; color: var(--accent); font-weight: 700; letter-spacing: .04em; margin: .2rem 0 .9rem; text-transform: uppercase; }
-    .institution-courses { display: flex; flex-wrap: wrap; gap: .65rem; }
+    .institution-courses { display: flex; flex-direction: column; gap: .5rem; }
     .institution-courses span {
-      font-size: .95rem; background: var(--sand); border: 1px solid var(--border);
-      padding: .55rem 1.1rem; border-radius: 999px; color: var(--text);
+      font-size: .92rem; background: var(--white); border: 1px solid var(--border);
+      padding: .5rem .9rem; border-radius: 8px; color: var(--text);
     }
-    @media (max-width: 640px) {
-      .institution-block { grid-template-columns: 1fr; }
-      .institution-building { height: 170px; }
+    .ready-list {
+      list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
     }
+    .ready-list li {
+      border: 1px solid var(--border); border-left: 3px solid var(--accent);
+      border-radius: 8px; padding: 1rem 1.25rem; background: var(--white);
+    }
+    .ready-course { font-weight: 600; color: var(--navy); font-size: .95rem; }
+    .ready-basis { font-size: .85rem; color: var(--muted); margin-top: .2rem; }
+    .teaching-statement { margin-top: 2rem; }
 
-    /* CONSULTING */
-    #consulting { background: var(--white); }
-    .consult-tagline {
-      font-size: .78rem; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 1.5rem;
-    }
-    .consult-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
-    .consult-card {
-      background: var(--sand); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.75rem; transition: all .2s;
-    }
-    .consult-card:hover { background: var(--light); border-color: rgba(184,151,10,.35); transform: translateY(-2px); }
-    .consult-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
-    .consult-card p { font-size: .875rem; color: var(--muted); line-height: 1.65; }
     .btn-accent { background: var(--accent); color: var(--navy); }
     .btn-accent:hover { background: var(--accent-lit); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(184,151,10,.35); }
-    .btn-outline-navy { background: transparent; color: var(--navy); border: 1.5px solid var(--border); margin-left: .75rem; }
-    .btn-outline-navy:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
 
     /* CV STRIP */
     #cv {
@@ -467,46 +463,57 @@
       text-align: center; padding: 2rem; font-size: .82rem;
     }
     footer strong { color: rgba(255,255,255,.8); }
+    .footer-links { margin-top: .5rem; }
+    .footer-links a { color: var(--accent-lit); text-decoration: none; }
+    .footer-links a:hover { text-decoration: underline; }
 
     /* RESPONSIVE */
     @media (max-width: 768px) {
       .about-grid { grid-template-columns: 1fr; gap: 2rem; }
       .contact-grid { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
-      .nav-links { display: none; }
-      .gallery-strip { grid-template-columns: 1fr; height: auto; }
-      .gallery-item { height: 220px; }
+      .stream, .essay { padding: 1.35rem 1.25rem; }
+    }
+    @media (max-width: 480px) {
+      section { padding: 4rem 1.25rem; }
+      #cv { padding: 3.5rem 1.25rem; }
+      .institution-timeline, .ready-list { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-<nav>
+<a class="skip-link" href="#main">Skip to content</a>
+<nav aria-label="Main">
   <div class="nav-inner">
     <a href="#hero" class="nav-logo">Timothy D. Spivey</a>
     <ul class="nav-links">
-      <li><a href="#about">About</a></li><li><a href="#research">Research</a></li><li><a href="#applied">Applied Work</a></li><li><a href="#publications">Publications</a></li><li><a href="#teaching">Teaching</a></li><li><a href="https://thresholddatasciences.com">Consulting</a></li><li><a href="blog/">Blog</a></li><li><a href="#contact">Contact</a></li>
+      <li><a href="#research">Research</a></li><li><a href="#teaching">Teaching</a></li><li><a href="timothy-spivey-cv.pdf">CV</a></li><li><a href="#contact">Contact</a></li>
     </ul>
+    <details class="nav-menu">
+      <summary>Menu</summary>
+      <ul>
+        <li><a href="#research">Research</a></li><li><a href="#teaching">Teaching</a></li><li><a href="timothy-spivey-cv.pdf">CV</a></li><li><a href="#contact">Contact</a></li>
+      </ul>
+    </details>
   </div>
 </nav>
 
+<main id="main">
 <section id="hero">
   <div class="hero-content">
-    <div class="hero-badge"><span></span>Academic Portfolio</div>
     <h1>Timothy D<span class="drop-dot">.</span> Spivey</h1>
-    <p class="hero-subtitle">Empirical Researcher &amp; Data Scientist</p>
+    
     <p class="hero-institution">PhD Candidate, Business Administration (Business Analytics) · University of South Alabama · Mitchell College of Business<br/>Dissertation defense: January 2027</p>
+    
+    <p class="hero-statement">I study how the public data behind regulatory research is built, and how fixing it changes what we conclude about disclosure rules and the markets they govern.</p>
     <div class="hero-ctas">
-      <a href="#research" class="btn btn-primary">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-        View Research
+      <a href="timothy-spivey-cv.pdf" class="btn btn-primary">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+        CV (PDF)
       </a>
-      <a href="#contact" class="btn btn-outline">Get in Touch</a>
+      <a href="#research" class="btn btn-outline">Research</a>
     </div>
-  </div>
-  <div class="scroll-hint">
-    <span>Scroll</span>
-    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
   </div>
 </section>
 
@@ -520,44 +527,35 @@
           <div class="about-role">PhD Candidate — Business Analytics</div>
           <div class="about-school">University of South Alabama</div>
           <div class="about-second-role">Adjunct Instructor · Pensacola State College</div>
-          <div class="school-logos">
-            
-            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/University%20of%20South%20Alabama%20logo.png?width=400" alt="University of South Alabama" class="school-logo" />
-            
-            <img src="https://en.wikipedia.org/wiki/Special:FilePath/Logo-of-Pensacola-State-College.svg" alt="Pensacola State College" class="school-logo" />
-            
-          </div>
+          
           <div class="about-stat-row">
             
-            <div class="about-stat"><strong>2</strong><span>Publications</span></div>
+            <div class="about-stat"><strong>1,054 → 489</strong><span>breach records resolved to events</span></div>
             
-            <div class="about-stat"><strong>6</strong><span>Research Areas</span></div>
+            <div class="about-stat"><strong>3</strong><span>dissertation essays</span></div>
             
-            <div class="about-stat"><strong>2</strong><span>Working Papers</span></div>
+            <div class="about-stat"><strong>3</strong><span>sole-authored working papers</span></div>
             
           </div>
+          
           <div class="about-links">
-            <a href="https://scholar.google.com/citations?user=S9sSV1EAAAAJ&amp;hl=en" target="_blank" class="about-link">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+            <a href="https://scholar.google.com/citations?user=S9sSV1EAAAAJ&amp;hl=en" target="_blank" rel="me noopener" class="about-link">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
               Google Scholar Profile
             </a>
             
-            <a href="https://orcid.org/0009-0009-8990-4308" target="_blank" class="about-link">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 10v7M8 7v.01M12 10v7h2.5a3.5 3.5 0 000-7H12z"/></svg>
+            <a href="https://orcid.org/0009-0009-8990-4308" target="_blank" rel="me noopener" class="about-link">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 10v7M8 7v.01M12 10v7h2.5a3.5 3.5 0 000-7H12z"/></svg>
               ORCID 0009-0009-8990-4308
             </a>
             
-            <a href="https://www.linkedin.com/in/tispivey/" target="_blank" class="about-link">
-              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 11.001-4.124 2.062 2.062 0 01-.001 4.124zM7.114 20.452H3.558V9h3.556v11.452z"/></svg>
+            <a href="https://www.linkedin.com/in/tispivey/" target="_blank" rel="me noopener" class="about-link">
+              <svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 11.001-4.124 2.062 2.062 0 01-.001 4.124zM7.114 20.452H3.558V9h3.556v11.452z"/></svg>
               Timothy D. Spivey on LinkedIn
             </a>
             <a href="mailto:tspivey@pensacolastate.edu" class="about-link">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
               tspivey@pensacolastate.edu
-            </a>
-            <a href="https://thresholddatasciences.com" class="about-link">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1m4 0h1M9 13h1m4 0h1M9 17h1m4 0h1"/></svg>
-              Threshold Data Sciences (in formation)
             </a>
           </div>
         </div>
@@ -568,87 +566,225 @@
         <h2 class="section-title">Researcher, Analyst &amp; Educator</h2>
         <div class="divider"></div>
         <p>Timothy D. Spivey is a doctoral candidate in Business Administration, with a concentration in Business Analytics, at the University of South Alabama, where his dissertation examines what mandatory breach disclosure timing actually does — to markets, to organizations, and to boards.</p><p>The question is not whether disclosure matters. It is whether mandating when a firm discloses produces the benefit regulators assumed it would. Across three empirical channels, his work finds real costs and little evidence of the intended benefit. The empirical backbone is a natural experiment built on the FCC’s 2007 mandatory disclosure rule (47 CFR § 64.2011), applied to 1,054 breach events from 2006 to 2025.</p><p>His broader work follows two lines. One examines security culture: how fear-based policies, rigid IT controls and workplace surveillance can create the very risks they are meant to prevent. The other extends into telecom markets: how competition from fiber and fixed wireless shapes cable incumbents’ service and networks, and how operators should decide which customers to retain.</p><p>Outside the dissertation, he supervises management information systems at Mediacom Communications and teaches Introduction to Entrepreneurship and Entrepreneurship Marketing and Sales as an adjunct at Pensacola State College. Nearly twenty years of telecom operations lies beneath the research: he has built the reporting pipelines, sat in the escalation calls, and watched compliance decisions get made under real pressure. That is why the empirical questions he chases are the ones practitioners recognize.</p><p>He holds an MBA in Business Analytics from the University of West Florida and a BAS in Organizational Administration from Pensacola State College — where he now teaches.</p>
+        
         <div class="tags">
           <span class="tag">Mandatory Disclosure</span><span class="tag">Cybersecurity Governance</span><span class="tag">Event Studies</span><span class="tag">Capital Markets</span><span class="tag">IT Ethics</span><span class="tag">Business Analytics</span><span class="tag">Telecom Markets</span><span class="tag">Customer Analytics</span>
         </div>
+        
       </div>
     </div>
   </div>
 </section>
 
-<section id="gallery">
-  <div class="gallery-strip">
+
+<section id="dissertation">
+  <div class="container">
+    <div class="section-label">Doctoral research</div>
+    <h2 class="section-title">Dissertation</h2>
     
-    <div class="gallery-item">
-      <img src="https://commons.wikimedia.org/wiki/Special:FilePath/MitchellCollegeofBusiness.JPG?width=1200" alt="Mitchell College of Business, University of South Alabama" loading="lazy" />
-      <div class="gallery-caption">Mitchell College of Business</div>
+    <p class="diss-meta">
+      
+      <span>Dissertation defense: January 2027</span>
+    </p>
+    
+    <div class="divider"></div>
+    <div class="essay-list">
+      
+      <article class="essay essay-featured">
+        <div class="essay-head">
+          <span class="essay-num">Essay 1</span>
+          <span class="jmp-tag">Job market paper</span>
+        </div>
+        <h3 class="essay-title">Records Are Not Events: Disclosure Timing, Regulatory Status, and Market Reactions to Data Breaches</h3>
+        
+      </article>
+      
     </div>
-    
-    <div class="gallery-item">
-      <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&amp;q=70" alt="Equity market data on screen" loading="lazy" />
-      <div class="gallery-caption">Breach Disclosure &amp; Market Response Research</div>
-    </div>
-    
-    <div class="gallery-item">
-      <img src="https://commons.wikimedia.org/wiki/Special:FilePath/MoultonBellTower.jpg?width=1200" alt="Moulton Bell Tower, University of South Alabama" loading="lazy" />
-      <div class="gallery-caption">University of South Alabama</div>
-    </div>
-    
   </div>
 </section>
+
+
 
 <section id="research">
   <div class="container">
     <div class="section-label">Scholarship</div>
-    <h2 class="section-title">Research Interests</h2>
-    <p class="section-desc">What happens when regulation and competition meet reality: mandatory disclosure, cybersecurity governance, telecom markets, and the ethical use of data, measured empirically.</p>
+    <h2 class="section-title">Research</h2>
+    <p class="section-desc">Three lines of empirical work: mandatory disclosure and markets, competition and regulation in broadband, and security culture and IT governance.</p>
     <div class="divider"></div>
-    <div class="research-grid">
+    <div class="streams">
       
-      <div class="research-card">
-        <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&amp;q=70" alt="Stock market chart" class="research-card-img" loading="lazy" />
-        <h3>Markets &amp; Breach Pricing</h3>
-        <p>How mandatory disclosure timing affects equity valuations and how investors price breach risk. Does forcing faster disclosure protect markets, or does it amplify volatility?</p>
+      <div class="stream">
+        <h3 class="stream-title">Mandatory disclosure and markets</h3>
+        <ul class="paper-list">
+          
+          <li class="paper">
+            <div class="paper-title">Records Are Not Events: Disclosure Timing, Regulatory Status, and Market Reactions to Data Breaches</div>
+            <div class="paper-meta">Sole author · 2026</div>
+            
+            
+            <div class="paper-tags">
+              <span class="jmp-tag">Job market paper</span>
+              <span class="pub-type">Dissertation essay</span>
+              <span class="pub-type">Working paper</span>
+            </div>
+          </li>
+          
+        </ul>
       </div>
       
-      <div class="research-card">
-        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&amp;q=70" alt="Data center operations" class="research-card-img" loading="lazy" />
-        <h3>Post-Disclosure Uncertainty</h3>
-        <p>The operational friction of disclosure: how mandates strain organizational capacity, extend remediation timelines, and leave information asymmetries standing even after the report is filed.</p>
+      <div class="stream">
+        <h3 class="stream-title">Competition and regulation in broadband</h3>
+        <ul class="paper-list">
+          
+          <li class="paper">
+            <div class="paper-title">Competition Without Discipline? Fiber Entry, Complaints, and Cable Incumbents&#39; Network Offers</div>
+            <div class="paper-meta">Sole author · 2026</div>
+            
+            
+            <div class="paper-tags">
+              
+              
+              <span class="pub-type">Working paper</span>
+            </div>
+          </li>
+          
+        </ul>
       </div>
       
-      <div class="research-card">
-        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&amp;q=70" alt="Boardroom meeting" class="research-card-img" loading="lazy" />
-        <h3>Boards &amp; Governance Disruption</h3>
-        <p>Board-level response and decision-making under disclosure pressure. How compliance requirements reshape governance structures without necessarily improving security outcomes.</p>
-      </div>
-      
-      <div class="research-card">
-        <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&amp;q=70" alt="Documents and screening" class="research-card-img" loading="lazy" />
-        <h3>AI Résumé Screening &amp; Hiring Ethics</h3>
-        <p>Algorithmic bias in hiring systems and the over-education paradox, framed through social exchange theory and organizational justice theory.</p>
-      </div>
-      
-      <div class="research-card">
-        <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&amp;q=70" alt="Data privacy and security" class="research-card-img" loading="lazy" />
-        <h3>Privacy in Analytics Workflows</h3>
-        <p>What actually causes privacy problems inside enterprise analytical pipelines, and where governance breaks down.</p>
-      </div>
-      
-      <div class="research-card">
-        <img src="static/img/telecom-card.svg" alt="Abstract fiber network lines" class="research-card-img" loading="lazy" />
-        <h3>Telecom Markets &amp; Customer Analytics</h3>
-        <p>How competition from fiber and fixed wireless shapes cable incumbents&#39; service and networks, and how operators decide whom to retain. Pre-registered designs on public FCC data.</p>
+      <div class="stream">
+        <h3 class="stream-title">Security culture and IT governance</h3>
+        <ul class="paper-list">
+          
+          <li class="paper">
+            <div class="paper-title">The Insider Threat Paradox: How Security Policies Inadvertently Create the Threats They&#39;re Designed to Prevent</div>
+            <div class="paper-meta">Sole author · 2026</div>
+            
+            <p class="paper-abstract">Third paper in a series on security culture: how device-ownership claims and workplace surveillance turn loyal employees into insider threats, and a rights-based alternative.</p>
+            <div class="paper-tags">
+              
+              
+              <span class="pub-type">Working paper</span>
+            </div>
+          </li>
+          
+          <li class="paper">
+            <div class="paper-title">Navigating the Shadows — A Comprehensive Framework for Anticipating, Identifying, and Managing Shadow IT in Organizations</div>
+            <div class="paper-meta">Spivey, T. D. &amp; McIlveene, T. · 2024</div>
+            <div class="pub-journal">ISACA Journal, 6</div>
+            
+            <div class="paper-tags">
+              
+              <span class="pub-type">Practitioner publication</span>
+              <span class="pub-type">Published</span>
+            </div>
+          </li>
+          
+          <li class="paper">
+            <div class="paper-title">To Fear or Not to Fear: How to Create an Optimal Security Culture</div>
+            <div class="paper-meta">Batchelor, J. H., Spivey, T. D., &amp; McIlveene, T. · 2023</div>
+            <div class="pub-journal">ISACA Journal, 6, 34–37</div>
+            
+            <div class="paper-tags">
+              
+              <span class="pub-type">Practitioner publication</span>
+              <span class="pub-type">Published</span>
+            </div>
+          </li>
+          
+        </ul>
       </div>
       
     </div>
   </div>
 </section>
 
+
+
+<section id="teaching">
+  <div class="container">
+    <div class="teaching-header">
+      <div>
+        <div class="section-label">Classroom</div>
+        <h2 class="section-title">Teaching</h2>
+        <p class="section-desc" style="margin-bottom:0">Courses taught at Pensacola State College and the University of West Florida, and the information systems and analytics courses I am prepared to teach.</p>
+        <div class="divider" style="margin-bottom:0"></div>
+      </div>
+      
+      <div>
+        <img src="clocktower.jpg" alt="M. J. Menge clock tower, Pensacola State College" class="teaching-photo" loading="lazy" />
+      </div>
+      
+    </div>
+    
+    <h3 class="sub-title">Courses taught</h3>
+    <div class="institution-timeline">
+      
+      <div class="institution-block">
+        <div class="institution-name">Pensacola State College</div>
+        <div class="institution-role">Adjunct Instructor</div>
+        <div class="institution-years">2025–present</div>
+        <div class="institution-courses">
+          <span>Introduction to Entrepreneurship (current)</span><span>Entrepreneurship Marketing and Sales (Spring 2027)</span>
+        </div>
+      </div>
+      
+      <div class="institution-block">
+        <div class="institution-name">University of West Florida</div>
+        <div class="institution-role">Graduate Teaching Assistant</div>
+        <div class="institution-years">2022–2024</div>
+        <div class="institution-courses">
+          <span>Writing for Business: Theory and Practice</span>
+        </div>
+      </div>
+      
+    </div>
+    
+    
+    <h3 class="sub-title">Ready to teach</h3>
+    <ul class="ready-list">
+      
+      <li>
+        <div class="ready-course">Introduction to Information Systems / MIS</div>
+        <div class="ready-basis">Nearly 20 years in telecom operations; current MIS supervisor</div>
+      </li>
+      
+      <li>
+        <div class="ready-course">Business Analytics / Data Analytics</div>
+        <div class="ready-basis">MBA in Business Analytics; dissertation data pipeline; public retention analytics playbook</div>
+      </li>
+      
+      <li>
+        <div class="ready-course">Database Management / SQL for Business</div>
+        <div class="ready-basis">Daily production SQL and executive reporting</div>
+      </li>
+      
+      <li>
+        <div class="ready-course">Python for Business Analytics</div>
+        <div class="ready-basis">Python research pipelines for breach and broadband data</div>
+      </li>
+      
+      <li>
+        <div class="ready-course">IT Governance, Risk and Cybersecurity Management</div>
+        <div class="ready-basis">Dissertation research; ISACA Journal publications</div>
+      </li>
+      
+      <li>
+        <div class="ready-course">Business Statistics / Forecasting</div>
+        <div class="ready-basis">Six years leading statistical workforce forecasting</div>
+      </li>
+      
+    </ul>
+    
+    
+  </div>
+</section>
+
+
+
 <section id="applied">
   <div class="container">
     <div class="section-label">Practice</div>
-    <h2 class="section-title">Applied Work</h2>
+    <h2 class="section-title">Applied research</h2>
     <p class="section-desc">Analytics built to answer operating questions, using public data and reproducible code.</p>
     <div class="divider"></div>
     <div class="research-grid">
@@ -656,7 +792,7 @@
       <div class="research-card">
         <h3>Who Leaves, Who to Save, and What It Costs</h3>
         <div class="section-label">Interactive analysis · 2026</div>
-        <p>A public-data retention playbook for broadband. It follows churn analysis through to the targeting decision: calibrated models, profit-based contact rules, uplift on a randomized experiment, and a fairness audit, with findings checked against real operator data.</p>
+        <p>A public-data retention playbook for broadband. It follows churn analysis through to the targeting decision: calibrated models, profit-based contact rules, uplift on a randomized experiment, and a fairness audit, with findings checked against operators&#39; public disclosures.</p>
         <a href="retention-playbook.html" class="btn btn-accent" style="margin-top:1.25rem">Open the playbook</a>
       </div>
       
@@ -678,170 +814,56 @@
   </div>
 </section>
 
-<section id="publications">
-  <div class="container">
-    <div class="section-label">Scholarship</div>
-    <h2 class="section-title">Selected Publications</h2>
-    <p class="section-desc">Practitioner research on security culture and IT governance, and current working papers.</p>
-    <div class="divider"></div>
-    <div class="pub-list">
-      
-      <div class="pub-item">
-        <div class="pub-year">2024</div>
-        <div>
-          <div class="pub-title">
-            Navigating the Shadows — A Comprehensive Framework for Anticipating, Identifying, and Managing Shadow IT in Organizations
-          </div>
-          <div class="pub-authors">Spivey, T. D., &amp; McIlveene, T.</div>
-          <div class="pub-journal">ISACA Journal, 6</div>
-          <span class="pub-type">Journal Article</span><span class="pub-type">Published</span>
-        </div>
-      </div>
-      
-      <div class="pub-item">
-        <div class="pub-year">2023</div>
-        <div>
-          <div class="pub-title">
-            To Fear or Not to Fear: How to Create an Optimal Security Culture
-          </div>
-          <div class="pub-authors">Batchelor, J. H., Spivey, T. D., &amp; McIlveene, T.</div>
-          <div class="pub-journal">ISACA Journal, 6, 34–37</div>
-          <span class="pub-type">Journal Article</span><span class="pub-type">Published</span>
-        </div>
-      </div>
-      
-    </div>
-    
-    <div class="section-label" style="margin-top:2.5rem">Working Papers</div>
-    <div class="pub-list">
-      
-      <div class="pub-item">
-        <div class="pub-year">2026</div>
-        <div>
-          <div class="pub-title">
-            Competition Without Discipline? Fiber Entry, Complaints, and Cable Incumbents&#39; Network Offers
-          </div>
-          <div class="pub-authors">Spivey, T. D.</div>
-          
-          <span class="pub-type">Working Paper</span>
-        </div>
-      </div>
-      
-      <div class="pub-item">
-        <div class="pub-year">2026</div>
-        <div>
-          <div class="pub-title">
-            The Insider Threat Paradox: How Security Policies Inadvertently Create the Threats They&#39;re Designed to Prevent
-          </div>
-          <div class="pub-authors">Spivey, T. D.</div>
-          <div class="pub-authors">Third paper in a series on security culture: how device-ownership claims and workplace surveillance turn loyal employees into insider threats, and a rights-based alternative.</div>
-          <span class="pub-type">Working Paper</span>
-        </div>
-      </div>
-      
-    </div>
-    
-  </div>
-</section>
+
 
 <section id="service">
   <div class="container">
     <div class="section-label">Scholarship</div>
     <h2 class="section-title">Service &amp; Affiliations</h2>
-    <p class="section-desc">Editorial review service and professional memberships.</p>
     <div class="divider"></div>
     <div class="service-grid">
+      
       <div class="service-card">
         <h3>Editorial &amp; Review Service</h3>
         
         <div class="service-item">
           <div class="service-role">Peer Reviewer · <em>Journal of Risk and Financial Management (MDPI)</em></div>
-          <div class="service-years">2025 – Present</div>
-          <p>International peer-reviewed journal, Q1 in Business, Management and Accounting; indexed in Scopus, EconBiz, EconLit, and RePEc.</p>
         </div>
         
         <div class="service-item">
           <div class="service-role">Peer Reviewer · <em>Business Strategy &amp; Development (Wiley)</em></div>
-          <div class="service-years">2025 – Present</div>
-          <p>International peer-reviewed journal covering strategic management, business development, and organizational growth.</p>
         </div>
         
       </div>
+      
+      
       <div class="service-card">
         <h3>Professional Affiliations</h3>
         
         <div class="service-item">
           <div class="service-role">ISACA</div>
-          <p>Information Systems Audit and Control Association — professional association for IT audit, governance, and security.</p>
         </div>
         
       </div>
+      
     </div>
   </div>
 </section>
 
-<section id="teaching">
-  <div class="container">
-    <div class="teaching-header">
-      <div>
-        <div class="section-label">Classroom</div>
-        <h2 class="section-title">Courses Taught</h2>
-        <p class="section-desc" style="margin-bottom:0">Courses in entrepreneurship, marketing and sales, and business writing at Pensacola State College and the University of West Florida, alongside doctoral study.</p>
-        <div class="divider" style="margin-bottom:0"></div>
-      </div>
-      <div>
-        <img src="clocktower.jpg" alt="M. J. Menge clock tower, Pensacola State College" class="teaching-photo" loading="lazy" />
-      </div>
-    </div>
-    <div class="institution-timeline">
-      
-      <div class="institution-block">
-        
-        <div class="institution-media">
-          <img src="clocktower.jpg" alt="M. J. Menge clock tower, Pensacola State College" class="institution-building" loading="lazy" />
-          <img src="https://en.wikipedia.org/wiki/Special:FilePath/Logo-of-Pensacola-State-College.svg" alt="Pensacola State College logo" class="institution-logo" loading="lazy" />
-        </div>
-        
-        <div>
-          <div class="institution-name">Pensacola State College</div>
-          <div class="institution-role">Adjunct Instructor · Instructor of record</div>
-          <div class="institution-years">2025 – Present</div>
-          <div class="institution-courses">
-            <span>Introduction to Entrepreneurship</span><span>Entrepreneurship Marketing and Sales</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="institution-block">
-        
-        <div class="institution-media">
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/John%20C.%20Pace%20Library%2C%20University%20of%20West%20Florida.jpg?width=1000" alt="John C. Pace Library, University of West Florida" class="institution-building" loading="lazy" />
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Univers%20of%20west%20florida%20logo.png?width=400" alt="University of West Florida logo" class="institution-logo" loading="lazy" />
-        </div>
-        
-        <div>
-          <div class="institution-name">University of West Florida</div>
-          <div class="institution-role">Graduate Teaching Assistant</div>
-          <div class="institution-years">2022 – 2024</div>
-          <div class="institution-courses">
-            <span>Writing for Business: Theory and Practice</span>
-          </div>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-</section>
+
+
+
+
 
 <section id="cv">
   <h2>Download Full Curriculum Vitae</h2>
   <p>Academic history, complete publication list, applied work, and service record.</p>
   <div class="cv-buttons">
     <a href="timothy-spivey-cv.pdf" target="_blank" class="btn btn-primary">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
       Download CV (PDF)
     </a>
-    <a href="https://scholar.google.com/citations?user=S9sSV1EAAAAJ&amp;hl=en" target="_blank" class="btn btn-outline">Google Scholar</a>
+    <a href="https://scholar.google.com/citations?user=S9sSV1EAAAAJ&amp;hl=en" target="_blank" rel="me noopener" class="btn btn-outline">Google Scholar</a>
   </div>
 </section>
 
@@ -854,9 +876,10 @@
     <div class="contact-grid">
       <div class="contact-info">
         <h3>Contact Information</h3>
+        
         <div class="contact-item">
           <div class="contact-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           </div>
           <div>
             <div class="contact-label">Teaching &amp; academic</div>
@@ -866,7 +889,7 @@
         
         <div class="contact-item">
           <div class="contact-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           </div>
           <div>
             <div class="contact-label">Research, consulting &amp; industry</div>
@@ -876,7 +899,7 @@
         
         <div class="contact-item">
           <div class="contact-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           </div>
           <div>
             <div class="contact-label">Location</div>
@@ -885,40 +908,30 @@
         </div>
         <div class="contact-item">
           <div class="contact-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
           </div>
           <div>
             <div class="contact-label">Scholar</div>
-            <div class="contact-value"><a href="https://scholar.google.com/citations?user=S9sSV1EAAAAJ&amp;hl=en" target="_blank">Google Scholar Profile</a></div>
+            <div class="contact-value"><a href="https://scholar.google.com/citations?user=S9sSV1EAAAAJ&amp;hl=en" target="_blank" rel="me noopener">Google Scholar Profile</a></div>
           </div>
         </div>
         
         <div class="contact-item">
           <div class="contact-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 10v7M8 7v.01M12 10v7h2.5a3.5 3.5 0 000-7H12z"/></svg>
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 10v7M8 7v.01M12 10v7h2.5a3.5 3.5 0 000-7H12z"/></svg>
           </div>
           <div>
             <div class="contact-label">ORCID</div>
-            <div class="contact-value"><a href="https://orcid.org/0009-0009-8990-4308" target="_blank">ORCID 0009-0009-8990-4308</a></div>
+            <div class="contact-value"><a href="https://orcid.org/0009-0009-8990-4308" target="_blank" rel="me noopener">ORCID 0009-0009-8990-4308</a></div>
           </div>
         </div>
         
-        <div class="contact-item">
-          <div class="contact-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1m4 0h1M9 13h1m4 0h1M9 17h1m4 0h1"/></svg>
-          </div>
-          <div>
-            <div class="contact-label">Consulting</div>
-            <div class="contact-value"><a href="https://thresholddatasciences.com">Threshold Data Sciences (in formation)</a></div>
-          </div>
-        </div>
       </div>
 
       <div class="contact-form">
         <h3>Send a Message</h3>
         
           
-        
         
         <form method="post" action="https://formsubmit.co/timothy@thresholddatasciences.com">
           
@@ -929,28 +942,28 @@
           
           <div class="form-row">
             <div class="form-group">
-              <label>First Name</label>
-              <input type="text" name="first_name" placeholder="Jane" required />
+              <label for="f-first">First Name</label>
+              <input id="f-first" type="text" name="first_name" placeholder="Jane" required />
             </div>
             <div class="form-group">
-              <label>Last Name</label>
-              <input type="text" name="last_name" placeholder="Smith" required />
+              <label for="f-last">Last Name</label>
+              <input id="f-last" type="text" name="last_name" placeholder="Smith" required />
             </div>
           </div>
           <div class="form-group">
-            <label>Email</label>
-            <input type="email" name="email" placeholder="jane@example.com" required />
+            <label for="f-email">Email</label>
+            <input id="f-email" type="email" name="email" placeholder="jane@example.com" required />
           </div>
           <div class="form-group">
-            <label>Subject</label>
-            <select name="topic">
+            <label for="f-topic">Subject</label>
+            <select id="f-topic" name="topic">
               <option value="">Select a topic&hellip;</option>
-              <option>Research Collaboration</option><option>Speaking / Presentation</option><option>Teaching Inquiry</option><option>Consulting Engagement</option><option>Industry / Analytics</option><option>Request CV</option><option>Other</option>
+              <option>Research Collaboration</option><option>Speaking / Presentation</option><option>Teaching Inquiry</option><option>Industry or consulting</option><option>Request CV</option><option>Other</option>
             </select>
           </div>
           <div class="form-group">
-            <label>Message</label>
-            <textarea name="message" placeholder="Your message&hellip;" required></textarea>
+            <label for="f-message">Message</label>
+            <textarea id="f-message" name="message" placeholder="Your message&hellip;" required></textarea>
           </div>
           <button class="btn-submit" type="submit">Send Message</button>
         </form>
@@ -958,9 +971,11 @@
     </div>
   </div>
 </section>
+</main>
 
 <footer>
-  <p><strong>Timothy D. Spivey</strong> &nbsp;&middot;&nbsp; Empirical Researcher &amp; Data Scientist &nbsp;&middot;&nbsp; PhD Candidate, University of South Alabama · Mitchell College of Business</p>
+  <p><strong>Timothy D. Spivey</strong> &nbsp;&middot;&nbsp; PhD Candidate, University of South Alabama · Mitchell College of Business</p>
+  <p class="footer-links">Also: <a href="https://thresholddatasciences.com">Threshold Data Sciences</a> &nbsp;&middot;&nbsp; Writing: <a href="blog/">Threshold Effects</a></p>
   <p style="margin-top:.4rem">&copy; 2026 Timothy D. Spivey. All rights reserved.</p>
   <p style="margin-top:.6rem; font-size:.72rem">Views expressed on this site are my own and do not represent my employer, Pensacola State College, or the University of South Alabama. Analyses published here use only publicly available data.</p>
 </footer>
@@ -978,28 +993,6 @@
     });
   }, { threshold: 0.4 });
   sections.forEach(s => observer.observe(s));
-
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!reduceMotion) {
-    const cards = document.querySelectorAll('.research-card, .pub-item, .consult-card, .institution-block, .about-card');
-    cards.forEach(c => {
-      c.style.opacity = '0';
-      c.style.transform = 'translateY(18px)';
-      c.style.transition = 'opacity .45s ease, transform .45s ease';
-    });
-    const cardObserver = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          setTimeout(() => {
-            e.target.style.opacity = '1';
-            e.target.style.transform = 'translateY(0)';
-          }, 60);
-          cardObserver.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.1 });
-    cards.forEach(c => cardObserver.observe(c));
-  }
 </script>
 </body>
 </html>

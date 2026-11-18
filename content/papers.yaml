@@ -1,0 +1,97 @@
+# Papers. One entry per paper; order within a stream is the display order.
+#
+# Fields:
+#   title, authors (list), year, venue, abstract, url
+#   stream:   disclosure | broadband | security_culture
+#   kind:     research | practitioner | dissertation_essay
+#   status:   working_paper | under_review | revise_resubmit | accepted | published
+#   featured: true marks the job market paper
+#
+# Rules the build enforces:
+#   - venue is never shown while status is working_paper (no target journals).
+#   - Any value starting with "TODO" renders nothing; a paper whose title is
+#     TODO is hidden entirely.
+#   - abstract is a description only: no coefficients, counts or findings.
+
+# --- Dissertation essays (in essay order) ------------------------------------
+- title: "Records Are Not Events: Disclosure Timing, Regulatory Status, and Market Reactions to Data Breaches"
+  authors: ["Spivey, T. D."]
+  year: 2026
+  stream: disclosure
+  kind: dissertation_essay
+  status: working_paper
+  venue: ""
+  abstract: "TODO: one-paragraph description, no results"
+  url: ""
+  featured: true
+
+- title: "TODO: Essay 2 title"
+  authors: ["Spivey, T. D."]
+  year: 2026
+  stream: disclosure
+  kind: dissertation_essay
+  status: working_paper
+  venue: ""
+  abstract: "TODO: one-paragraph description, no results"
+  url: ""
+  featured: false
+
+- title: "TODO: Essay 3 title"
+  authors: ["Spivey, T. D."]
+  year: 2026
+  stream: disclosure
+  kind: dissertation_essay
+  status: working_paper
+  venue: ""
+  abstract: "TODO: one-paragraph description, no results"
+  url: ""
+  featured: false
+
+# --- Other research -----------------------------------------------------------
+- title: "Competition Without Discipline? Fiber Entry, Complaints, and Cable Incumbents' Network Offers"
+  authors: ["Spivey, T. D."]
+  year: 2026
+  stream: broadband
+  kind: research
+  status: working_paper
+  venue: ""
+  abstract: ""
+  url: ""          # SSRN link once posted; makes the title a link
+  featured: false
+
+- title: "The Insider Threat Paradox: How Security Policies Inadvertently Create the Threats They're Designed to Prevent"
+  authors: ["Spivey, T. D."]   # add co-authors here
+  year: 2026
+  stream: security_culture
+  kind: research
+  status: working_paper
+  venue: ""
+  abstract: >-
+    Third paper in a series on security culture: how device-ownership claims
+    and workplace surveillance turn loyal employees into insider threats, and
+    a rights-based alternative.
+  url: ""
+  featured: false
+
+# --- Practitioner publications ------------------------------------------------
+- title: "Navigating the Shadows — A Comprehensive Framework for Anticipating, Identifying, and Managing Shadow IT in Organizations"
+  authors: ["Spivey, T. D.", "McIlveene, T."]
+  year: 2024
+  stream: security_culture
+  kind: practitioner
+  status: published
+  venue: "ISACA Journal, 6"
+  abstract: ""
+  url: ""
+  featured: false
+
+- title: "To Fear or Not to Fear: How to Create an Optimal Security Culture"
+  authors: ["Batchelor, J. H.", "Spivey, T. D.", "McIlveene, T."]
+  year: 2023
+  stream: security_culture
+  kind: practitioner
+  status: published
+  venue: "ISACA Journal, 6, 34–37"
+  abstract: ""
+  url: ""
+  featured: false

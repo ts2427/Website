@@ -10,6 +10,8 @@
   <meta property="og:type" content="article" />
   <meta property="og:url" content="https://timothydspivey.com/blog/what-the-broadband-labels-revealed.html" />
   <link rel="canonical" href="https://thresholddatasciences.com/threshold-effects/no-007/" />
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#0d1b2a" />
   <link rel="alternate" type="application/rss+xml" title="Threshold Effects" href="/blog/feed.xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -78,6 +80,40 @@
       color: var(--muted); transition: color .2s;
     }
     .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+    .skip-link {
+      position: absolute; left: 1rem; top: -3rem; z-index: 200;
+      background: var(--navy); color: var(--white); padding: .6rem 1rem;
+      border-radius: 8px; font-size: .875rem; font-weight: 600; text-decoration: none;
+    }
+    .skip-link:focus { top: .75rem; }
+    .nav-menu { display: none; position: relative; }
+    .nav-menu summary {
+      list-style: none; cursor: pointer; user-select: none;
+      display: inline-flex; align-items: center; gap: .45rem;
+      font-size: .875rem; font-weight: 600; color: var(--navy);
+      padding: .45rem .85rem; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--white);
+    }
+    .nav-menu summary::-webkit-details-marker { display: none; }
+    .nav-menu summary::before { content: "\2630"; font-size: 1rem; line-height: 1; }
+    .nav-menu[open] summary { color: var(--accent); border-color: var(--accent); }
+    .nav-menu[open] summary::before { content: "\2715"; }
+    .nav-menu ul {
+      position: absolute; right: 0; top: calc(100% + .5rem); min-width: 200px;
+      list-style: none; padding: .4rem 0; background: var(--white);
+      border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg);
+    }
+    .nav-menu a {
+      display: block; padding: .7rem 1.2rem; font-size: .95rem; font-weight: 500;
+      color: var(--text); text-decoration: none;
+    }
+    .nav-menu a:hover, .nav-menu a:focus { color: var(--accent); background: var(--sand); }
+    @media (max-width: 767px) {
+      .nav-links { display: none; }
+      .nav-menu { display: block; }
+      .nav-inner { padding: 0 1.25rem; }
+    }
 
     /* BLOG HEADER BAND */
     .blog-hero {
@@ -208,7 +244,6 @@
     footer strong { color: rgba(255,255,255,.8); }
 
     @media (max-width: 768px) {
-      .nav-links { display: none; }
       .blog-hero { padding: 8rem 1.5rem 3.5rem; }
       .wrap, article { padding-left: 1.5rem; padding-right: 1.5rem; }
     }
@@ -219,18 +254,19 @@
 </head>
 <body>
 
-<nav>
+<a class="skip-link" href="#main">Skip to content</a>
+<nav aria-label="Main">
   <div class="nav-inner">
     <a href="/" class="nav-logo">Timothy D. Spivey</a>
     <ul class="nav-links">
-      <li><a href="/#about">About</a></li>
-      <li><a href="/#research">Research</a></li>
-      <li><a href="/#publications">Publications</a></li>
-      <li><a href="/#teaching">Teaching</a></li>
-      <li><a href="/#consulting">Consulting</a></li>
-      <li><a href="/blog/" class="active">Blog</a></li>
-      <li><a href="/#contact">Contact</a></li>
+      <li><a href="/#research">Research</a></li><li><a href="/#teaching">Teaching</a></li><li><a href="/timothy-spivey-cv.pdf">CV</a></li><li><a href="/#contact">Contact</a></li>
     </ul>
+    <details class="nav-menu">
+      <summary>Menu</summary>
+      <ul>
+        <li><a href="/#research">Research</a></li><li><a href="/#teaching">Teaching</a></li><li><a href="/timothy-spivey-cv.pdf">CV</a></li><li><a href="/#contact">Contact</a></li>
+      </ul>
+    </details>
   </div>
 </nav>
 
@@ -247,7 +283,7 @@
   </div>
 </header>
 
-<article>
+<article id="main">
   <div class="post-body">
 
 <p>In 2021, Congress mandated "broadband nutrition labels" — standardized
@@ -304,7 +340,7 @@ August 10, 2026.</em></p>
 </article>
 
 <footer>
-  <p><strong>Timothy D. Spivey</strong> &nbsp;&middot;&nbsp; Empirical Researcher &amp; Data Scientist &nbsp;&middot;&nbsp; University of South Alabama · Mitchell College of Business</p>
+  <p><strong>Timothy D. Spivey</strong> &nbsp;&middot;&nbsp; PhD Candidate, Business Analytics &nbsp;&middot;&nbsp; University of South Alabama · Mitchell College of Business</p>
   <p style="margin-top:.4rem">&copy; 2026 Timothy D. Spivey. All rights reserved.</p>
 </footer>
 </body>

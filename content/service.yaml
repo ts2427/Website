@@ -1,0 +1,11 @@
+# Editorial review service and professional affiliations.
+# Only role and journal (or affiliation name) are rendered.
+review:
+  - role: Peer Reviewer
+    journal: Journal of Risk and Financial Management (MDPI)
+    years: "2025–present"
+  - role: Peer Reviewer
+    journal: Business Strategy & Development (Wiley)
+    years: "2025–present"
+affiliations:
+  - name: ISACA

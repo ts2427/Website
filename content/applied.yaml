@@ -1,0 +1,23 @@
+# Applied research cards. cta_href/cta_label are optional.
+- title: "Who Leaves, Who to Save, and What It Costs"
+  label: "Interactive analysis · 2026"
+  text: >-
+    A public-data retention playbook for broadband. It follows churn analysis
+    through to the targeting decision: calibrated models, profit-based contact
+    rules, uplift on a randomized experiment, and a fairness audit, with
+    findings checked against operators' public disclosures.
+  cta_label: Open the playbook
+  cta_href: retention-playbook.html
+
+- title: Breach Disclosure Research Pipeline
+  label: "Data engineering · 2024–2026"
+  text: >-
+    1,054 breach events across nineteen years, normalized from inconsistent
+    public sources into a Python and Snowflake pipeline matched to market
+    data. The empirical backbone of my dissertation.
+
+- title: Operational Reporting and Forecasting
+  label: Industry practice
+  text: >-
+    Nearly twenty years building reporting pipelines, executive scorecards
+    and workforce forecasts in telecom operations.

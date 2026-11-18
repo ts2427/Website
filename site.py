@@ -2,12 +2,13 @@
 """
 Timothy D. Spivey — personal / academic site. Single file, no other assets.
 
-    pip install flask
+    pip install -r requirements.txt
     python site.py            # dev server at http://127.0.0.1:5000
     python site.py --build    # writes index.html + blog/ + threshold/
 
-Everything you edit is in the CONTENT section at the top. The HTML, CSS, and JS
-are in TEMPLATE at the bottom; you shouldn't need to touch it.
+Settings are in the CONTENT section at the top; papers, courses, teaching
+interests, applied work, service, talks and awards live in content/*.yaml.
+The HTML, CSS, and JS are in TEMPLATE at the bottom.
 
 Drop a headshot named headshot.jpg beside this file and it will be picked up
 automatically. Anything marked TODO needs a real value before you publish.
@@ -20,6 +21,8 @@ import sys
 from datetime import date, datetime
 from xml.sax.saxutils import escape as xml_escape
 
+import yaml
+
 from flask import (Flask, render_template_string, request, redirect,
                    url_for, flash, send_from_directory, abort)
 
@@ -30,8 +33,30 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # =============================================================================
 
 # Degree stage drives every piece of degree wording on the main page (hero,
-# About card, bio, footer, JSON-LD). One of "candidate", "defended", "conferred".
+# About card, bio, footer, JSON-LD). One of "candidate", "defended",
+# "conferred", "faculty". "faculty" uses POSITION below.
 DEGREE_STAGE = "candidate"
+
+# Used only when DEGREE_STAGE == "faculty". Values starting with TODO render
+# nothing.
+POSITION = {
+    "title": "TODO",        # e.g. "Assistant Professor of Information Systems"
+    "department": "TODO",
+    "school": "TODO",
+}
+
+# One sentence under the hero. Description only, no findings.
+RESEARCH_STATEMENT = (
+    "I study how the public data behind regulatory research is built, and how "
+    "fixing it changes what we conclude about disclosure rules and the markets "
+    "they govern.")
+
+# Dissertation block (after About). TODO / empty values render nothing.
+DISSERTATION_TITLE = "TODO"
+DISSERTATION_CHAIR = ""
+
+# Shown only if this file exists beside site.py.
+TEACHING_STATEMENT_PDF = "teaching-statement.pdf"
 
 # Profile URLs for the JSON-LD sameAs list; skipped while empty.
 ORCID_URL = "https://orcid.org/0009-0009-8990-4308"
@@ -39,23 +64,172 @@ ORCID_LABEL = "ORCID 0009-0009-8990-4308"
 # SSRN author page: JSON-LD sameAs only; no visible link until a paper is posted.
 SSRN_URL = "https://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id=13977868"
 
-# Authors line for the Insider Threat working paper; add co-authors here.
-THIRD_PAPER_AUTHORS = "Spivey, T. D."
+# Research address. While empty, the Contact section and form behave as
+# before (form posts to PROFESSIONAL_EMAIL). Once set, it becomes the primary
+# contact and the FormSubmit endpoint (FormSubmit sends a one-time activation
+# email to the new address).
+RESEARCH_EMAIL = ""
 
-# Set to an address on my own domain. The Contact section shows a second
-# email line for it only while it is non-empty, and the contact form posts to
-# it once set (FormSubmit sends a one-time activation email to the new address).
+# Address on my own domain; shown as a second contact line while non-empty.
 PROFESSIONAL_EMAIL = "timothy@thresholddatasciences.com"
 
-# Change only after the Florida LLC is filed.
-CONSULTING_NAME = "Threshold Data Sciences (in formation)"
+FIRM_NAME = "Threshold Data Sciences"
+FIRM_URL = "https://thresholddatasciences.com"
+
+# =============================================================================
+# DATA FILES — papers, courses, service etc. live in content/*.yaml
+# =============================================================================
+
+CONTENT_DIR = os.path.join(HERE, "content")
+
+
+def load_yaml(name):
+    """content/<name>.yaml, or an empty list when the file is missing/empty."""
+    path = os.path.join(CONTENT_DIR, name + ".yaml")
+    if not os.path.exists(path):
+        return []
+    with open(path, encoding="utf-8") as fh:
+        data = yaml.safe_load(fh)
+    return data if data is not None else []
+
+
+def shown(value):
+    """Empty = hidden: None, "", [], {} and strings starting with TODO."""
+    if value is None:
+        return False
+    if isinstance(value, str):
+        v = value.strip()
+        return bool(v) and not v.upper().startswith("TODO")
+    if isinstance(value, (list, tuple, dict)):
+        return len(value) > 0
+    return True
+
+
+def clean(value):
+    """Return value if it should render, else ""."""
+    return value if shown(value) else ""
+
+
+STATUS_LABELS = {
+    "working_paper": "Working paper",
+    "under_review": "Under review",
+    "revise_resubmit": "Revise and resubmit",
+    "accepted": "Accepted",
+    "published": "Published",
+}
+KIND_LABELS = {
+    "research": "",
+    "practitioner": "Practitioner publication",
+    "dissertation_essay": "Dissertation essay",
+}
+STREAMS = [
+    ("disclosure", "Mandatory disclosure and markets"),
+    ("broadband", "Competition and regulation in broadband"),
+    ("security_culture", "Security culture and IT governance"),
+]
+
+
+def _authors_line(authors):
+    if isinstance(authors, str):
+        authors = [authors]
+    authors = [a for a in (authors or []) if shown(a)]
+    if len(authors) == 1 and authors[0].startswith("Spivey"):
+        return "Sole author"
+    if len(authors) <= 1:
+        return "".join(authors)
+    return ", ".join(authors[:-1]) + (", & " if len(authors) > 2 else " & ") + authors[-1]
+
+
+def _paper_view(p):
+    """Paper dict with display fields; None if the paper has no real title."""
+    if not shown(p.get("title")):
+        return None
+    status = p.get("status", "working_paper")
+    authors = p.get("authors") or []
+    if isinstance(authors, str):
+        authors = [authors]
+    return {
+        "title": p["title"],
+        "year": clean(str(p.get("year") or "")),
+        "stream": p.get("stream"),
+        "kind": p.get("kind", "research"),
+        "kind_label": KIND_LABELS.get(p.get("kind"), ""),
+        "status": status,
+        "status_label": STATUS_LABELS.get(status, ""),
+        # Never show a target journal before submission.
+        "venue": clean(p.get("venue")) if status != "working_paper" else "",
+        "abstract": clean(p.get("abstract")),
+        "url": clean(p.get("url")),
+        "featured": bool(p.get("featured")),
+        "authors_line": _authors_line(authors),
+        "sole": len(authors) == 1 and authors[0].startswith("Spivey"),
+    }
+
+
+PAPERS_RAW = load_yaml("papers")
+PAPERS = [v for v in (_paper_view(p) for p in PAPERS_RAW) if v]
+# Essays keep their number from yaml order even while some are hidden.
+ESSAYS = []
+for _i, _p in enumerate([p for p in PAPERS_RAW if p.get("kind") == "dissertation_essay"], 1):
+    _v = _paper_view(_p)
+    if _v:
+        _v["number"] = _i
+        ESSAYS.append(_v)
+N_ESSAYS = sum(1 for p in PAPERS_RAW if p.get("kind") == "dissertation_essay")
+RESEARCH_STREAMS = [
+    {"key": k, "title": t, "papers": [p for p in PAPERS if p["stream"] == k]}
+    for k, t in STREAMS
+]
+RESEARCH_STREAMS = [s for s in RESEARCH_STREAMS if s["papers"]]
+
+N_SOLE_WP = sum(1 for p in PAPERS
+                if p["sole"] and p["status"] == "working_paper"
+                and p["kind"] != "practitioner")
+
+COURSES = load_yaml("courses")
+for _inst in COURSES:
+    _inst["courses"] = [
+        c["title"] + (f" ({c['term']})" if shown(c.get("term")) else "")
+        for c in (_inst.get("courses") or []) if shown(c.get("title"))
+    ]
+COURSES = [i for i in COURSES if shown(i.get("institution")) and i["courses"]]
+TEACHING_INTERESTS = [t for t in load_yaml("teaching_interests") if shown(t.get("course"))]
+APPLIED_CARDS = [c for c in load_yaml("applied") if shown(c.get("title"))]
+_service = load_yaml("service") or {}
+SERVICE = {
+    "review": [r for r in (_service.get("review") or [])
+               if shown(r.get("role")) and shown(r.get("journal"))],
+    "affiliations": [a for a in (_service.get("affiliations") or []) if shown(a.get("name"))],
+}
+TALKS = [t for t in load_yaml("talks") if shown(t.get("title"))]
+AWARDS = [a for a in load_yaml("awards") if shown(a.get("title"))]
+
+# Headline numbers in the About card. Methodological, not results.
+STATS = [
+    {"value": "1,054 → 489", "label": "breach records resolved to events"},
+    {"value": str(N_ESSAYS), "label": "dissertation essays"},
+    {"value": str(N_SOLE_WP),
+     "label": "sole-authored working paper" if N_SOLE_WP == 1
+              else "sole-authored working papers"},
+]
+STATS = [s for s in STATS if shown(s["value"]) and s["value"] != "0"]
+
+# =============================================================================
+# SITE COPY
+# =============================================================================
+
+_pos_title = clean(POSITION["title"])
+_pos_school = clean(POSITION["school"])
+_pos_dept = clean(POSITION["department"])
 
 DEGREE_WORDING = {
     "candidate": {
         "name_suffix": "",
+        "short_title": "PhD Candidate, Business Analytics",
+        "job_title": "PhD Candidate",
         "hero_line": ("PhD Candidate, Business Administration (Business Analytics) · "
                       "University of South Alabama · Mitchell College of Business"),
-        "hero_line_2": "Dissertation defense: January 2027",
+        "defense_line": "Dissertation defense: January 2027",
         "about_role": "PhD Candidate — Business Analytics",
         "footer": "PhD Candidate, University of South Alabama · Mitchell College of Business",
         "bio_first": (
@@ -66,9 +240,11 @@ DEGREE_WORDING = {
     },
     "defended": {
         "name_suffix": "",
+        "short_title": "PhD, Business Analytics",
+        "job_title": "PhD Candidate",
         "hero_line": ("PhD, Business Administration (Business Analytics) · Dissertation "
                       "defended January 2027; conferral expected May 2027"),
-        "hero_line_2": "",
+        "defense_line": "",
         "about_role": "PhD (defended January 2027) — Business Analytics",
         "footer": ("PhD, University of South Alabama · Mitchell College of Business "
                    "(conferral expected May 2027)"),
@@ -80,11 +256,27 @@ DEGREE_WORDING = {
     },
     "conferred": {
         "name_suffix": ", PhD",
+        "short_title": "PhD, Business Analytics",
+        "job_title": "Adjunct Instructor",
         "hero_line": ("PhD, Business Administration (Business Analytics) · "
                       "University of South Alabama (2027)"),
-        "hero_line_2": "",
+        "defense_line": "",
         "about_role": "PhD — Business Analytics",
         "footer": "PhD, University of South Alabama · Mitchell College of Business",
+        "bio_first": (
+            "Timothy D. Spivey holds a PhD in Business Administration, with a "
+            "concentration in Business Analytics, from the University of South "
+            "Alabama. His dissertation examines what mandatory breach disclosure "
+            "timing actually does — to markets, to organizations, and to boards."),
+    },
+    "faculty": {
+        "name_suffix": ", PhD",
+        "short_title": _pos_title or "PhD, Business Analytics",
+        "job_title": _pos_title,
+        "hero_line": " · ".join(x for x in (_pos_title, _pos_dept, _pos_school) if x),
+        "defense_line": "",
+        "about_role": _pos_title,
+        "footer": ", ".join(x for x in (_pos_title, _pos_school) if x),
         "bio_first": (
             "Timothy D. Spivey holds a PhD in Business Administration, with a "
             "concentration in Business Analytics, from the University of South "
@@ -102,15 +294,16 @@ SITE = {
     "hero_name_after_dot": " Spivey" + DEGREE["name_suffix"],
     # Nav logo; gains ", PhD" once the degree is conferred.
     "display_name": "Timothy D. Spivey" + DEGREE["name_suffix"],
-    "title": "Empirical Researcher & Data Scientist",
+    "title": DEGREE["short_title"],
     "hero_line": DEGREE["hero_line"],
-    "hero_line_2": DEGREE["hero_line_2"],
+    "defense_line": DEGREE["defense_line"],
+    "research_statement": RESEARCH_STATEMENT,
     "footer_degree": DEGREE["footer"],
     "institution": "University of South Alabama · Mitchell College of Business",
     "meta_description": (
-        "Timothy D. Spivey: empirical researcher and data scientist studying mandatory "
-        "breach disclosure, cybersecurity governance, telecom markets, and the ethical "
-        "use of data."
+        "Timothy D. Spivey: business analytics researcher studying mandatory "
+        "breach disclosure, competition in broadband markets, and security "
+        "culture and IT governance."
     ),
     "email": "tspivey@pensacolastate.edu",
     "location_lines": ["Pensacola State College", "Pensacola, Florida"],
@@ -119,50 +312,36 @@ SITE = {
         "linkedin": "https://www.linkedin.com/in/tispivey/",
         "linkedin_label": "Timothy D. Spivey on LinkedIn",
         "scholar": "https://scholar.google.com/citations?user=S9sSV1EAAAAJ&hl=en",
-        # The firm's standalone site (launched 2026-08-25). The old
-        # /threshold/ page here is now a redirect stub to it.
-        "firm": "https://thresholddatasciences.com",
+        "firm": FIRM_URL,
     },
-    # Where the contact form posts. Formspree is the easiest option for a static
-    # deploy: sign up, create a form, paste the endpoint here. Leave blank to use
-    # the local Flask /contact route instead.
+    # Where the contact form posts (FormSubmit). Leave blank to use the local
+    # Flask /contact route instead.
     "contact_endpoint": "https://formsubmit.co/"
-                        + (PROFESSIONAL_EMAIL or "tspivey@pensacolastate.edu"),
+                        + (RESEARCH_EMAIL or PROFESSIONAL_EMAIL
+                           or "tspivey@pensacolastate.edu"),
     # Google Analytics 4 Measurement ID (looks like "G-XXXXXXXXXX"). Leave blank
     # to omit the tracking snippet entirely.
     "ga_measurement_id": "G-Q1XYCGEW06",
     # Canonical origin of the deployed site (no trailing slash). Used for
     # canonical URLs, Open Graph tags, and the blog's RSS feed.
     "base_url": "https://timothydspivey.com",
+    "theme_color": "#0d1b2a",
 }
 
 NAV = [
-    {"label": "About", "href": "#about"},
     {"label": "Research", "href": "#research"},
-    {"label": "Applied Work", "href": "#applied"},
-    {"label": "Publications", "href": "#publications"},
     {"label": "Teaching", "href": "#teaching"},
-    {"label": "Consulting", "href": "https://thresholddatasciences.com"},
-    {"label": "Blog", "href": "blog/"},
+    {"label": "CV", "href": "timothy-spivey-cv.pdf"},
     {"label": "Contact", "href": "#contact"},
 ]
 
 # Sidebar profile card in the About section.
 ABOUT_CARD = {
     "role": DEGREE["about_role"],
-    "school": "University of South Alabama",
-    "secondary_role": "Adjunct Instructor · Pensacola State College",
-    "school_logos": [
-        {"src": "https://commons.wikimedia.org/wiki/Special:FilePath/University%20of%20South%20Alabama%20logo.png?width=400",
-         "alt": "University of South Alabama"},
-        {"src": "https://en.wikipedia.org/wiki/Special:FilePath/Logo-of-Pensacola-State-College.svg",
-         "alt": "Pensacola State College"},
-    ],
-    # Keep these methodological, not results — no coefficients before the defense.
-    "stats": [
-        {"value": "2", "label": "Publications"},
-        {"value": "6", "label": "Research Areas"},
-    ],
+    "school": ("University of South Alabama" if DEGREE_STAGE != "faculty"
+               else _pos_school),
+    "secondary_role": ("Adjunct Instructor · Pensacola State College"
+                       if DEGREE_STAGE != "faculty" else ""),
 }
 
 ABOUT = {
@@ -216,273 +395,30 @@ ABOUT = {
     ],
 }
 
-GALLERY = [
-    {
-        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/MitchellCollegeofBusiness.JPG?width=1200",
-        "alt": "Mitchell College of Business, University of South Alabama",
-        "caption": "Mitchell College of Business",
-    },
-    {
-        "image": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&q=70",
-        "alt": "Equity market data on screen",
-        "caption": "Breach Disclosure & Market Response Research",
-    },
-    {
-        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/MoultonBellTower.jpg?width=1200",
-        "alt": "Moulton Bell Tower, University of South Alabama",
-        "caption": "University of South Alabama",
-    },
-]
-
 RESEARCH = {
     "intro": (
-        "What happens when regulation and competition meet reality: mandatory "
-        "disclosure, cybersecurity governance, telecom markets, and the ethical use "
-        "of data, measured empirically."
+        "Three lines of empirical work: mandatory disclosure and markets, "
+        "competition and regulation in broadband, and security culture and IT "
+        "governance."
     ),
-    "cards": [
-        {
-            "title": "Markets & Breach Pricing",
-            "image": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=70",
-            "alt": "Stock market chart",
-            "text": (
-                "How mandatory disclosure timing affects equity valuations and how "
-                "investors price breach risk. Does forcing faster disclosure protect "
-                "markets, or does it amplify volatility?"
-            ),
-        },
-        {
-            "title": "Post-Disclosure Uncertainty",
-            "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=70",
-            "alt": "Data center operations",
-            "text": (
-                "The operational friction of disclosure: how mandates strain "
-                "organizational capacity, extend remediation timelines, and leave "
-                "information asymmetries standing even after the report is filed."
-            ),
-        },
-        {
-            "title": "Boards & Governance Disruption",
-            "image": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&q=70",
-            "alt": "Boardroom meeting",
-            "text": (
-                "Board-level response and decision-making under disclosure pressure. "
-                "How compliance requirements reshape governance structures without "
-                "necessarily improving security outcomes."
-            ),
-        },
-        {
-            "title": "AI Résumé Screening & Hiring Ethics",
-            "image": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&q=70",
-            "alt": "Documents and screening",
-            "text": (
-                "Algorithmic bias in hiring systems and the over-education paradox, "
-                "framed through social exchange theory and organizational justice "
-                "theory."
-            ),
-        },
-        {
-            "title": "Privacy in Analytics Workflows",
-            "image": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&q=70",
-            "alt": "Data privacy and security",
-            "text": (
-                "What actually causes privacy problems inside enterprise analytical "
-                "pipelines, and where governance breaks down."
-            ),
-        },
-        {
-            "title": "Telecom Markets & Customer Analytics",
-            "image": "static/img/telecom-card.svg",
-            "alt": "Abstract fiber network lines",
-            "text": (
-                "How competition from fiber and fixed wireless shapes cable "
-                "incumbents' service and networks, and how operators decide whom to "
-                "retain. Pre-registered designs on public FCC data."
-            ),
-        },
-    ],
 }
 
 APPLIED = {
     "intro": ("Analytics built to answer operating questions, using public data "
               "and reproducible code."),
-    "cards": [
-        {
-            "title": "Who Leaves, Who to Save, and What It Costs",
-            "label": "Interactive analysis · 2026",
-            "text": (
-                "A public-data retention playbook for broadband. It follows churn "
-                "analysis through to the targeting decision: calibrated models, "
-                "profit-based contact rules, uplift on a randomized experiment, and a "
-                "fairness audit, with findings checked against real operator data."
-            ),
-            "cta_label": "Open the playbook",
-            "cta_href": "retention-playbook.html",
-        },
-        {
-            "title": "Breach Disclosure Research Pipeline",
-            "label": "Data engineering · 2024–2026",
-            "text": (
-                "1,054 breach events across nineteen years, normalized from "
-                "inconsistent public sources into a Python and Snowflake pipeline "
-                "matched to market data. The empirical backbone of my dissertation."
-            ),
-        },
-        {
-            "title": "Operational Reporting and Forecasting",
-            "label": "Industry practice",
-            "text": (
-                "Nearly twenty years building reporting pipelines, executive "
-                "scorecards and workforce forecasts in telecom operations."
-            ),
-        },
-    ],
-}
-
-PUBLICATIONS = {
-    "intro": ("Practitioner research on security culture and IT governance, and "
-              "current working papers."),
-    "entries": [
-        {
-            "year": "2024",
-            "title": ("Navigating the Shadows — A Comprehensive Framework for "
-                      "Anticipating, Identifying, and Managing Shadow IT in "
-                      "Organizations"),
-            "authors": "Spivey, T. D., & McIlveene, T.",
-            "venue": "ISACA Journal, 6",
-            "kind": "Journal Article",
-            "status": "Published",
-            "url": "",
-        },
-        {
-            "year": "2023",
-            "title": "To Fear or Not to Fear: How to Create an Optimal Security Culture",
-            "authors": "Batchelor, J. H., Spivey, T. D., & McIlveene, T.",
-            "venue": "ISACA Journal, 6, 34–37",
-            "kind": "Journal Article",
-            "status": "Published",
-            "url": "",
-        },
-    ],
-    # Titles only; no results before the defense.
-    "working_papers": [
-        {
-            "year": "2026",
-            "title": ("Competition Without Discipline? Fiber Entry, Complaints, and "
-                      "Cable Incumbents' Network Offers"),
-            "authors": "Spivey, T. D.",
-            "kind": "Working Paper",
-            "ssrn_url": "",   # set once posted; makes the title a link
-        },
-        {
-            "year": "2026",
-            "title": ("The Insider Threat Paradox: How Security Policies "
-                      "Inadvertently Create the Threats They're Designed to Prevent"),
-            "authors": THIRD_PAPER_AUTHORS,
-            "description": (
-                "Third paper in a series on security culture: how device-ownership "
-                "claims and workplace surveillance turn loyal employees into insider "
-                "threats, and a rights-based alternative."),
-            "kind": "Working Paper",
-            "ssrn_url": "",
-        },
-    ],
-}
-
-_n_wp = len(PUBLICATIONS["working_papers"])
-ABOUT_CARD["stats"].append(
-    {"value": str(_n_wp), "label": "Working Paper" if _n_wp == 1 else "Working Papers"})
-
-SERVICE = {
-    "intro": "Editorial review service and professional memberships.",
-    "review": [
-        {
-            "role": "Peer Reviewer",
-            "venue": "Journal of Risk and Financial Management (MDPI)",
-            "years": "2025 – Present",
-            "note": ("International peer-reviewed journal, Q1 in Business, "
-                     "Management and Accounting; indexed in Scopus, EconBiz, "
-                     "EconLit, and RePEc."),
-        },
-        {
-            "role": "Peer Reviewer",
-            "venue": "Business Strategy & Development (Wiley)",
-            "years": "2025 – Present",
-            "note": ("International peer-reviewed journal covering strategic "
-                     "management, business development, and organizational "
-                     "growth."),
-        },
-    ],
-    "affiliations": [
-        {
-            "name": "ISACA",
-            "detail": ("Information Systems Audit and Control Association — "
-                       "professional association for IT audit, governance, "
-                       "and security."),
-        },
-    ],
+    "cards": APPLIED_CARDS,
 }
 
 TEACHING = {
     "intro": (
-        "Courses in entrepreneurship, marketing and sales, and business writing at Pensacola "
-        "State College and the University of West Florida, alongside doctoral study."
+        "Courses taught at Pensacola State College and the University of West "
+        "Florida, and the information systems and analytics courses I am "
+        "prepared to teach."
     ),
     "photo": "clocktower.jpg",
     "photo_alt": "M. J. Menge clock tower, Pensacola State College",
-    "institutions": [
-        {
-            "name": "Pensacola State College",
-            "role": "Adjunct Instructor · Instructor of record",
-            "years": "2025 – Present",
-            "building": "clocktower.jpg",
-            "building_alt": "M. J. Menge clock tower, Pensacola State College",
-            "logo": "https://en.wikipedia.org/wiki/Special:FilePath/Logo-of-Pensacola-State-College.svg",
-            "logo_alt": "Pensacola State College logo",
-            "courses": ["Introduction to Entrepreneurship", "Entrepreneurship Marketing and Sales"],
-        },
-        {
-            "name": "University of West Florida",
-            "role": "Graduate Teaching Assistant",
-            "years": "2022 – 2024",
-            "building": "https://commons.wikimedia.org/wiki/Special:FilePath/John%20C.%20Pace%20Library%2C%20University%20of%20West%20Florida.jpg?width=1000",
-            "building_alt": "John C. Pace Library, University of West Florida",
-            "logo": "https://commons.wikimedia.org/wiki/Special:FilePath/Univers%20of%20west%20florida%20logo.png?width=400",
-            "logo_alt": "University of West Florida logo",
-            "courses": ["Writing for Business: Theory and Practice"],
-        },
-    ],
-}
-
-CONSULTING = {
-    "firm": CONSULTING_NAME,
-    "tagline": "Empirical insight. Practical guidance.",
-    "heading": "Where Research Meets Practice",
-    "pitch": (
-        "Whether you need analytics infrastructure built, a research question answered "
-        "with defensible methods, or counsel on governance and disclosure, Threshold "
-        "Data Sciences brings the same rigor to consulting that peer review demands of "
-        "research. I don't only advise on this — I study it."
-    ),
-    "focus": [
-        {
-            "title": "Data Science & Analytics",
-            "detail": ("Forecasting, data pipelines, executive dashboards, and "
-                       "reporting infrastructure that stakeholders actually use."),
-        },
-        {
-            "title": "Research & Measurement",
-            "detail": ("Study design, causal inference, and statistical analysis — "
-                       "answers you can defend, not just charts."),
-        },
-        {
-            "title": "Governance, Risk & Compliance",
-            "detail": ("Breach disclosure strategy, board oversight, and security "
-                       "spend prioritization, grounded in the empirical evidence."),
-        },
-    ],
-    "cta_label": "Send an Inquiry",
-    "cta_href": "#contact",
+    "institutions": COURSES,
+    "interests": TEACHING_INTERESTS,
 }
 
 CONTACT = {
@@ -491,8 +427,7 @@ CONTACT = {
         "Research Collaboration",
         "Speaking / Presentation",
         "Teaching Inquiry",
-        "Consulting Engagement",
-        "Industry / Analytics",
+        "Industry or consulting",
         "Request CV",
         "Other",
     ],
@@ -502,7 +437,7 @@ BLOG = {
     "name": "Threshold Effects",
     "label": "Essays & Research Notes",
     "tagline": ("Rules change what organizations are required to do. They "
-                "rarely change what they are. A weekly research series on the "
+                "rarely change what they are. A research series on the "
                 "gap between the two — regulation, disclosure, governance, and "
                 "the organizational capacity that actually decides outcomes."),
     "meta_description": (
@@ -1189,7 +1124,7 @@ def person_json_ld():
     escaped so no string value can close the <script> element early."""
     org = lambda name, kind="CollegeOrUniversity": {"@type": kind, "name": name}
     alumni = [org("University of West Florida"), org("Pensacola State College")]
-    if DEGREE_STAGE == "conferred":
+    if DEGREE_STAGE in ("conferred", "faculty"):
         alumni.append(org("University of South Alabama"))
     person = {
         "@type": "Person",
@@ -1197,7 +1132,7 @@ def person_json_ld():
         "alternateName": ["Timothy Spivey", "T. D. Spivey"],
         "url": SITE["base_url"],
         "image": headshot_abs_url(),
-        "jobTitle": "MIS Supervisor; Adjunct Faculty",
+        "jobTitle": DEGREE["job_title"],
         "affiliation": org("University of South Alabama"),
         "alumniOf": alumni,
         "memberOf": org("ISACA", "Organization"),
@@ -1207,11 +1142,105 @@ def person_json_ld():
         "sameAs": [u for u in (SITE["links"]["scholar"], SITE["links"]["linkedin"],
                                ORCID_URL, SSRN_URL) if u],
     }
-    if DEGREE_STAGE == "conferred":
+    if not person["jobTitle"]:
+        del person["jobTitle"]
+    if DEGREE_STAGE == "faculty" and _pos_school:
+        person["affiliation"] = org(_pos_school)
+        person["worksFor"] = org(_pos_school)
+    if DEGREE_STAGE in ("conferred", "faculty"):
         person["honorificSuffix"] = "PhD"
     data = {"@context": "https://schema.org", "@type": "ProfilePage",
             "mainEntity": person}
     return json.dumps(data, ensure_ascii=False, indent=2).replace("</", "<\\/")
+
+
+def contact_rows():
+    """(label, address) pairs for the Contact section, primary first."""
+    if RESEARCH_EMAIL:
+        rows = [("Research & academic", RESEARCH_EMAIL),
+                ("Teaching", SITE["email"])]
+    else:
+        rows = [("Teaching & academic", SITE["email"])]
+    if PROFESSIONAL_EMAIL:
+        rows.append(("Industry or consulting" if RESEARCH_EMAIL
+                     else "Research, consulting & industry", PROFESSIONAL_EMAIL))
+    return rows
+
+
+def teaching_statement_url():
+    if shown(TEACHING_STATEMENT_PDF) and os.path.exists(
+            os.path.join(HERE, TEACHING_STATEMENT_PDF)):
+        return TEACHING_STATEMENT_PDF
+    return ""
+
+
+FAVICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<rect width="64" height="64" rx="12" fill="#0d1b2a"/>
+<text x="32" y="43" text-anchor="middle" font-family="'Playfair Display', Georgia, serif"
+ font-size="30" font-weight="700" fill="#e2c84b">TS</text>
+</svg>
+"""
+
+
+# Shared by the main page and the blog. Below 768px the link list is replaced
+# by a <details> menu, which opens and closes without JavaScript.
+NAV_CSS = r"""
+    .skip-link {
+      position: absolute; left: 1rem; top: -3rem; z-index: 200;
+      background: var(--navy); color: var(--white); padding: .6rem 1rem;
+      border-radius: 8px; font-size: .875rem; font-weight: 600; text-decoration: none;
+    }
+    .skip-link:focus { top: .75rem; }
+    .nav-menu { display: none; position: relative; }
+    .nav-menu summary {
+      list-style: none; cursor: pointer; user-select: none;
+      display: inline-flex; align-items: center; gap: .45rem;
+      font-size: .875rem; font-weight: 600; color: var(--navy);
+      padding: .45rem .85rem; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--white);
+    }
+    .nav-menu summary::-webkit-details-marker { display: none; }
+    .nav-menu summary::before { content: "\2630"; font-size: 1rem; line-height: 1; }
+    .nav-menu[open] summary { color: var(--accent); border-color: var(--accent); }
+    .nav-menu[open] summary::before { content: "\2715"; }
+    .nav-menu ul {
+      position: absolute; right: 0; top: calc(100% + .5rem); min-width: 200px;
+      list-style: none; padding: .4rem 0; background: var(--white);
+      border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg);
+    }
+    .nav-menu a {
+      display: block; padding: .7rem 1.2rem; font-size: .95rem; font-weight: 500;
+      color: var(--text); text-decoration: none;
+    }
+    .nav-menu a:hover, .nav-menu a:focus { color: var(--accent); background: var(--sand); }
+    @media (max-width: 767px) {
+      .nav-links { display: none; }
+      .nav-menu { display: block; }
+      .nav-inner { padding: 0 1.25rem; }
+    }
+"""
+
+NAV_PARTIAL = r"""<a class="skip-link" href="#main">Skip to content</a>
+<nav aria-label="Main">
+  <div class="nav-inner">
+    <a href="{{ home }}" class="nav-logo">{{ site.display_name }}</a>
+    <ul class="nav-links">
+      {% for item in nav %}<li><a href="{{ prefix ~ item.href }}">{{ item.label }}</a></li>{% endfor %}
+    </ul>
+    <details class="nav-menu">
+      <summary>Menu</summary>
+      <ul>
+        {% for item in nav %}<li><a href="{{ prefix ~ item.href }}">{{ item.label }}</a></li>{% endfor %}
+      </ul>
+    </details>
+  </div>
+</nav>"""
+
+
+def nav_html(on_blog=False):
+    return render_template_string(
+        NAV_PARTIAL, site=SITE, nav=NAV,
+        prefix="/" if on_blog else "", home="/" if on_blog else "#hero")
 
 
 def render(building=False):
@@ -1225,22 +1254,29 @@ def render(building=False):
     return render_template_string(
         TEMPLATE,
         site=SITE,
-        nav=NAV,
+        nav_html=nav_html(),
+        nav_css=NAV_CSS,
         about_card=ABOUT_CARD,
         about=ABOUT,
-        gallery=GALLERY,
         research=RESEARCH,
+        streams=RESEARCH_STREAMS,
+        essays=ESSAYS,
+        dissertation_title=clean(DISSERTATION_TITLE),
+        dissertation_chair=clean(DISSERTATION_CHAIR),
+        stats=STATS,
         applied=APPLIED,
-        publications=PUBLICATIONS,
-        professional_email=PROFESSIONAL_EMAIL,
-        consulting_name=CONSULTING_NAME,
+        talks=TALKS,
+        awards=AWARDS,
+        contact_rows=contact_rows(),
+        primary_email=RESEARCH_EMAIL or SITE["email"],
+        teaching_statement=teaching_statement_url(),
+        firm_name=FIRM_NAME,
         orcid_url=ORCID_URL,
         orcid_label=ORCID_LABEL,
         headshot_abs=headshot_abs_url(),
         json_ld=person_json_ld(),
         service=SERVICE,
         teaching=TEACHING,
-        consulting=CONSULTING,
         contact=CONTACT,
         portrait_url=portrait_url(building),
         form_action=action,
@@ -1309,6 +1345,8 @@ def render_blog():
     return render_template_string(
         BLOG_TEMPLATE,
         site=SITE,
+        nav_html=nav_html(on_blog=True),
+        nav_css=NAV_CSS,
         blog=BLOG,
         posts=[_post_view(p) for p in _published_posts()],
         page_title=f"{BLOG['name']} | {SITE['name']}",
@@ -1323,6 +1361,8 @@ def render_post(post):
     return render_template_string(
         POST_TEMPLATE,
         site=SITE,
+        nav_html=nav_html(on_blog=True),
+        nav_css=NAV_CSS,
         blog=BLOG,
         post=view,
         page_title=f"{view['title']} | {BLOG['name']}",
@@ -1398,6 +1438,11 @@ def clocktower():
     return send_from_directory(HERE, "clocktower.jpg")
 
 
+@app.route("/teaching-statement.pdf")
+def teaching_statement():
+    return send_from_directory(HERE, "teaching-statement.pdf")
+
+
 @app.route("/timothy-spivey-cv.pdf")
 def cv():
     return send_from_directory(HERE, "timothy-spivey-cv.pdf")
@@ -1432,6 +1477,12 @@ def build():
     with open(out, "w", encoding="utf-8") as fh:
         fh.write(html)
     print("Wrote", out)
+
+    fav = os.path.join(HERE, "static", "favicon.svg")
+    os.makedirs(os.path.dirname(fav), exist_ok=True)
+    with open(fav, "w", encoding="utf-8") as fh:
+        fh.write(FAVICON_SVG)
+    print("Wrote", fav)
 
     th_dir = os.path.join(HERE, "threshold")
     os.makedirs(th_dir, exist_ok=True)
@@ -1471,6 +1522,9 @@ TEMPLATE = r"""<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ site.name }} | {{ site.title }}</title>
   <meta name="description" content="{{ site.meta_description }}" />
+  <link rel="canonical" href="{{ site.base_url }}/" />
+  <link rel="icon" href="static/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="{{ site.theme_color }}" />
   <meta property="og:title" content="{{ site.name }} — {{ site.title }}" />
   <meta property="og:description" content="{{ site.meta_description }}" />
   <meta property="og:type" content="profile" />
@@ -1546,13 +1600,13 @@ TEMPLATE = r"""<!DOCTYPE html>
       color: var(--muted); transition: color .2s;
     }
     .nav-links a:hover { color: var(--accent); }
-
+{{ nav_css | safe }}
     /* HERO */
     #hero {
-      min-height: 100vh;
+      min-height: 60vh;
       background: linear-gradient(135deg, var(--navy) 0%, #16293d 60%, var(--blue) 100%);
       display: flex; align-items: center; justify-content: center;
-      text-align: center; padding: 7rem 2rem 4rem;
+      text-align: center; padding: 6.5rem 2rem 3.5rem;
       position: relative; overflow: hidden;
     }
     #hero::before {
@@ -1562,21 +1616,17 @@ TEMPLATE = r"""<!DOCTYPE html>
       pointer-events: none;
     }
     .hero-content { position: relative; z-index: 1; max-width: 720px; }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: .5rem;
-      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
-      color: rgba(255,255,255,.9); font-size: .78rem; font-weight: 600;
-      letter-spacing: .08em; text-transform: uppercase;
-      padding: .35rem 1rem; border-radius: 999px; margin-bottom: 1.5rem;
-    }
-    .hero-badge span { width: 6px; height: 6px; background: var(--accent-lit); border-radius: 50%; }
     h1 {
       font-family: 'Playfair Display', serif;
       font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 700;
       color: var(--white); line-height: 1.15; margin-bottom: 1rem;
     }
     .hero-subtitle { font-size: 1.15rem; color: rgba(255,255,255,.78); margin-bottom: .5rem; }
-    .hero-institution { font-size: .95rem; color: rgba(255,255,255,.55); margin-bottom: 2.5rem; }
+    .hero-institution { font-size: .95rem; color: rgba(255,255,255,.6); margin-bottom: 1.5rem; }
+    .hero-statement {
+      font-size: 1.12rem; line-height: 1.6; color: rgba(255,255,255,.88);
+      max-width: 620px; margin: 0 auto 2.25rem;
+    }
     .hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
     .btn {
       display: inline-flex; align-items: center; gap: .5rem;
@@ -1588,14 +1638,6 @@ TEMPLATE = r"""<!DOCTYPE html>
     .btn-primary:hover { background: var(--light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,.18); }
     .btn-outline { background: transparent; color: var(--white); border: 1.5px solid rgba(255,255,255,.45); }
     .btn-outline:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.75); transform: translateY(-1px); }
-    .scroll-hint {
-      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
-      color: rgba(255,255,255,.4); font-size: .78rem; letter-spacing: .06em;
-      text-transform: uppercase; display: flex; flex-direction: column; align-items: center; gap: .5rem;
-      animation: bounce 2.4s infinite;
-    }
-    @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
-
     .drop-dot {
       display: inline-block;
       animation: dropDot .7s cubic-bezier(.34,1.1,.4,1) 1.3s both;
@@ -1609,7 +1651,6 @@ TEMPLATE = r"""<!DOCTYPE html>
     }
     @media (prefers-reduced-motion: reduce) {
       .drop-dot { animation: none; }
-      .scroll-hint { animation: none; }
       html { scroll-behavior: auto; }
     }
 
@@ -1648,12 +1689,13 @@ TEMPLATE = r"""<!DOCTYPE html>
     .about-role { font-size: .85rem; color: var(--accent); font-weight: 600; margin-bottom: .2rem; }
     .about-school { font-size: .82rem; color: var(--muted); }
     .about-second-role { font-size: .78rem; color: var(--muted); font-style: italic; margin: .3rem 0 .75rem; padding-top: .3rem; border-top: 1px solid var(--border); }
-    .school-logos { display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.25rem; }
-    .school-logo { height: 70px; width: auto; max-width: 48%; object-fit: contain; display: block; }
-    .about-stat-row { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; }
-    .about-stat { text-align: center; }
-    .about-stat strong { display: block; font-size: 1.4rem; font-weight: 700; color: var(--navy); }
-    .about-stat span { font-size: .75rem; color: var(--muted); }
+    .about-stat-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.25rem;
+      margin: 1rem 0 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);
+    }
+    .about-stat:first-child { grid-column: 1 / -1; }
+    .about-stat strong { display: block; font-size: 1.35rem; font-weight: 700; color: var(--navy); line-height: 1.2; }
+    .about-stat span { display: block; font-size: .75rem; color: var(--muted); line-height: 1.4; }
     .about-links { display: flex; flex-direction: column; gap: .6rem; }
     .about-link {
       display: flex; align-items: center; gap: .6rem;
@@ -1669,42 +1711,45 @@ TEMPLATE = r"""<!DOCTYPE html>
       padding: .3rem .85rem; border-radius: 999px; border: 1px solid rgba(184,151,10,.3);
     }
 
-    /* GALLERY */
-    #gallery { background: var(--white); padding: 0; }
-    .gallery-strip {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr 1fr;
-      height: 340px;
-      overflow: hidden;
-    }
-    .gallery-item {
-      position: relative; overflow: hidden;
-    }
-    .gallery-item img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      transition: transform .5s ease;
-      display: block;
-    }
-    .gallery-item:hover img { transform: scale(1.04); }
-    .gallery-caption {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      background: linear-gradient(transparent, rgba(13,27,42,.7));
-      color: rgba(255,255,255,.9);
-      font-size: .78rem; font-weight: 600;
-      padding: 1.5rem .75rem .6rem;
-      letter-spacing: .03em;
-    }
-
     /* RESEARCH */
     #research { background: var(--sand); }
-    .research-card-img {
-      width: 100%; height: 160px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      display: block;
+    .streams { display: flex; flex-direction: column; gap: 1.5rem; }
+    .stream {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.75rem 2rem;
     }
+    .stream-title {
+      font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700;
+      color: var(--navy); margin-bottom: 1rem; padding-bottom: .75rem;
+      border-bottom: 2px solid var(--light);
+    }
+    .paper-list { list-style: none; display: flex; flex-direction: column; gap: 1.35rem; }
+    .paper-title { font-size: .98rem; font-weight: 600; color: var(--navy); line-height: 1.45; }
+    .paper-title a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--accent); }
+    .paper-meta { font-size: .82rem; color: var(--muted); margin-top: .2rem; }
+    .paper-abstract { font-size: .88rem; color: var(--muted); line-height: 1.65; margin-top: .4rem; max-width: 760px; }
+    .paper-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
+    .jmp-tag {
+      display: inline-block; font-size: .7rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      background: var(--accent); color: var(--navy);
+      padding: .18rem .55rem; border-radius: 4px;
+    }
+
+    /* DISSERTATION */
+    #dissertation { background: var(--white); }
+    .diss-meta { display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; font-size: .92rem; color: var(--muted); }
+    .essay-list { display: flex; flex-direction: column; gap: 1.25rem; }
+    .essay {
+      background: var(--sand); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.6rem 1.9rem;
+    }
+    .essay-featured { border-left: 4px solid var(--accent); }
+    .essay-head { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-bottom: .5rem; }
+    .essay-num { font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+    .essay-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; line-height: 1.35; color: var(--navy); }
+    .essay-title a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--accent); }
+    .essay-abstract { font-size: .92rem; color: var(--muted); margin-top: .6rem; max-width: 780px; }
     .research-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
     .research-card {
       background: var(--white); border: 1px solid var(--border);
@@ -1721,33 +1766,20 @@ TEMPLATE = r"""<!DOCTYPE html>
     .research-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
     .research-card p { font-size: .875rem; color: var(--muted); line-height: 1.65; }
 
-    /* APPLIED WORK */
-    #applied { background: var(--white); }
+    /* APPLIED RESEARCH */
+    #applied { background: var(--sand); }
 
-    /* PUBLICATIONS */
-    #publications { background: var(--sand); }
-    .pub-list { display: flex; flex-direction: column; gap: 1.25rem; }
-    .pub-item {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.5rem 1.75rem;
-      display: flex; gap: 1.25rem; align-items: flex-start; transition: box-shadow .22s;
-    }
-    .pub-item:hover { box-shadow: var(--shadow); }
-    .pub-year {
-      flex-shrink: 0; font-size: .75rem; font-weight: 700; letter-spacing: .05em;
-      color: var(--accent); background: var(--light);
-      padding: .3rem .7rem; border-radius: 6px; margin-top: .15rem;
-    }
-    .pub-title { font-size: .95rem; font-weight: 600; color: var(--navy); margin-bottom: .3rem; }
-    .pub-title a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--accent); }
-    .pub-authors { font-size: .82rem; color: var(--muted); margin-bottom: .25rem; }
-    .pub-journal { font-size: .82rem; color: var(--accent); font-style: italic; }
+    /* PAPER LABELS */
+    .pub-journal { font-size: .82rem; color: var(--accent); font-style: italic; margin-top: .15rem; }
     .pub-type {
       display: inline-block; font-size: .7rem; font-weight: 700;
       letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
-      border: 1px solid var(--border); padding: .15rem .5rem; border-radius: 4px; margin-top: .5rem;
+      border: 1px solid var(--border); padding: .15rem .5rem; border-radius: 4px;
     }
-    .pub-type + .pub-type { margin-left: .4rem; }
+
+    /* TALKS & AWARDS */
+    #talks { background: var(--sand); }
+    #awards { background: var(--white); }
 
     /* SERVICE & AFFILIATIONS */
     #service { background: var(--white); }
@@ -1769,65 +1801,46 @@ TEMPLATE = r"""<!DOCTYPE html>
     .service-item p { font-size: .82rem; color: var(--muted); line-height: 1.6; }
 
     /* TEACHING */
-    #teaching { background: var(--sand); }
+    #teaching { background: var(--white); }
     .teaching-header {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; margin-bottom: 3rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; margin-bottom: 1rem;
     }
     .teaching-photo {
       width: 100%; height: 240px; object-fit: cover; border-radius: var(--radius);
       box-shadow: var(--shadow-lg); display: block;
     }
     @media (max-width: 768px) { .teaching-header { grid-template-columns: 1fr; } }
-    .institution-timeline { display: flex; flex-direction: column; gap: 1.75rem; margin-top: 2.5rem; }
+    .sub-title {
+      font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--navy); margin: 2.5rem 0 1rem;
+    }
+    .institution-timeline { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; }
     .institution-block {
-      display: grid; grid-template-columns: 220px 1fr; gap: 2rem; align-items: center;
-      background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 1.5rem; box-shadow: var(--shadow); transition: all .2s;
+      background: var(--sand); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.5rem 1.75rem;
     }
-    .institution-block:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
-    .institution-media { position: relative; }
-    .institution-building { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; display: block; }
-    .institution-logo {
-      width: 52px; height: 52px; object-fit: contain; background: var(--white);
-      border-radius: 8px; padding: 5px; border: 1px solid var(--border);
-      position: absolute; bottom: -12px; left: -12px; box-shadow: var(--shadow);
-    }
-    .institution-logo-only {
-      height: 130px; display: flex; align-items: center; justify-content: center;
-      background: var(--sand); border-radius: 8px;
-    }
-    .institution-logo-only img { width: 120px; height: auto; max-height: 100px; object-fit: contain; }
     .institution-name { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--navy); }
-    .institution-role { font-size: .82rem; color: var(--muted); margin-top: .1rem; }
+    .institution-role { font-size: .85rem; color: var(--muted); margin-top: .1rem; }
     .institution-years { font-size: .78rem; color: var(--accent); font-weight: 700; letter-spacing: .04em; margin: .2rem 0 .9rem; text-transform: uppercase; }
-    .institution-courses { display: flex; flex-wrap: wrap; gap: .65rem; }
+    .institution-courses { display: flex; flex-direction: column; gap: .5rem; }
     .institution-courses span {
-      font-size: .95rem; background: var(--sand); border: 1px solid var(--border);
-      padding: .55rem 1.1rem; border-radius: 999px; color: var(--text);
+      font-size: .92rem; background: var(--white); border: 1px solid var(--border);
+      padding: .5rem .9rem; border-radius: 8px; color: var(--text);
     }
-    @media (max-width: 640px) {
-      .institution-block { grid-template-columns: 1fr; }
-      .institution-building { height: 170px; }
+    .ready-list {
+      list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
     }
+    .ready-list li {
+      border: 1px solid var(--border); border-left: 3px solid var(--accent);
+      border-radius: 8px; padding: 1rem 1.25rem; background: var(--white);
+    }
+    .ready-course { font-weight: 600; color: var(--navy); font-size: .95rem; }
+    .ready-basis { font-size: .85rem; color: var(--muted); margin-top: .2rem; }
+    .teaching-statement { margin-top: 2rem; }
 
-    /* CONSULTING */
-    #consulting { background: var(--white); }
-    .consult-tagline {
-      font-size: .78rem; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 1.5rem;
-    }
-    .consult-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
-    .consult-card {
-      background: var(--sand); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.75rem; transition: all .2s;
-    }
-    .consult-card:hover { background: var(--light); border-color: rgba(184,151,10,.35); transform: translateY(-2px); }
-    .consult-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
-    .consult-card p { font-size: .875rem; color: var(--muted); line-height: 1.65; }
     .btn-accent { background: var(--accent); color: var(--navy); }
     .btn-accent:hover { background: var(--accent-lit); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(184,151,10,.35); }
-    .btn-outline-navy { background: transparent; color: var(--navy); border: 1.5px solid var(--border); margin-left: .75rem; }
-    .btn-outline-navy:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
 
     /* CV STRIP */
     #cv {
@@ -1888,46 +1901,43 @@ TEMPLATE = r"""<!DOCTYPE html>
       text-align: center; padding: 2rem; font-size: .82rem;
     }
     footer strong { color: rgba(255,255,255,.8); }
+    .footer-links { margin-top: .5rem; }
+    .footer-links a { color: var(--accent-lit); text-decoration: none; }
+    .footer-links a:hover { text-decoration: underline; }
 
     /* RESPONSIVE */
     @media (max-width: 768px) {
       .about-grid { grid-template-columns: 1fr; gap: 2rem; }
       .contact-grid { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
-      .nav-links { display: none; }
-      .gallery-strip { grid-template-columns: 1fr; height: auto; }
-      .gallery-item { height: 220px; }
+      .stream, .essay { padding: 1.35rem 1.25rem; }
+    }
+    @media (max-width: 480px) {
+      section { padding: 4rem 1.25rem; }
+      #cv { padding: 3.5rem 1.25rem; }
+      .institution-timeline, .ready-list { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-<nav>
-  <div class="nav-inner">
-    <a href="#hero" class="nav-logo">{{ site.display_name }}</a>
-    <ul class="nav-links">
-      {% for item in nav %}<li><a href="{{ item.href }}">{{ item.label }}</a></li>{% endfor %}
-    </ul>
-  </div>
-</nav>
+{{ nav_html | safe }}
 
+<main id="main">
 <section id="hero">
   <div class="hero-content">
-    <div class="hero-badge"><span></span>Academic Portfolio</div>
     <h1>{{ site.hero_name_before_dot }}<span class="drop-dot">.</span>{{ site.hero_name_after_dot }}</h1>
-    <p class="hero-subtitle">{{ site.title }}</p>
-    <p class="hero-institution">{{ site.hero_line }}{% if site.hero_line_2 %}<br/>{{ site.hero_line_2 }}{% endif %}</p>
+    {% if site.hero_line or site.defense_line %}
+    <p class="hero-institution">{{ site.hero_line }}{% if site.hero_line and site.defense_line %}<br/>{% endif %}{{ site.defense_line }}</p>
+    {% endif %}
+    {% if site.research_statement %}<p class="hero-statement">{{ site.research_statement }}</p>{% endif %}
     <div class="hero-ctas">
-      <a href="#research" class="btn btn-primary">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-        View Research
+      <a href="{{ site.cv_url }}" class="btn btn-primary">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+        CV (PDF)
       </a>
-      <a href="#contact" class="btn btn-outline">Get in Touch</a>
+      <a href="#research" class="btn btn-outline">Research</a>
     </div>
-  </div>
-  <div class="scroll-hint">
-    <span>Scroll</span>
-    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
   </div>
 </section>
 
@@ -1938,41 +1948,34 @@ TEMPLATE = r"""<!DOCTYPE html>
         <div class="about-card">
           <img src="{{ portrait_url }}" alt="{{ about.portrait_alt }}" class="about-photo" />
           <div class="about-name">{{ site.name }}</div>
-          <div class="about-role">{{ about_card.role }}</div>
-          <div class="about-school">{{ about_card.school }}</div>
-          <div class="about-second-role">{{ about_card.secondary_role }}</div>
-          <div class="school-logos">
-            {% for l in about_card.school_logos %}
-            <img src="{{ l.src }}" alt="{{ l.alt }}" class="school-logo" />
-            {% endfor %}
-          </div>
+          {% if about_card.role %}<div class="about-role">{{ about_card.role }}</div>{% endif %}
+          {% if about_card.school %}<div class="about-school">{{ about_card.school }}</div>{% endif %}
+          {% if about_card.secondary_role %}<div class="about-second-role">{{ about_card.secondary_role }}</div>{% endif %}
+          {% if stats %}
           <div class="about-stat-row">
-            {% for s in about_card.stats %}
+            {% for s in stats %}
             <div class="about-stat"><strong>{{ s.value }}</strong><span>{{ s.label }}</span></div>
             {% endfor %}
           </div>
+          {% endif %}
           <div class="about-links">
-            <a href="{{ site.links.scholar }}" target="_blank" class="about-link">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+            <a href="{{ site.links.scholar }}" target="_blank" rel="me noopener" class="about-link">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
               Google Scholar Profile
             </a>
             {% if orcid_url %}
-            <a href="{{ orcid_url }}" target="_blank" class="about-link">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 10v7M8 7v.01M12 10v7h2.5a3.5 3.5 0 000-7H12z"/></svg>
+            <a href="{{ orcid_url }}" target="_blank" rel="me noopener" class="about-link">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 10v7M8 7v.01M12 10v7h2.5a3.5 3.5 0 000-7H12z"/></svg>
               {{ orcid_label }}
             </a>
             {% endif %}
-            <a href="{{ site.links.linkedin }}" target="_blank" class="about-link">
-              <svg fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 11.001-4.124 2.062 2.062 0 01-.001 4.124zM7.114 20.452H3.558V9h3.556v11.452z"/></svg>
+            <a href="{{ site.links.linkedin }}" target="_blank" rel="me noopener" class="about-link">
+              <svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 11.001-4.124 2.062 2.062 0 01-.001 4.124zM7.114 20.452H3.558V9h3.556v11.452z"/></svg>
               {{ site.links.linkedin_label }}
             </a>
-            <a href="mailto:{{ site.email }}" class="about-link">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              {{ site.email }}
-            </a>
-            <a href="{{ site.links.firm }}" class="about-link">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1m4 0h1M9 13h1m4 0h1M9 17h1m4 0h1"/></svg>
-              {{ consulting_name }}
+            <a href="mailto:{{ primary_email }}" class="about-link">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              {{ primary_email }}
             </a>
           </div>
         </div>
@@ -1983,183 +1986,224 @@ TEMPLATE = r"""<!DOCTYPE html>
         <h2 class="section-title">{{ about.heading }}</h2>
         <div class="divider"></div>
         {% for p in about.paragraphs %}<p>{{ p }}</p>{% endfor %}
+        {% if about.keywords %}
         <div class="tags">
           {% for k in about.keywords %}<span class="tag">{{ k }}</span>{% endfor %}
         </div>
+        {% endif %}
       </div>
     </div>
   </div>
 </section>
 
-<section id="gallery">
-  <div class="gallery-strip">
-    {% for g in gallery %}
-    <div class="gallery-item">
-      <img src="{{ g.image }}" alt="{{ g.alt }}" loading="lazy" />
-      <div class="gallery-caption">{{ g.caption }}</div>
+{% if essays or dissertation_title %}
+<section id="dissertation">
+  <div class="container">
+    <div class="section-label">Doctoral research</div>
+    <h2 class="section-title">{{ dissertation_title or "Dissertation" }}</h2>
+    {% if dissertation_chair or site.defense_line %}
+    <p class="diss-meta">
+      {% if dissertation_chair %}<span>Chair: {{ dissertation_chair }}</span>{% endif %}
+      {% if site.defense_line %}<span>{{ site.defense_line }}</span>{% endif %}
+    </p>
+    {% endif %}
+    <div class="divider"></div>
+    <div class="essay-list">
+      {% for e in essays %}
+      <article class="essay{% if e.featured %} essay-featured{% endif %}">
+        <div class="essay-head">
+          <span class="essay-num">Essay {{ e.number }}</span>
+          {% if e.featured %}<span class="jmp-tag">Job market paper</span>{% endif %}
+        </div>
+        <h3 class="essay-title">{% if e.url %}<a href="{{ e.url }}">{{ e.title }}</a>{% else %}{{ e.title }}{% endif %}</h3>
+        {% if e.abstract %}<p class="essay-abstract">{{ e.abstract }}</p>{% endif %}
+      </article>
+      {% endfor %}
     </div>
-    {% endfor %}
   </div>
 </section>
+{% endif %}
 
+{% if streams %}
 <section id="research">
   <div class="container">
     <div class="section-label">Scholarship</div>
-    <h2 class="section-title">Research Interests</h2>
-    <p class="section-desc">{{ research.intro }}</p>
+    <h2 class="section-title">Research</h2>
+    {% if research.intro %}<p class="section-desc">{{ research.intro }}</p>{% endif %}
     <div class="divider"></div>
-    <div class="research-grid">
-      {% for c in research.cards %}
-      <div class="research-card">
-        <img src="{{ c.image }}" alt="{{ c.alt }}" class="research-card-img" loading="lazy" />
-        <h3>{{ c.title }}</h3>
-        <p>{{ c.text }}</p>
+    <div class="streams">
+      {% for s in streams %}
+      <div class="stream">
+        <h3 class="stream-title">{{ s.title }}</h3>
+        <ul class="paper-list">
+          {% for p in s.papers %}
+          <li class="paper">
+            <div class="paper-title">{% if p.url %}<a href="{{ p.url }}" target="_blank" rel="noopener">{{ p.title }}</a>{% else %}{{ p.title }}{% endif %}</div>
+            <div class="paper-meta">{{ p.authors_line }}{% if p.authors_line and p.year %} · {% endif %}{{ p.year }}</div>
+            {% if p.venue %}<div class="pub-journal">{{ p.venue }}</div>{% endif %}
+            {% if p.abstract %}<p class="paper-abstract">{{ p.abstract }}</p>{% endif %}
+            <div class="paper-tags">
+              {% if p.featured %}<span class="jmp-tag">Job market paper</span>{% endif %}
+              {% if p.kind_label %}<span class="pub-type">{{ p.kind_label }}</span>{% endif %}
+              {% if p.status_label %}<span class="pub-type">{{ p.status_label }}</span>{% endif %}
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
       </div>
       {% endfor %}
     </div>
   </div>
 </section>
+{% endif %}
 
+{% if teaching.institutions or teaching.interests %}
+<section id="teaching">
+  <div class="container">
+    <div class="teaching-header">
+      <div>
+        <div class="section-label">Classroom</div>
+        <h2 class="section-title">Teaching</h2>
+        <p class="section-desc" style="margin-bottom:0">{{ teaching.intro }}</p>
+        <div class="divider" style="margin-bottom:0"></div>
+      </div>
+      {% if teaching.photo %}
+      <div>
+        <img src="{{ teaching.photo }}" alt="{{ teaching.photo_alt }}" class="teaching-photo" loading="lazy" />
+      </div>
+      {% endif %}
+    </div>
+    {% if teaching.institutions %}
+    <h3 class="sub-title">Courses taught</h3>
+    <div class="institution-timeline">
+      {% for inst in teaching.institutions %}
+      <div class="institution-block">
+        <div class="institution-name">{{ inst.institution }}</div>
+        {% if inst.role %}<div class="institution-role">{{ inst.role }}</div>{% endif %}
+        {% if inst.years %}<div class="institution-years">{{ inst.years }}</div>{% endif %}
+        <div class="institution-courses">
+          {% for c in inst.courses %}<span>{{ c }}</span>{% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% if teaching.interests %}
+    <h3 class="sub-title">Ready to teach</h3>
+    <ul class="ready-list">
+      {% for t in teaching.interests %}
+      <li>
+        <div class="ready-course">{{ t.course }}</div>
+        {% if t.basis %}<div class="ready-basis">{{ t.basis }}</div>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% if teaching_statement %}
+    <p class="teaching-statement"><a href="{{ teaching_statement }}" class="btn btn-accent">Teaching statement (PDF)</a></p>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+{% if applied.cards %}
 <section id="applied">
   <div class="container">
     <div class="section-label">Practice</div>
-    <h2 class="section-title">Applied Work</h2>
-    <p class="section-desc">{{ applied.intro }}</p>
+    <h2 class="section-title">Applied research</h2>
+    {% if applied.intro %}<p class="section-desc">{{ applied.intro }}</p>{% endif %}
     <div class="divider"></div>
     <div class="research-grid">
       {% for c in applied.cards %}
       <div class="research-card">
         <h3>{{ c.title }}</h3>
-        <div class="section-label">{{ c.label }}</div>
-        <p>{{ c.text }}</p>
+        {% if c.label %}<div class="section-label">{{ c.label }}</div>{% endif %}
+        {% if c.text %}<p>{{ c.text }}</p>{% endif %}
         {% if c.cta_href %}<a href="{{ c.cta_href }}" class="btn btn-accent" style="margin-top:1.25rem">{{ c.cta_label }}</a>{% endif %}
       </div>
       {% endfor %}
     </div>
   </div>
 </section>
+{% endif %}
 
-<section id="publications">
-  <div class="container">
-    <div class="section-label">Scholarship</div>
-    <h2 class="section-title">Selected Publications</h2>
-    <p class="section-desc">{{ publications.intro }}</p>
-    <div class="divider"></div>
-    <div class="pub-list">
-      {% for p in publications.entries %}
-      <div class="pub-item">
-        <div class="pub-year">{{ p.year }}</div>
-        <div>
-          <div class="pub-title">
-            {% if p.url %}<a href="{{ p.url }}" target="_blank">{{ p.title }}</a>{% else %}{{ p.title }}{% endif %}
-          </div>
-          <div class="pub-authors">{{ p.authors }}</div>
-          <div class="pub-journal">{{ p.venue }}</div>
-          <span class="pub-type">{{ p.kind }}</span><span class="pub-type">{{ p.status }}</span>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-    {% if publications.working_papers %}
-    <div class="section-label" style="margin-top:2.5rem">Working Papers</div>
-    <div class="pub-list">
-      {% for p in publications.working_papers %}
-      <div class="pub-item">
-        <div class="pub-year">{{ p.year }}</div>
-        <div>
-          <div class="pub-title">
-            {% if p.ssrn_url %}<a href="{{ p.ssrn_url }}" target="_blank">{{ p.title }}</a>{% else %}{{ p.title }}{% endif %}
-          </div>
-          <div class="pub-authors">{{ p.authors }}</div>
-          {% if p.description %}<div class="pub-authors">{{ p.description }}</div>{% endif %}
-          <span class="pub-type">{{ p.kind }}</span>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-    {% endif %}
-  </div>
-</section>
-
+{% if service.review or service.affiliations %}
 <section id="service">
   <div class="container">
     <div class="section-label">Scholarship</div>
     <h2 class="section-title">Service &amp; Affiliations</h2>
-    <p class="section-desc">{{ service.intro }}</p>
     <div class="divider"></div>
     <div class="service-grid">
+      {% if service.review %}
       <div class="service-card">
         <h3>Editorial &amp; Review Service</h3>
         {% for r in service.review %}
         <div class="service-item">
-          <div class="service-role">{{ r.role }} · <em>{{ r.venue }}</em></div>
-          <div class="service-years">{{ r.years }}</div>
-          <p>{{ r.note }}</p>
+          <div class="service-role">{{ r.role }} · <em>{{ r.journal }}</em></div>
         </div>
         {% endfor %}
       </div>
+      {% endif %}
+      {% if service.affiliations %}
       <div class="service-card">
         <h3>Professional Affiliations</h3>
         {% for a in service.affiliations %}
         <div class="service-item">
           <div class="service-role">{{ a.name }}</div>
-          <p>{{ a.detail }}</p>
         </div>
         {% endfor %}
       </div>
+      {% endif %}
     </div>
   </div>
 </section>
+{% endif %}
 
-<section id="teaching">
+{% if talks %}
+<section id="talks">
   <div class="container">
-    <div class="teaching-header">
-      <div>
-        <div class="section-label">Classroom</div>
-        <h2 class="section-title">Courses Taught</h2>
-        <p class="section-desc" style="margin-bottom:0">{{ teaching.intro }}</p>
-        <div class="divider" style="margin-bottom:0"></div>
-      </div>
-      <div>
-        <img src="{{ teaching.photo }}" alt="{{ teaching.photo_alt }}" class="teaching-photo" loading="lazy" />
-      </div>
-    </div>
-    <div class="institution-timeline">
-      {% for inst in teaching.institutions %}
-      <div class="institution-block">
-        {% if inst.building %}
-        <div class="institution-media">
-          <img src="{{ inst.building }}" alt="{{ inst.building_alt }}" class="institution-building" loading="lazy" />
-          <img src="{{ inst.logo }}" alt="{{ inst.logo_alt }}" class="institution-logo" loading="lazy" />
-        </div>
-        {% else %}
-        <div class="institution-logo-only">
-          <img src="{{ inst.logo }}" alt="{{ inst.logo_alt }}" loading="lazy" />
-        </div>
-        {% endif %}
-        <div>
-          <div class="institution-name">{{ inst.name }}</div>
-          <div class="institution-role">{{ inst.role }}</div>
-          <div class="institution-years">{{ inst.years }}</div>
-          <div class="institution-courses">
-            {% for c in inst.courses %}<span>{{ c }}</span>{% endfor %}
-          </div>
-        </div>
-      </div>
+    <div class="section-label">Scholarship</div>
+    <h2 class="section-title">Talks</h2>
+    <div class="divider"></div>
+    <ul class="paper-list">
+      {% for t in talks %}
+      <li class="paper">
+        <div class="paper-title">{% if t.url %}<a href="{{ t.url }}" target="_blank" rel="noopener">{{ t.title }}</a>{% else %}{{ t.title }}{% endif %}</div>
+        <div class="paper-meta">{{ [t.event, t.location, t.date] | select | join(' · ') }}</div>
+      </li>
       {% endfor %}
-    </div>
+    </ul>
   </div>
 </section>
+{% endif %}
+
+{% if awards %}
+<section id="awards">
+  <div class="container">
+    <div class="section-label">Recognition</div>
+    <h2 class="section-title">Awards</h2>
+    <div class="divider"></div>
+    <ul class="paper-list">
+      {% for a in awards %}
+      <li class="paper">
+        <div class="paper-title">{{ a.title }}</div>
+        <div class="paper-meta">{{ [a.organization, a.year | string if a.year else ''] | select | join(' · ') }}</div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
 
 <section id="cv">
   <h2>Download Full Curriculum Vitae</h2>
   <p>Academic history, complete publication list, applied work, and service record.</p>
   <div class="cv-buttons">
     <a href="{{ site.cv_url }}" target="_blank" class="btn btn-primary">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
       Download CV (PDF)
     </a>
-    <a href="{{ site.links.scholar }}" target="_blank" class="btn btn-outline">Google Scholar</a>
+    <a href="{{ site.links.scholar }}" target="_blank" rel="me noopener" class="btn btn-outline">Google Scholar</a>
   </div>
 </section>
 
@@ -2172,29 +2216,20 @@ TEMPLATE = r"""<!DOCTYPE html>
     <div class="contact-grid">
       <div class="contact-info">
         <h3>Contact Information</h3>
+        {% for label, addr in contact_rows %}
         <div class="contact-item">
           <div class="contact-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           </div>
           <div>
-            <div class="contact-label">Teaching &amp; academic</div>
-            <div class="contact-value">{{ site.email }}</div>
+            <div class="contact-label">{{ label }}</div>
+            <div class="contact-value">{{ addr }}</div>
           </div>
         </div>
-        {% if professional_email %}
+        {% endfor %}
         <div class="contact-item">
           <div class="contact-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          </div>
-          <div>
-            <div class="contact-label">Research, consulting &amp; industry</div>
-            <div class="contact-value">{{ professional_email }}</div>
-          </div>
-        </div>
-        {% endif %}
-        <div class="contact-item">
-          <div class="contact-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           </div>
           <div>
             <div class="contact-label">Location</div>
@@ -2203,33 +2238,24 @@ TEMPLATE = r"""<!DOCTYPE html>
         </div>
         <div class="contact-item">
           <div class="contact-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
           </div>
           <div>
             <div class="contact-label">Scholar</div>
-            <div class="contact-value"><a href="{{ site.links.scholar }}" target="_blank">Google Scholar Profile</a></div>
+            <div class="contact-value"><a href="{{ site.links.scholar }}" target="_blank" rel="me noopener">Google Scholar Profile</a></div>
           </div>
         </div>
         {% if orcid_url %}
         <div class="contact-item">
           <div class="contact-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 10v7M8 7v.01M12 10v7h2.5a3.5 3.5 0 000-7H12z"/></svg>
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 10v7M8 7v.01M12 10v7h2.5a3.5 3.5 0 000-7H12z"/></svg>
           </div>
           <div>
             <div class="contact-label">ORCID</div>
-            <div class="contact-value"><a href="{{ orcid_url }}" target="_blank">{{ orcid_label }}</a></div>
+            <div class="contact-value"><a href="{{ orcid_url }}" target="_blank" rel="me noopener">{{ orcid_label }}</a></div>
           </div>
         </div>
         {% endif %}
-        <div class="contact-item">
-          <div class="contact-icon">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1m4 0h1M9 13h1m4 0h1M9 17h1m4 0h1"/></svg>
-          </div>
-          <div>
-            <div class="contact-label">Consulting</div>
-            <div class="contact-value"><a href="{{ site.links.firm }}">{{ consulting_name }}</a></div>
-          </div>
-        </div>
       </div>
 
       <div class="contact-form">
@@ -2237,7 +2263,6 @@ TEMPLATE = r"""<!DOCTYPE html>
         {% with messages = get_flashed_messages() %}
           {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
         {% endwith %}
-        {# TODO: move the FormSubmit target to PROFESSIONAL_EMAIL once that address exists. #}
         <form method="post" action="{{ form_action }}">
           {% if site.contact_endpoint %}
           <input type="hidden" name="_subject" value="Message from timothydspivey.com" />
@@ -2247,28 +2272,28 @@ TEMPLATE = r"""<!DOCTYPE html>
           {% endif %}
           <div class="form-row">
             <div class="form-group">
-              <label>First Name</label>
-              <input type="text" name="first_name" placeholder="Jane" required />
+              <label for="f-first">First Name</label>
+              <input id="f-first" type="text" name="first_name" placeholder="Jane" required />
             </div>
             <div class="form-group">
-              <label>Last Name</label>
-              <input type="text" name="last_name" placeholder="Smith" required />
+              <label for="f-last">Last Name</label>
+              <input id="f-last" type="text" name="last_name" placeholder="Smith" required />
             </div>
           </div>
           <div class="form-group">
-            <label>Email</label>
-            <input type="email" name="email" placeholder="jane@example.com" required />
+            <label for="f-email">Email</label>
+            <input id="f-email" type="email" name="email" placeholder="jane@example.com" required />
           </div>
           <div class="form-group">
-            <label>Subject</label>
-            <select name="topic">
+            <label for="f-topic">Subject</label>
+            <select id="f-topic" name="topic">
               <option value="">Select a topic&hellip;</option>
               {% for t in contact.topics %}<option>{{ t }}</option>{% endfor %}
             </select>
           </div>
           <div class="form-group">
-            <label>Message</label>
-            <textarea name="message" placeholder="Your message&hellip;" required></textarea>
+            <label for="f-message">Message</label>
+            <textarea id="f-message" name="message" placeholder="Your message&hellip;" required></textarea>
           </div>
           <button class="btn-submit" type="submit">Send Message</button>
         </form>
@@ -2276,9 +2301,11 @@ TEMPLATE = r"""<!DOCTYPE html>
     </div>
   </div>
 </section>
+</main>
 
 <footer>
-  <p><strong>{{ site.name }}</strong> &nbsp;&middot;&nbsp; {{ site.title }} &nbsp;&middot;&nbsp; {{ site.footer_degree }}</p>
+  <p><strong>{{ site.name }}</strong>{% if site.footer_degree %} &nbsp;&middot;&nbsp; {{ site.footer_degree }}{% endif %}</p>
+  <p class="footer-links">Also: <a href="{{ site.links.firm }}">{{ firm_name }}</a> &nbsp;&middot;&nbsp; Writing: <a href="blog/">Threshold Effects</a></p>
   <p style="margin-top:.4rem">&copy; {{ year }} {{ site.name }}. All rights reserved.</p>
   <p style="margin-top:.6rem; font-size:.72rem">Views expressed on this site are my own and do not represent my employer, Pensacola State College, or the University of South Alabama. Analyses published here use only publicly available data.</p>
 </footer>
@@ -2296,28 +2323,6 @@ TEMPLATE = r"""<!DOCTYPE html>
     });
   }, { threshold: 0.4 });
   sections.forEach(s => observer.observe(s));
-
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!reduceMotion) {
-    const cards = document.querySelectorAll('.research-card, .pub-item, .consult-card, .institution-block, .about-card');
-    cards.forEach(c => {
-      c.style.opacity = '0';
-      c.style.transform = 'translateY(18px)';
-      c.style.transition = 'opacity .45s ease, transform .45s ease';
-    });
-    const cardObserver = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          setTimeout(() => {
-            e.target.style.opacity = '1';
-            e.target.style.transform = 'translateY(0)';
-          }, 60);
-          cardObserver.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.1 });
-    cards.forEach(c => cardObserver.observe(c));
-  }
 </script>
 </body>
 </html>
@@ -2341,6 +2346,8 @@ _BLOG_HEAD = r"""<!DOCTYPE html>
   <meta property="og:type" content="article" />
   <meta property="og:url" content="{{ page_url }}" />
   <link rel="canonical" href="{{ canonical or page_url }}" />
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="{{ site.theme_color }}" />
   <link rel="alternate" type="application/rss+xml" title="{{ blog.name }}" href="/blog/feed.xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -2409,7 +2416,7 @@ _BLOG_HEAD = r"""<!DOCTYPE html>
       color: var(--muted); transition: color .2s;
     }
     .nav-links a:hover, .nav-links a.active { color: var(--accent); }
-
+{{ nav_css | safe }}
     /* BLOG HEADER BAND */
     .blog-hero {
       background: linear-gradient(135deg, var(--navy) 0%, #16293d 60%, var(--blue) 100%);
@@ -2539,7 +2546,6 @@ _BLOG_HEAD = r"""<!DOCTYPE html>
     footer strong { color: rgba(255,255,255,.8); }
 
     @media (max-width: 768px) {
-      .nav-links { display: none; }
       .blog-hero { padding: 8rem 1.5rem 3.5rem; }
       .wrap, article { padding-left: 1.5rem; padding-right: 1.5rem; }
     }
@@ -2550,20 +2556,7 @@ _BLOG_HEAD = r"""<!DOCTYPE html>
 </head>
 <body>
 
-<nav>
-  <div class="nav-inner">
-    <a href="/" class="nav-logo">{{ site.name }}</a>
-    <ul class="nav-links">
-      <li><a href="/#about">About</a></li>
-      <li><a href="/#research">Research</a></li>
-      <li><a href="/#publications">Publications</a></li>
-      <li><a href="/#teaching">Teaching</a></li>
-      <li><a href="/#consulting">Consulting</a></li>
-      <li><a href="/blog/" class="active">Blog</a></li>
-      <li><a href="/#contact">Contact</a></li>
-    </ul>
-  </div>
-</nav>
+{{ nav_html | safe }}
 """
 
 _BLOG_FOOT = r"""
@@ -2589,7 +2582,7 @@ BLOG_TEMPLATE = _BLOG_HEAD + r"""
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap" id="main">
   <div class="post-list">
   {% for post in posts %}
     <div class="post-card">
@@ -2627,7 +2620,7 @@ POST_TEMPLATE = _BLOG_HEAD + r"""
   </div>
 </header>
 
-<article>
+<article id="main">
   <div class="post-body">
 {{ post.body | safe }}
   </div>

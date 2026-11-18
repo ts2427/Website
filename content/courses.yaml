@@ -1,0 +1,17 @@
+# Courses taught, grouped by institution (newest first).
+# term is optional; when set it renders after the title in parentheses.
+- institution: Pensacola State College
+  role: Adjunct Instructor
+  years: "2025–present"
+  courses:
+    - title: Introduction to Entrepreneurship
+      term: current
+    - title: Entrepreneurship Marketing and Sales
+      term: Spring 2027
+
+- institution: University of West Florida
+  role: Graduate Teaching Assistant
+  years: "2022–2024"
+  courses:
+    - title: "Writing for Business: Theory and Practice"
+      term: ""
