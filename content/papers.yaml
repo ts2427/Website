@@ -21,7 +21,14 @@
   kind: dissertation_essay
   status: working_paper
   venue: ""
-  abstract: "TODO: one-paragraph description, no results"
+  abstract: >-
+    Public breach databases record notifications, not incidents: one breach
+    can appear many times, filing dates can stand in for breach dates, and
+    industry codes stand in for regulatory status. This essay rebuilds the
+    data at the event level, takes regulatory status from the FCC's Form 499
+    registry, and uses the FCC's 2007 disclosure rule as a natural experiment
+    to show how those measurement choices shape estimated market reactions to
+    breaches.
   url: ""
   featured: true
 

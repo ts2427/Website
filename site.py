@@ -503,6 +503,11 @@ something worth saying, and not otherwise. If that suits you, there is an
     # ------------------------------------------------------------------
     {
         "slug": "the-faster-is-better-assumption",
+        # Editor's note shown above the archived body; body and summary unchanged.
+        "note": ("Update, November 2026: The 1,054 figure counts public breach "
+                 "records, which resolve to 489 distinct breach events. The "
+                 "analysis has since been revised, and final results will be "
+                 "reported with the dissertation."),
         "title": "The Faster-Is-Better Assumption",
         "date": "2026-07-20",
         "tags": ["Mandatory Disclosure", "Cybersecurity", "Research"],
@@ -2534,6 +2539,16 @@ _BLOG_HEAD = r"""<!DOCTYPE html>
     .post-body img { max-width: 100%; border-radius: 8px; display: block; margin: 1.6rem auto; }
     .post-body figcaption { text-align: center; font-size: .8rem; color: var(--muted); margin-top: -1rem; margin-bottom: 1.6rem; }
     .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.2rem 0; }
+    .editor-note {
+      background: var(--light); border: 1px solid rgba(184,151,10,.35);
+      border-left: 4px solid var(--accent); border-radius: 8px;
+      padding: 1rem 1.25rem; margin-bottom: 2rem;
+      font-size: .92rem; line-height: 1.65; color: var(--blue);
+    }
+    .editor-note strong {
+      display: block; font-size: .7rem; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: .3rem;
+    }
     .post-end {
       margin-top: 3rem; padding-top: 1.75rem; border-top: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
@@ -2625,6 +2640,7 @@ POST_TEMPLATE = _BLOG_HEAD + r"""
 
 <article id="main">
   <div class="post-body">
+{% if post.note %}<aside class="editor-note" role="note"><strong>Editor's note</strong>{{ post.note }}</aside>{% endif %}
 {{ post.body | safe }}
   </div>
   <div class="post-end">
