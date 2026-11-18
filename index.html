@@ -185,6 +185,12 @@
     }
     .hero-subtitle { font-size: 1.15rem; color: rgba(255,255,255,.78); margin-bottom: .5rem; }
     .hero-institution { font-size: .95rem; color: rgba(255,255,255,.6); margin-bottom: 1.5rem; }
+    .hero-market {
+      display: inline-block; margin: -.75rem 0 1.75rem;
+      font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--accent-lit); border: 1px solid rgba(226,200,75,.45);
+      padding: .4rem 1rem; border-radius: 999px;
+    }
     .hero-statement {
       font-size: 1.12rem; line-height: 1.6; color: rgba(255,255,255,.88);
       max-width: 620px; margin: 0 auto 2.25rem;
@@ -267,6 +273,10 @@
     .about-link svg { width: 14px; flex-shrink: 0; }
     .about-bio p { color: var(--muted); font-size: 1rem; line-height: 1.75; margin-bottom: 1rem; }
     .about-bio p:last-child { margin-bottom: 0; }
+    .edu-list { list-style: none; display: flex; flex-direction: column; gap: .75rem; }
+    .edu-list li { border-left: 3px solid var(--accent); padding-left: 1rem; }
+    .edu-degree { font-weight: 600; color: var(--navy); font-size: .95rem; }
+    .edu-meta { font-size: .85rem; color: var(--muted); }
     .tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.5rem; }
     .tag {
       background: var(--light); color: var(--blue); font-size: .78rem; font-weight: 600;
@@ -338,6 +348,12 @@
       letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
       border: 1px solid var(--border); padding: .15rem .5rem; border-radius: 4px;
     }
+
+    /* REFERENCES */
+    #references { background: var(--white); }
+    .ref-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+    .ref-card { background: var(--sand); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; }
+    .ref-card a { color: var(--accent); text-decoration: none; }
 
     /* TALKS & AWARDS */
     #talks { background: var(--sand); }
@@ -508,6 +524,7 @@
     <p class="hero-institution">PhD Candidate, Business Administration (Business Analytics) · University of South Alabama · Mitchell College of Business<br/>Dissertation defense: January 2027</p>
     
     <p class="hero-statement">I study how the public data behind regulatory research is built, and how fixing it changes what we conclude about disclosure rules and the markets they govern.</p>
+    <p class="hero-market">On the 2026–27 academic job market</p>
     <div class="hero-ctas">
       <a href="timothy-spivey-cv.pdf" class="btn btn-primary">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
@@ -572,6 +589,27 @@
           <span class="tag">Mandatory Disclosure</span><span class="tag">Cybersecurity Governance</span><span class="tag">Event Studies</span><span class="tag">Capital Markets</span><span class="tag">IT Ethics</span><span class="tag">Business Analytics</span><span class="tag">Telecom Markets</span><span class="tag">Customer Analytics</span>
         </div>
         
+        
+        <h3 class="sub-title" id="education">Education</h3>
+        <ul class="edu-list">
+          
+          <li>
+            <div class="edu-degree">PhD, Business Administration (Business Analytics)</div>
+            <div class="edu-meta">University of South Alabama, Mitchell College of Business · Expected May 2027</div>
+          </li>
+          
+          <li>
+            <div class="edu-degree">MBA, Business Analytics</div>
+            <div class="edu-meta">University of West Florida</div>
+          </li>
+          
+          <li>
+            <div class="edu-degree">BAS, Business and Management (Organizational Administration)</div>
+            <div class="edu-meta">Pensacola State College</div>
+          </li>
+          
+        </ul>
+        
       </div>
     </div>
   </div>
@@ -584,7 +622,7 @@
     <h2 class="section-title">Dissertation</h2>
     
     <p class="diss-meta">
-      
+      <span>Chair: Dr. Ying Johnson</span>
       <span>Dissertation defense: January 2027</span>
     </p>
     
@@ -611,6 +649,7 @@
     <div class="section-label">Scholarship</div>
     <h2 class="section-title">Research</h2>
     <p class="section-desc">Three lines of empirical work: mandatory disclosure and markets, competition and regulation in broadband, and security culture and IT governance.</p>
+    
     <div class="divider"></div>
     <div class="streams">
       
@@ -882,6 +921,8 @@
 
 
 
+
+
 <section id="cv">
   <h2>Download Full Curriculum Vitae</h2>
   <p>Academic history, complete publication list, applied work, and service record.</p>
@@ -1003,7 +1044,7 @@
 <footer>
   <p><strong>Timothy D. Spivey</strong> &nbsp;&middot;&nbsp; PhD Candidate, University of South Alabama · Mitchell College of Business</p>
   <p class="footer-links">Also: <a href="https://thresholddatasciences.com">Threshold Data Sciences</a> &nbsp;&middot;&nbsp; Writing: <a href="blog/">Threshold Effects</a></p>
-  <p style="margin-top:.4rem">&copy; 2026 Timothy D. Spivey. All rights reserved.</p>
+  <p style="margin-top:.4rem">&copy; 2026 Timothy D. Spivey. All rights reserved. &nbsp;&middot;&nbsp; Last updated November 2026</p>
   <p style="margin-top:.6rem; font-size:.72rem">Views expressed on this site are my own and do not represent my employer, Pensacola State College, or the University of South Alabama. Analyses published here use only publicly available data.</p>
 </footer>
 

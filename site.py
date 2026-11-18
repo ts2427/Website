@@ -53,10 +53,17 @@ RESEARCH_STATEMENT = (
 
 # Dissertation block (after About). TODO / empty values render nothing.
 DISSERTATION_TITLE = "TODO"
-DISSERTATION_CHAIR = ""
+# From the CV committee list (proposal defense, April 2026).
+DISSERTATION_CHAIR = "Dr. Ying Johnson"
+
+# Hero line announcing candidacy. Empty hides it; clear it once you accept a
+# position.
+JOB_MARKET = "On the 2026–27 academic job market"
 
 # Shown only if this file exists beside site.py.
 TEACHING_STATEMENT_PDF = "teaching-statement.pdf"
+# Shown in the Research section only if this file exists beside site.py.
+RESEARCH_STATEMENT_PDF = "research-statement.pdf"
 
 # Profile URLs for the JSON-LD sameAs list; skipped while empty.
 ORCID_URL = "https://orcid.org/0009-0009-8990-4308"
@@ -215,6 +222,18 @@ SERVICE = {
 }
 TALKS = [t for t in load_yaml("talks") if shown(t.get("title"))]
 AWARDS = [a for a in load_yaml("awards") if shown(a.get("title"))]
+REFERENCES = [r for r in load_yaml("references") if shown(r.get("name"))]
+EDUCATION = []
+for _e in load_yaml("education"):
+    if not shown(_e.get("degree")):
+        continue
+    _e = dict(_e)
+    if str(_e.get("year", "")).strip().lower() == "auto":
+        _e["year"] = ("Expected May 2027" if DEGREE_STAGE in ("candidate", "defended")
+                      else "2027")
+    _e["year"] = clean(str(_e.get("year") or ""))
+    _e["school"] = clean(_e.get("school"))
+    EDUCATION.append(_e)
 
 # Headline numbers in the About card. Methodological, not results.
 STATS = [
@@ -1189,11 +1208,15 @@ def contact_rows():
     return rows
 
 
-def teaching_statement_url():
-    if shown(TEACHING_STATEMENT_PDF) and os.path.exists(
-            os.path.join(HERE, TEACHING_STATEMENT_PDF)):
-        return TEACHING_STATEMENT_PDF
+def existing_file(name):
+    """name if it is set and the file exists beside site.py, else ""."""
+    if shown(name) and os.path.exists(os.path.join(HERE, name)):
+        return name
     return ""
+
+
+def teaching_statement_url():
+    return existing_file(TEACHING_STATEMENT_PDF)
 
 
 FAVICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
@@ -1292,6 +1315,11 @@ def render(building=False):
         contact_rows=contact_rows(),
         primary_email=RESEARCH_EMAIL or SITE["email"],
         teaching_statement=teaching_statement_url(),
+        research_statement_pdf=existing_file(RESEARCH_STATEMENT_PDF),
+        job_market=clean(JOB_MARKET),
+        education=EDUCATION,
+        references=REFERENCES,
+        last_updated=date.today().strftime("%B %Y"),
         firm_name=FIRM_NAME,
         orcid_url=ORCID_URL,
         orcid_label=ORCID_LABEL,
@@ -1645,6 +1673,12 @@ TEMPLATE = r"""<!DOCTYPE html>
     }
     .hero-subtitle { font-size: 1.15rem; color: rgba(255,255,255,.78); margin-bottom: .5rem; }
     .hero-institution { font-size: .95rem; color: rgba(255,255,255,.6); margin-bottom: 1.5rem; }
+    .hero-market {
+      display: inline-block; margin: -.75rem 0 1.75rem;
+      font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--accent-lit); border: 1px solid rgba(226,200,75,.45);
+      padding: .4rem 1rem; border-radius: 999px;
+    }
     .hero-statement {
       font-size: 1.12rem; line-height: 1.6; color: rgba(255,255,255,.88);
       max-width: 620px; margin: 0 auto 2.25rem;
@@ -1727,6 +1761,10 @@ TEMPLATE = r"""<!DOCTYPE html>
     .about-link svg { width: 14px; flex-shrink: 0; }
     .about-bio p { color: var(--muted); font-size: 1rem; line-height: 1.75; margin-bottom: 1rem; }
     .about-bio p:last-child { margin-bottom: 0; }
+    .edu-list { list-style: none; display: flex; flex-direction: column; gap: .75rem; }
+    .edu-list li { border-left: 3px solid var(--accent); padding-left: 1rem; }
+    .edu-degree { font-weight: 600; color: var(--navy); font-size: .95rem; }
+    .edu-meta { font-size: .85rem; color: var(--muted); }
     .tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.5rem; }
     .tag {
       background: var(--light); color: var(--blue); font-size: .78rem; font-weight: 600;
@@ -1798,6 +1836,12 @@ TEMPLATE = r"""<!DOCTYPE html>
       letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
       border: 1px solid var(--border); padding: .15rem .5rem; border-radius: 4px;
     }
+
+    /* REFERENCES */
+    #references { background: var(--white); }
+    .ref-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+    .ref-card { background: var(--sand); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; }
+    .ref-card a { color: var(--accent); text-decoration: none; }
 
     /* TALKS & AWARDS */
     #talks { background: var(--sand); }
@@ -1954,6 +1998,7 @@ TEMPLATE = r"""<!DOCTYPE html>
     <p class="hero-institution">{{ site.hero_line }}{% if site.hero_line and site.defense_line %}<br/>{% endif %}{{ site.defense_line }}</p>
     {% endif %}
     {% if site.research_statement %}<p class="hero-statement">{{ site.research_statement }}</p>{% endif %}
+    {% if job_market %}<p class="hero-market">{{ job_market }}</p>{% endif %}
     <div class="hero-ctas">
       <a href="{{ site.cv_url }}" class="btn btn-primary">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
@@ -2014,6 +2059,17 @@ TEMPLATE = r"""<!DOCTYPE html>
           {% for k in about.keywords %}<span class="tag">{{ k }}</span>{% endfor %}
         </div>
         {% endif %}
+        {% if education %}
+        <h3 class="sub-title" id="education">Education</h3>
+        <ul class="edu-list">
+          {% for e in education %}
+          <li>
+            <div class="edu-degree">{{ e.degree }}</div>
+            <div class="edu-meta">{{ [e.school, e.year] | select | join(' · ') }}</div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -2053,6 +2109,7 @@ TEMPLATE = r"""<!DOCTYPE html>
     <div class="section-label">Scholarship</div>
     <h2 class="section-title">Research</h2>
     {% if research.intro %}<p class="section-desc">{{ research.intro }}</p>{% endif %}
+    {% if research_statement_pdf %}<p style="margin:-1.5rem 0 1.5rem"><a href="{{ research_statement_pdf }}" class="btn btn-accent">Research statement (PDF)</a></p>{% endif %}
     <div class="divider"></div>
     <div class="streams">
       {% for s in streams %}
@@ -2221,6 +2278,26 @@ TEMPLATE = r"""<!DOCTYPE html>
 </section>
 {% endif %}
 
+{% if references %}
+<section id="references">
+  <div class="container">
+    <div class="section-label">Job market</div>
+    <h2 class="section-title">References</h2>
+    <div class="divider"></div>
+    <div class="ref-grid">
+      {% for r in references %}
+      <div class="ref-card">
+        <div class="edu-degree">{{ r.name }}</div>
+        {% if r.role %}<div class="essay-num">{{ r.role }}</div>{% endif %}
+        <div class="edu-meta">{{ [r.title, r.institution] | select | join(', ') }}</div>
+        {% if r.email %}<div class="edu-meta"><a href="mailto:{{ r.email }}">{{ r.email }}</a></div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
 <section id="cv">
   <h2>Download Full Curriculum Vitae</h2>
   <p>Academic history, complete publication list, applied work, and service record.</p>
@@ -2332,7 +2409,7 @@ TEMPLATE = r"""<!DOCTYPE html>
 <footer>
   <p><strong>{{ site.name }}</strong>{% if site.footer_degree %} &nbsp;&middot;&nbsp; {{ site.footer_degree }}{% endif %}</p>
   <p class="footer-links">Also: <a href="{{ site.links.firm }}">{{ firm_name }}</a> &nbsp;&middot;&nbsp; Writing: <a href="blog/">Threshold Effects</a></p>
-  <p style="margin-top:.4rem">&copy; {{ year }} {{ site.name }}. All rights reserved.</p>
+  <p style="margin-top:.4rem">&copy; {{ year }} {{ site.name }}. All rights reserved.{% if last_updated %} &nbsp;&middot;&nbsp; Last updated {{ last_updated }}{% endif %}</p>
   <p style="margin-top:.6rem; font-size:.72rem">Views expressed on this site are my own and do not represent my employer, Pensacola State College, or the University of South Alabama. Analyses published here use only publicly available data.</p>
 </footer>
 

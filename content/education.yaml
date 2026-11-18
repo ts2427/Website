@@ -1,0 +1,11 @@
+# Degrees, newest first. year: "auto" on the PhD follows DEGREE_STAGE
+# ("Expected May 2027" until conferral, then "2027"). TODO years render nothing.
+- degree: "PhD, Business Administration (Business Analytics)"
+  school: "University of South Alabama, Mitchell College of Business"
+  year: auto
+- degree: "MBA, Business Analytics"
+  school: "University of West Florida"
+  year: "TODO"
+- degree: "BAS, Business and Management (Organizational Administration)"
+  school: "Pensacola State College"
+  year: "TODO"
