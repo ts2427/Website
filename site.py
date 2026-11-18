@@ -52,7 +52,8 @@ RESEARCH_STATEMENT = (
     "they govern.")
 
 # Dissertation block (after About). TODO / empty values render nothing.
-DISSERTATION_TITLE = "TODO"
+DISSERTATION_TITLE = ("Records, Codes, and Filings: Measurement, Regulatory Status, "
+                      "and the Consequences of Data Breaches")
 # From the CV committee list (proposal defense, April 2026).
 DISSERTATION_CHAIR = "Dr. Ying Johnson"
 
@@ -75,7 +76,7 @@ SSRN_URL = "https://papers.ssrn.com/sol3/cf_dev/AbsByAuth.cfm?per_id=13977868"
 # before (form posts to PROFESSIONAL_EMAIL). Once set, it becomes the primary
 # contact and the FormSubmit endpoint (FormSubmit sends a one-time activation
 # email to the new address).
-RESEARCH_EMAIL = ""
+RESEARCH_EMAIL = "ts2427@jagmail.southalabama.edu"
 
 # Address on my own domain; shown as a second contact line while non-empty.
 PROFESSIONAL_EMAIL = "timothy@thresholddatasciences.com"
