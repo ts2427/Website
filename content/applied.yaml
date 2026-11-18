@@ -12,9 +12,9 @@
 - title: Breach Disclosure Research Pipeline
   label: "Data engineering · 2024–2026"
   text: >-
-    1,054 breach events across nineteen years, normalized from inconsistent
-    public sources into a Python and Snowflake pipeline matched to market
-    data. The empirical backbone of my dissertation.
+    1,054 public breach records spanning nineteen years, resolved to 489
+    distinct events and matched to market data in a Python and Snowflake
+    pipeline. The empirical backbone of my dissertation.
 
 - title: Operational Reporting and Forecasting
   label: Industry practice

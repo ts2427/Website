@@ -189,7 +189,9 @@ N_SOLE_WP = sum(1 for p in PAPERS
 COURSES = load_yaml("courses")
 for _inst in COURSES:
     _inst["courses"] = [
-        c["title"] + (f" ({c['term']})" if shown(c.get("term")) else "")
+        # term "current" renders no label; other terms render as "(Spring 2027)".
+        c["title"] + (f" ({c['term']})" if shown(c.get("term"))
+                      and str(c["term"]).strip().lower() != "current" else "")
         for c in (_inst.get("courses") or []) if shown(c.get("title"))
     ]
 COURSES = [i for i in COURSES if shown(i.get("institution")) and i["courses"]]
@@ -209,8 +211,8 @@ STATS = [
     {"value": "1,054 → 489", "label": "breach records resolved to events"},
     {"value": str(N_ESSAYS), "label": "dissertation essays"},
     {"value": str(N_SOLE_WP),
-     "label": "sole-authored working paper" if N_SOLE_WP == 1
-              else "sole-authored working papers"},
+     "label": "sole-authored paper" if N_SOLE_WP == 1
+              else "sole-authored papers"},
 ]
 STATS = [s for s in STATS if shown(s["value"]) and s["value"] != "0"]
 
@@ -350,11 +352,12 @@ ABOUT = {
         DEGREE["bio_first"],
 
         "The question is not whether disclosure matters. It is whether mandating "
-        "when a firm discloses produces the benefit regulators assumed it would. "
-        "Across three empirical channels, his work finds real costs and little "
-        "evidence of the intended benefit. The empirical backbone is a natural "
-        "experiment built on the FCC’s 2007 mandatory disclosure rule "
-        "(47 CFR § 64.2011), applied to 1,054 breach events from 2006 to 2025.",
+        "when a firm discloses produces the benefit regulators assumed it would, "
+        "and whether the public data used to answer that question can support "
+        "the answer. The empirical design is a natural experiment built on the "
+        "FCC's 2007 mandatory disclosure rule (47 CFR § 64.2011), applied to "
+        "1,054 public breach records from 2006 to 2025 that resolve to 489 "
+        "distinct breach events.",
 
         "His broader work follows two lines. One examines security culture: how "
         "fear-based policies, rigid IT controls and workplace surveillance can create "
