@@ -130,6 +130,14 @@ KIND_LABELS = {
     "practitioner": "Practitioner publication",
     "dissertation_essay": "Dissertation essay",
 }
+# Optional "Related" link under a research stream.
+STREAM_RELATED = {
+    "broadband": {
+        "text": "Related: an interactive retention playbook built on public broadband data.",
+        "label": "Open the playbook",
+        "href": "retention-playbook.html",
+    },
+}
 STREAMS = [
     ("disclosure", "Mandatory disclosure and markets"),
     ("broadband", "Competition and regulation in broadband"),
@@ -185,7 +193,8 @@ for _i, _p in enumerate([p for p in PAPERS_RAW if p.get("kind") == "dissertation
         ESSAYS.append(_v)
 N_ESSAYS = sum(1 for p in PAPERS_RAW if p.get("kind") == "dissertation_essay")
 RESEARCH_STREAMS = [
-    {"key": k, "title": t, "papers": [p for p in PAPERS if p["stream"] == k]}
+    {"key": k, "title": t, "papers": [p for p in PAPERS if p["stream"] == k],
+     "related": STREAM_RELATED.get(k)}
     for k, t in STREAMS
 ]
 RESEARCH_STREAMS = [s for s in RESEARCH_STREAMS if s["papers"]]
@@ -363,6 +372,7 @@ SITE = {
 NAV = [
     {"label": "Research", "href": "#research"},
     {"label": "Teaching", "href": "#teaching"},
+    {"label": "Applied research", "href": "#applied"},
     {"label": "CV", "href": "timothy-spivey-cv.pdf"},
     {"label": "Contact", "href": "#contact"},
 ]
@@ -1784,6 +1794,12 @@ TEMPLATE = r"""<!DOCTYPE html>
       color: var(--navy); margin-bottom: 1rem; padding-bottom: .75rem;
       border-bottom: 2px solid var(--light);
     }
+    .stream-related {
+      margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed var(--border);
+      font-size: .88rem; color: var(--muted);
+    }
+    .stream-related a { color: var(--accent); font-weight: 600; text-decoration: none; white-space: nowrap; }
+    .stream-related a:hover { text-decoration: underline; }
     .paper-list { list-style: none; display: flex; flex-direction: column; gap: 1.35rem; }
     .paper-title { font-size: .98rem; font-weight: 600; color: var(--navy); line-height: 1.45; }
     .paper-title a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--accent); }
@@ -2131,6 +2147,9 @@ TEMPLATE = r"""<!DOCTYPE html>
           </li>
           {% endfor %}
         </ul>
+        {% if s.related %}
+        <p class="stream-related">{{ s.related.text }} <a href="{{ s.related.href }}">{{ s.related.label }} &rarr;</a></p>
+        {% endif %}
       </div>
       {% endfor %}
     </div>

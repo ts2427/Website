@@ -295,6 +295,12 @@
       color: var(--navy); margin-bottom: 1rem; padding-bottom: .75rem;
       border-bottom: 2px solid var(--light);
     }
+    .stream-related {
+      margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed var(--border);
+      font-size: .88rem; color: var(--muted);
+    }
+    .stream-related a { color: var(--accent); font-weight: 600; text-decoration: none; white-space: nowrap; }
+    .stream-related a:hover { text-decoration: underline; }
     .paper-list { list-style: none; display: flex; flex-direction: column; gap: 1.35rem; }
     .paper-title { font-size: .98rem; font-weight: 600; color: var(--navy); line-height: 1.45; }
     .paper-title a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--accent); }
@@ -505,12 +511,12 @@
   <div class="nav-inner">
     <a href="#hero" class="nav-logo">Timothy D. Spivey</a>
     <ul class="nav-links">
-      <li><a href="#research">Research</a></li><li><a href="#teaching">Teaching</a></li><li><a href="timothy-spivey-cv.pdf">CV</a></li><li><a href="#contact">Contact</a></li>
+      <li><a href="#research">Research</a></li><li><a href="#teaching">Teaching</a></li><li><a href="#applied">Applied research</a></li><li><a href="timothy-spivey-cv.pdf">CV</a></li><li><a href="#contact">Contact</a></li>
     </ul>
     <details class="nav-menu">
       <summary>Menu</summary>
       <ul>
-        <li><a href="#research">Research</a></li><li><a href="#teaching">Teaching</a></li><li><a href="timothy-spivey-cv.pdf">CV</a></li><li><a href="#contact">Contact</a></li>
+        <li><a href="#research">Research</a></li><li><a href="#teaching">Teaching</a></li><li><a href="#applied">Applied research</a></li><li><a href="timothy-spivey-cv.pdf">CV</a></li><li><a href="#contact">Contact</a></li>
       </ul>
     </details>
   </div>
@@ -670,6 +676,7 @@
           </li>
           
         </ul>
+        
       </div>
       
       <div class="stream">
@@ -689,6 +696,9 @@
           </li>
           
         </ul>
+        
+        <p class="stream-related">Related: an interactive retention playbook built on public broadband data. <a href="retention-playbook.html">Open the playbook &rarr;</a></p>
+        
       </div>
       
       <div class="stream">
@@ -732,6 +742,7 @@
           </li>
           
         </ul>
+        
       </div>
       
     </div>
