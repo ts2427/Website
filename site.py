@@ -393,10 +393,10 @@ ABOUT = {
         "The question is not whether disclosure matters. It is whether mandating "
         "when a firm discloses produces the benefit regulators assumed it would, "
         "and whether the public data used to answer that question can support "
-        "the answer. The empirical design is a natural experiment built on the "
-        "FCC's 2007 mandatory disclosure rule (47 CFR § 64.2011), applied to "
-        "1,054 public breach records from 2006 to 2025 that resolve to 489 "
-        "distinct breach events.",
+        "the answer. The empirical design compares breaches at carriers subject "
+        "to the FCC's 2007 breach rule (47 CFR § 64.2011) with breaches at other "
+        "public firms, using 1,054 public breach records from 2006 to 2025 that "
+        "resolve to 489 distinct breach events.",
 
         "His broader work follows two lines. One examines security culture: how "
         "fear-based policies, rigid IT controls and workplace surveillance can create "
