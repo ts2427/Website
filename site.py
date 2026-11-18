@@ -247,7 +247,6 @@ for _e in load_yaml("education"):
 
 # Headline numbers in the About card. Methodological, not results.
 STATS = [
-    {"value": "1,054 → 489", "label": "breach records resolved to events"},
     {"value": str(N_ESSAYS), "label": "dissertation essays"},
     {"value": str(N_SOLE_WP),
      "label": "sole-authored paper" if N_SOLE_WP == 1
@@ -1760,7 +1759,6 @@ TEMPLATE = r"""<!DOCTYPE html>
       display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.25rem;
       margin: 1rem 0 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);
     }
-    .about-stat:first-child { grid-column: 1 / -1; }
     .about-stat strong { display: block; font-size: 1.35rem; font-weight: 700; color: var(--navy); line-height: 1.2; }
     .about-stat span { display: block; font-size: .75rem; color: var(--muted); line-height: 1.4; }
     .about-links { display: flex; flex-direction: column; gap: .6rem; }
